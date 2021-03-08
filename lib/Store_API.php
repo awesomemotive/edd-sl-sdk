@@ -60,7 +60,7 @@ class Store_API {
 			$update_array[] = $product->to_api_args();
 		}
 
-		$response = wp_remote_get( $this->store['url'], array(
+		$response = wp_remote_get( $this->store->store_url, array(
 			'timeout'   => 15,
 			'sslverify' => $this->verify_ssl,
 			'body'      => array(
@@ -122,11 +122,11 @@ class Store_API {
 	 * @throws \Exception
 	 */
 	private function validate_url() {
-		if ( empty( $this->store['url'] ) ) {
+		if ( empty( $this->store->store_url ) ) {
 			throw new \Exception( __( 'Missing store URL.' ) );
 		}
 
-		if ( trailingslashit( home_url() ) === trailingslashit( $this->store['url'] ) ) {
+		if ( trailingslashit( home_url() ) === trailingslashit( $this->store->store_url ) ) {
 			throw new \Exception( __( 'A site cannot ping itself.' ) );
 		}
 	}

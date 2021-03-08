@@ -20,6 +20,13 @@ class Store {
 	public $id;
 
 	/**
+	 * Store URL. This is what we use for API requests.
+	 *
+	 * @var string
+	 */
+	public $store_url;
+
+	/**
 	 * Contains all of this store's products.
 	 *
 	 * @var Product_Registry
