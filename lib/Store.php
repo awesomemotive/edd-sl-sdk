@@ -93,6 +93,11 @@ class Store {
 	public function add_product( $product_args ) {
 		$product = new Product( $product_args );
 
+		$existing_product = $this->products->get( $product->id );
+		if ( $existing_product instanceof Product ) {
+			return $existing_product;
+		}
+
 		$this->products->add_item( $product->id, $product );
 
 		return $product;

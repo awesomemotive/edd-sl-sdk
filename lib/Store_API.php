@@ -35,8 +35,11 @@ class Store_API {
 
 		/**
 		 * Whether or not to verify SSL.
+		 *
+		 * @param bool  $verify_ssl
+		 * @param Store $store
 		 */
-		$this->verify_ssl = (bool) apply_filters( 'edd_sl_api_request_verify_ssl', true );
+		$this->verify_ssl = (bool) apply_filters( 'edd_sl_api_request_verify_ssl', true, $this->store );
 	}
 
 	/**

@@ -100,6 +100,8 @@ class SDK {
 	 *                     if you intend on using it.
 	 *
 	 * @since 1.0
+	 * @return Store
+	 * @throws \InvalidArgumentException
 	 */
 	public function register_store( $args, $id = '' ) {
 		if ( empty( $args['store_url'] ) ) {
@@ -107,10 +109,22 @@ class SDK {
 		}
 
 		if ( empty( $id ) ) {
-			$id = sanitize_key( $args['store_url'] );
+			$id = strtolower( sanitize_key( trailingslashit( $args['store_url'] ) ) );
 		}
 
-		$this->store_registry->add_item( $id, $args );
+		// If the store already exists, add products to it.
+		$store = $this->store_registry->get( $id );
+		if ( $store instanceof Store ) {
+			if ( ! empty( $args['products'] ) && is_array( $args['products'] ) ) {
+				foreach ( $args['products'] as $product_args ) {
+					$store->add_product( $product_args );
+				}
+			}
+
+			return $store;
+		}
+
+		return $this->store_registry->add_item( $id, $args );
 	}
 
 }

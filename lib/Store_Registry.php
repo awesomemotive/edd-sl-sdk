@@ -37,6 +37,8 @@ class Store_Registry extends Registry {
 		 * @since 1.0
 		 */
 		do_action( 'edd_sl_after_store_registered', $store );
+
+		return $store;
 	}
 
 	/**
