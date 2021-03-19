@@ -34,18 +34,19 @@ abstract class Updater {
 	abstract public function init();
 
 	/**
-	 * Retrieves the latest versions for all products, for each store.
+	 * Checks for product updates. This does one API request per store.
+	 *
+	 * @todo  Caching?
+	 *
+	 * @param object $transient_data
 	 *
 	 * @since 1.0
-	 * @return object[] An array of stores, containing an array of product details.
+	 * @return object
 	 */
-	protected function get_latest_versions() {
-		$product_args = array();
-		if ( ! empty( $this->type ) ) {
-			$product_args['type'] = $this->type;
+	public function check_updates( $transient_data ) {
+		if ( ! is_object( $transient_data ) ) {
+			$transient_data = new \stdClass();
 		}
-
-		$latest_versions = [];
 
 		// Get latest versions for each store.
 		foreach ( SDK::instance()->store_registry->get_items() as $store_id => $store ) {
@@ -53,16 +54,25 @@ abstract class Updater {
 			 * @var Store $store
 			 */
 
-			$api = new Store_API( $store );
+			$api           = new Store_API( $store );
+			$store_products = $store->get_products( array(
+				'type' => $this->type
+			) );
+
+			if ( empty( $store_products ) ) {
+				continue;
+			}
 
 			try {
-				$latest_versions[] = $api->check_versions( $store->get_products( $product_args ) );
+				$latest_versions = $api->check_versions( $store_products );
 			} catch ( \Exception $e ) {
 				continue;
 			}
+
+			$transient_data = $this->maybe_add_version_details( $transient_data, $latest_versions, $store_products );
 		}
 
-		return $latest_versions;
+		return $transient_data;
 	}
 
 	/**
@@ -101,15 +111,6 @@ abstract class Updater {
 		}
 
 		return $transient_data;
-	}
-
-	protected function convert_object_to_array( $data ) {
-		$new_data = array();
-		foreach ( $data as $key => $value ) {
-			$new_data[ $key ] = is_object( $value ) ? $this->convert_object_to_array( $value ) : $value;
-		}
-
-		return $new_data;
 	}
 
 }

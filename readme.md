@@ -16,7 +16,6 @@ add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 				array(
 					'type'      => 'plugin',
 					'item_name' => 'My Product',
-					'item_slug' => 'my-product',
 					'item_id'   => 123,
 					'file'      => __FILE__,
 					'version'   => '1.0',

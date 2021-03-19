@@ -75,10 +75,10 @@ class Product {
 	 */
 	public function __construct( $args ) {
 		// Verify we have all the required arguments.
-		$required_args = [ 'item_id', 'file', 'version' ];
+		$required_args = [ 'type', 'item_id', 'file', 'version' ];
 
 		// Slug is required for themes.
-		if ( isset( $args['type'] ) && 'theme' === $args['type'] ) {
+		if ( 'theme' === $args['type'] ) {
 			$required_args[] = 'slug';
 		}
 
@@ -94,6 +94,11 @@ class Product {
 		// If this is a plugin and we don't have a slug, we can make one.
 		if ( empty( $args['slug'] ) && ! empty( $args['file'] ) ) {
 			$args['slug'] = basename( $args['file'], '.php' );
+		}
+
+		// If there's no cache key, make one.
+		if ( empty( $args['cache_key'] ) ) {
+			$args['cache_key'] = sprintf( '%s_%s', $args['type'], $args['slug'] );
 		}
 
 		foreach ( $args as $key => $value ) {

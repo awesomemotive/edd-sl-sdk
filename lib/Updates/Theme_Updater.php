@@ -1,0 +1,33 @@
+<?php
+/**
+ * Theme_Updater.php
+ *
+ * @package   EDD_SL_SDK\Updates
+ * @copyright Copyright (c) 2021, Sandhills Development, LLC
+ * @license   GPL2+
+ * @since     1.0
+ */
+
+namespace EDD_SL_SDK\Updates;
+
+use EDD_SL_SDK\Traits\Singleton;
+
+class Theme_Updater extends Updater {
+
+	use Singleton;
+
+	/**
+	 * Product type
+	 *
+	 * @since 1.0
+	 * @var string
+	 */
+	private $type = 'theme';
+
+	/**
+	 * Initializes hooks.
+	 */
+	public function init() {
+		add_filter( 'site_transient_update_themes', [ $this, 'check_updates' ] );
+	}
+}

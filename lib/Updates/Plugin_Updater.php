@@ -33,50 +33,8 @@ class Plugin_Updater extends Updater {
 	 * Initializes hooks.
 	 */
 	public function init() {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_updates' ) );
 		add_filter( 'plugins_api', array( $this, 'show_version_details' ), 10, 3 );
-	}
-
-	/**
-	 * Checks for plugin updates. This does one API request per store.
-	 *
-	 * @todo  Caching?
-	 *
-	 * @param object $transient_data
-	 *
-	 * @since 1.0
-	 * @return object
-	 */
-	public function check_update( $transient_data ) {
-		if ( ! is_object( $transient_data ) ) {
-			$transient_data = new \stdClass();
-		}
-
-		// Get latest versions for each store.
-		foreach ( SDK::instance()->store_registry->get_items() as $store_id => $store ) {
-			/**
-			 * @var Store $store
-			 */
-
-			$api           = new Store_API( $store );
-			$store_plugins = $store->get_products( array(
-				'type' => 'plugin'
-			) );
-
-			if ( empty( $store_plugins ) ) {
-				continue;
-			}
-
-			try {
-				$latest_versions = $api->check_versions( $store_plugins );
-			} catch ( \Exception $e ) {
-				continue;
-			}
-
-			$transient_data = $this->maybe_add_version_details( $transient_data, $latest_versions, $store_plugins );
-		}
-
-		return $transient_data;
 	}
 
 	/**

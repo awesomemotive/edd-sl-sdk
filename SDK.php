@@ -90,6 +90,7 @@ class SDK {
 		self::$instance->store_registry = new Store_Registry();
 
 		Updates\Plugin_Updater::instance()->init();
+		Updates\Theme_Updater::instance()->init();
 	}
 
 	/**
