@@ -12,11 +12,14 @@ namespace EDD_SL_SDK;
 /**
  * Class Product
  *
- * @property string|int $id
- *
  * @package EDD_SL_SDK
  */
 class Product {
+
+	/**
+	 * @var string
+	 */
+	public $id;
 
 	/**
 	 * @var string
@@ -37,6 +40,11 @@ class Product {
 	 * @var int
 	 */
 	public $item_id;
+
+	/**
+	 * @var string
+	 */
+	public $file;
 
 	/**
 	 * @var string
@@ -62,48 +70,48 @@ class Product {
 	 * Product constructor.
 	 *
 	 * @param array $args
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct( $args ) {
+		// Verify we have all the required arguments.
+		$required_args = [ 'item_id', 'file', 'version' ];
+
+		// Slug is required for themes.
+		if ( isset( $args['type'] ) && 'theme' === $args['type'] ) {
+			$required_args[] = 'slug';
+		}
+
+		foreach( $required_args as $required_arg ) {
+			if ( empty( $args[ $required_arg ] ) ) {
+				throw new \InvalidArgumentException( sprintf(
+					__( 'Missing required argument: %s' ),
+					$required_arg
+				) );
+			}
+		}
+
+		// If this is a plugin and we don't have a slug, we can make one.
+		if ( empty( $args['slug'] ) && ! empty( $args['file'] ) ) {
+			$args['slug'] = basename( $args['file'], '.php' );
+		}
+
 		foreach ( $args as $key => $value ) {
 			$this->{$key} = $value;
 		}
-	}
 
-	/**
-	 * Mostly used to dynamically build the `id` property.
-	 *
-	 * @param string $key
-	 *
-	 * @return mixed|null
-	 */
-	public function __get( $key ) {
-		if ( method_exists( $this, 'get_' . $key ) ) {
-			return call_user_func( array( $this, 'get_' . $key ) );
-		}
-
-		if ( property_exists( $this, $key ) ) {
-			return $this->{$key};
-		}
-
-		return null;
+		$this->id = $this->get_id();
 	}
 
 	/**
 	 * Retrieves the unique ID for this product.
-	 *
-	 * Note: this is only unique to the store; not unique across all stores.
+	 * For plugins, this is the `plugin_basename()` value; for themes it's the slug (`get_template()`).
 	 *
 	 * @since 1.0
-	 * @return string|null
+	 * @return string
 	 */
-	public function get_id() {
-		foreach ( [ 'item_id', 'item_slug', 'item_name' ] as $possible_id ) {
-			if ( property_exists( $this, $possible_id ) && ! empty( $this->{$possible_id} ) ) {
-				return sanitize_key( $this->{$possible_id} );
-			}
-		}
-
-		return null;
+	private function get_id() {
+		return 'plugin' === $this->type ? plugin_basename( $this->file ) : $this->slug;
 	}
 
 	/**

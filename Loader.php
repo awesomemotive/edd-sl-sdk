@@ -71,7 +71,7 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 			if ( ! empty( $this->latest_sdk['path'] ) && file_exists( $this->latest_sdk['path'] ) ) {
 				require_once $this->latest_sdk['path'];
 
-				if ( class_exists( '\\EDD_SL_SDK\\SDK' ) ) {
+				if ( class_exists( '\\EDD_SL_SDK\\SDK' ) && ! did_action( 'edd_sl_sdk_loaded' ) ) {
 					/**
 					 * Triggers after the SDK has been loaded.
 					 *

@@ -48,10 +48,10 @@ class Store_API {
 	 * @param Product[] $store_products Registered products to get new versions for. If empty, then all
 	 *                                  the store's products are checked.
 	 *
-	 * @return object
+	 * @return array
 	 * @throws \Exception
 	 */
-	public function check_version( $store_products = [] ) {
+	public function check_versions( $store_products = [] ) {
 		$this->validate_url();
 
 		if ( empty( $store_products ) ) {
@@ -60,16 +60,16 @@ class Store_API {
 
 		$update_array = array();
 		foreach ( $store_products as $product ) {
-			$update_array[] = $product->to_api_args();
+			$update_array[ $product->id ] = $product->to_api_args();
 		}
 
 		$response = wp_remote_get( $this->store->store_url, array(
 			'timeout'   => 15,
 			'sslverify' => $this->verify_ssl,
-			'body'      => array(
-				'edd_action'   => 'get_version',
-				'update_array' => $update_array
-			)
+			'body'      => [
+				'edd_action' => 'get_version',
+				'products'   => $update_array
+			]
 		) );
 
 		if ( is_wp_error( $response ) ) {
@@ -81,7 +81,7 @@ class Store_API {
 			throw new \Exception( sprintf( __( 'Invalid HTTP response code: %d' ), $response_code ) );
 		}
 
-		$response = $this->format_version_response( json_decode( wp_remote_retrieve_body( $response ) ) );
+		$response = $this->format_version_response( json_decode( wp_remote_retrieve_body( $response ), true ) );
 
 		if ( empty( $response ) ) {
 			throw new \Exception( __( 'Invalid response.' ) );
@@ -91,32 +91,30 @@ class Store_API {
 	}
 
 	/**
-	 * @param object $response
+	 * Formats the version check response.
 	 *
-	 * @return object|false
+	 * @param array $products
+	 *
+	 * @since 1.0
+	 * @return array
 	 */
-	private function format_version_response( $response ) {
-		if ( ! $response || ! isset( $response->sections ) ) {
-			return false;
+	private function format_version_response( $products ) {
+		if ( ! is_array( $products ) ) {
+			return [];
 		}
 
-		$response->sections = maybe_unserialize( $response->sections );
-
-		if ( isset( $response->banners ) ) {
-			$response->banners = maybe_unserialize( $response->banners );
-		}
-
-		if ( isset( $response->icons ) ) {
-			$response->icons = maybe_unserialize( $response->icons );
-		}
-
-		if ( ! empty( $response->sections ) && ( is_array( $response->sections ) || is_object( $response->sections ) ) ) {
-			foreach ( $response->sections as $key => $section ) {
-				$response->$key = (array) $section;
+		foreach ( $products as $key => $product ) {
+			// Unserialize arrays.
+			foreach ( [ 'sections', 'banners', 'icons' ] as $property_name ) {
+				if ( isset( $product[ $property_name ] ) ) {
+					$product[ $property_name ] = maybe_unserialize( $product[ $property_name ] );
+				}
 			}
+
+			$products[ $key ] = $product;
 		}
 
-		return $response;
+		return $products;
 	}
 
 	/**
@@ -128,6 +126,8 @@ class Store_API {
 		if ( empty( $this->store->store_url ) ) {
 			throw new \Exception( __( 'Missing store URL.' ) );
 		}
+
+		return; // @todo remove
 
 		if ( trailingslashit( home_url() ) === trailingslashit( $this->store->store_url ) ) {
 			throw new \Exception( __( 'A site cannot ping itself.' ) );
