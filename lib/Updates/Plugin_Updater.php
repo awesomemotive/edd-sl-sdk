@@ -40,7 +40,7 @@ class Plugin_Updater extends Updater {
 	/**
 	 * Updates information on the "View version x.x details" page with custom data.
 	 *
-	 * @todo Caching
+	 * @todo  Caching
 	 *
 	 * @param object      $data
 	 * @param string      $action
@@ -55,10 +55,6 @@ class Plugin_Updater extends Updater {
 		}
 
 		foreach ( SDK::instance()->store_registry->get_items() as $store_id => $store ) {
-			/**
-			 * @var Store $store
-			 */
-
 			$api           = new Store_API( $store );
 			$store_plugins = $store->get_products( array(
 				'type' => 'plugin',
@@ -75,7 +71,48 @@ class Plugin_Updater extends Updater {
 				continue;
 			}
 
-			$data = (object) reset( $latest_versions );
+			return $this->format_version_details( reset( $latest_versions ) );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Formats an input array in the way WordPress core expects.
+	 * The main return value is an object, but certain elements within that object
+	 * need to be arrays.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array $data
+	 *
+	 * @return object
+	 */
+	private function format_version_details( $data ) {
+		/*
+		 * Overall we want to return an object, but these properties should be arrays.
+		 * Let's save them while we have them.
+		 */
+		$array_properties = array(
+			'sections'     => array(),
+			'banners'      => array(),
+			'icons'        => array(),
+			'contributors' => array()
+		);
+		foreach ( array_keys( $array_properties ) as $property_name ) {
+			if ( isset( $data[ $property_name ] ) && is_array( $data[ $property_name ] ) ) {
+				$array_properties[ $property_name ] = $data[ $property_name ];
+			}
+		}
+
+		// Convert the main data to an object.
+		if ( is_array( $data ) ) {
+			$data = json_decode( jsone_encode( $data ) );
+		}
+
+		// Now put our array values back.
+		foreach ( $array_properties as $property_name => $property_value ) {
+			$data->{$property_name} = $property_value;
 		}
 
 		return $data;

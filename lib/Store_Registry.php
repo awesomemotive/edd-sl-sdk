@@ -14,6 +14,8 @@ class Store_Registry extends Registry {
 	/**
 	 * Adds a new store to the registry.
 	 *
+	 * @since 1.0
+	 *
 	 * @param string $item_id
 	 * @param array  $attributes
 	 */
@@ -35,6 +37,13 @@ class Store_Registry extends Registry {
 		do_action( 'edd_sl_after_store_registered', $store );
 
 		return $store;
+	}
+
+	/**
+	 * @return Store[]
+	 */
+	public function get_items() {
+		return parent::get_items();
 	}
 
 }

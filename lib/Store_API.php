@@ -63,13 +63,12 @@ class Store_API {
 			$update_array[ $product->id ] = $product->to_api_args();
 		}
 
-		$response = wp_remote_get( $this->store->store_url, array(
+		$response = wp_remote_post( $this->store->api_url, array(
 			'timeout'   => 15,
 			'sslverify' => $this->verify_ssl,
-			'body'      => [
-				'edd_action' => 'get_version',
-				'products'   => $update_array
-			]
+			'body'      => json_encode( array(
+				'products' => $update_array
+			) )
 		) );
 
 		if ( is_wp_error( $response ) ) {
@@ -81,40 +80,13 @@ class Store_API {
 			throw new \Exception( sprintf( __( 'Invalid HTTP response code: %d' ), $response_code ) );
 		}
 
-		$response = $this->format_version_response( json_decode( wp_remote_retrieve_body( $response ), true ) );
+		$response = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		if ( empty( $response ) ) {
+		if ( empty( $response['products'] ) || ! is_array( $response['products'] ) ) {
 			throw new \Exception( __( 'Invalid response.' ) );
 		}
 
-		return $response;
-	}
-
-	/**
-	 * Formats the version check response.
-	 *
-	 * @param array $products
-	 *
-	 * @since 1.0
-	 * @return array
-	 */
-	private function format_version_response( $products ) {
-		if ( ! is_array( $products ) ) {
-			return [];
-		}
-
-		foreach ( $products as $key => $product ) {
-			// Unserialize arrays.
-			foreach ( [ 'sections', 'banners', 'icons' ] as $property_name ) {
-				if ( isset( $product[ $property_name ] ) ) {
-					$product[ $property_name ] = maybe_unserialize( $product[ $property_name ] );
-				}
-			}
-
-			$products[ $key ] = $product;
-		}
-
-		return $products;
+		return $response['products'];
 	}
 
 	/**
@@ -123,13 +95,13 @@ class Store_API {
 	 * @throws \Exception
 	 */
 	private function validate_url() {
-		if ( empty( $this->store->store_url ) ) {
+		if ( empty( $this->store->api_url ) ) {
 			throw new \Exception( __( 'Missing store URL.' ) );
 		}
 
 		return; // @todo remove
 
-		if ( trailingslashit( home_url() ) === trailingslashit( $this->store->store_url ) ) {
+		if ( trailingslashit( home_url() ) === trailingslashit( $this->store->api_url ) ) {
 			throw new \Exception( __( 'A site cannot ping itself.' ) );
 		}
 	}

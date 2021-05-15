@@ -10,7 +10,8 @@ require_once 'sdk/Loader.php';
 add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 	try {
 		$sdk->register_store( array(
-			'store_url' => 'https://sandhillsdev.com',
+			'id' => 'sandhillsdev.com',
+			'api_url' => 'https://sandhillsdev.com/wp-json/edd-sl/v2',
 			'author'    => 'Sandhills Development, LLC',
 			'products'  => array(
 				array(

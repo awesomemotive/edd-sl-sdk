@@ -96,25 +96,31 @@ class SDK {
 	/**
 	 * Registers a new store.
 	 *
-	 * @param array  $args Array of arguments.
-	 * @param string $id   Optional unique ID. If omitted, an ID is generated from the URL. Set this explicitly
-	 *                     if you intend on using it.
+	 * @param array $args     {
+	 *                        Array of arguments.
+	 *
+	 * @type string $id       Optional unique ID. If omitted, an ID is generated from the API URL.
+	 *                     Set this explicitly if you intend on using it.
+	 * @type string $api_url  Required. Software Licensing API endpoint.
+	 * @type string $author   Optional. Name of the store.
+	 * @type array  $products Optional. Array of products.
+	 *                     }
 	 *
 	 * @since 1.0
 	 * @return Store
 	 * @throws \InvalidArgumentException
 	 */
-	public function register_store( $args, $id = '' ) {
-		if ( empty( $args['store_url'] ) ) {
-			throw new \InvalidArgumentException( __( 'Missing required store_url argument.' ) );
+	public function register_store( $args ) {
+		if ( empty( $args['api_url'] ) ) {
+			throw new \InvalidArgumentException( __( 'Missing required api_url argument.' ) );
 		}
 
-		if ( empty( $id ) ) {
-			$id = strtolower( sanitize_key( trailingslashit( $args['store_url'] ) ) );
+		if ( empty( $args['id'] ) ) {
+			$args['id'] = strtolower( sanitize_key( trailingslashit( $args['api_url'] ) ) );
 		}
 
 		// If the store already exists, add products to it.
-		$store = $this->store_registry->get( $id );
+		$store = $this->store_registry->get( $args['id'] );
 		if ( $store instanceof Store ) {
 			if ( ! empty( $args['products'] ) && is_array( $args['products'] ) ) {
 				foreach ( $args['products'] as $product_args ) {
@@ -125,7 +131,7 @@ class SDK {
 			return $store;
 		}
 
-		return $this->store_registry->add_item( $id, $args );
+		return $this->store_registry->add_item( $args['id'], $args );
 	}
 
 }

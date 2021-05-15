@@ -5,6 +5,7 @@
  * @package   EDD_SL_SDK
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
  * @license   GPL2+
+ * @since     1.0
  */
 
 namespace EDD_SL_SDK;
@@ -30,11 +31,6 @@ class Product {
 	 * @var string
 	 */
 	public $license;
-
-	/**
-	 * @var string
-	 */
-	public $item_name;
 
 	/**
 	 * @var int
@@ -82,7 +78,7 @@ class Product {
 			$required_args[] = 'slug';
 		}
 
-		foreach( $required_args as $required_arg ) {
+		foreach ( $required_args as $required_arg ) {
 			if ( empty( $args[ $required_arg ] ) ) {
 				throw new \InvalidArgumentException( sprintf(
 					__( 'Missing required argument: %s' ),
@@ -122,12 +118,12 @@ class Product {
 	/**
 	 * Builds API arguments for the product.
 	 *
+	 * @since 1.0
 	 * @return array
 	 */
 	public function to_api_args() {
 		return array(
 			'license'   => $this->license,
-			'item_name' => $this->item_name,
 			'item_id'   => $this->item_id,
 			'version'   => $this->version,
 			'slug'      => $this->slug,

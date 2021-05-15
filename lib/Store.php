@@ -20,11 +20,11 @@ class Store {
 	public $id;
 
 	/**
-	 * Store URL. This is what we use for API requests.
+	 * API URL. This is the domain that Software Licensing is installed on.
 	 *
 	 * @var string
 	 */
-	public $store_url;
+	public $api_url;
 
 	/**
 	 * Contains all of this store's products.
