@@ -82,7 +82,60 @@ class Product {
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct( $args ) {
+		$args = $this->fillMissingArgs( $args );
+
 		// Verify we have all the required arguments.
+		$this->validateArgs( $args );
+
+		foreach ( $args as $key => $value ) {
+			$this->{$key} = $value;
+		}
+
+		$this->id = $this->getId();
+	}
+
+	/**
+	 * Fills in any missing arguments that we're capable of guessing.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	private function fillMissingArgs( $args ) {
+		// If this is a theme and we don't have a version, we can get it.
+		if ( isset( $args['type'] ) && 'theme' === $args['type'] && ! isset( $args['version'] ) && ! empty( $args['slug'] ) ) {
+			$theme = wp_get_theme( $args['slug'] );
+
+			if ( $theme ) {
+				$args['version'] = $theme->get( 'Version' );
+			}
+		}
+
+		// If we don't have a slug, we can make one.
+		if ( empty( $args['slug'] ) && ! empty( $args['file'] ) ) {
+			$args['slug'] = basename( $args['file'], '.php' );
+		}
+
+		// If there's no cache key, make one.
+		if ( empty( $args['cache_key'] ) && ! empty( $args['type'] ) && ! empty( $args['slug'] ) ) {
+			$args['cache_key'] = sprintf( 'sl_%s_data_%s', $args['type'], $args['slug'] );
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Validates that we have required arguments.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array $args
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	private function validateArgs( $args ) {
 		$requiredArgs = [ 'type', 'item_id', 'file', 'version', 'store_id' ];
 
 		foreach ( $requiredArgs as $requiredArg ) {
@@ -93,22 +146,6 @@ class Product {
 				) );
 			}
 		}
-
-		// If we don't have a slug, we can make one.
-		if ( empty( $args['slug'] ) && ! empty( $args['file'] ) ) {
-			$args['slug'] = basename( $args['file'], '.php' );
-		}
-
-		// If there's no cache key, make one.
-		if ( empty( $args['cache_key'] ) ) {
-			$args['cache_key'] = sprintf( 'sl_%s_data_%s', $args['type'], $args['slug'] );
-		}
-
-		foreach ( $args as $key => $value ) {
-			$this->{$key} = $value;
-		}
-
-		$this->id = $this->getId();
 	}
 
 	/**
