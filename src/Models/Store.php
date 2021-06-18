@@ -11,7 +11,7 @@
 namespace EDD_SL_SDK\Models;
 
 use EDD_SL_SDK\Exceptions;
-use EDD_SL_SDK\ProductRegistry;
+use EDD_SL_SDK\Registry\ProductRegistry;
 
 class Store {
 

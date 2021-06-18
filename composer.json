@@ -1,0 +1,8 @@
+{
+  "name": "easy-digital-downloads/edd-sl-sdk",
+  "license": "GPL-2.0-or-later",
+  "type": "library",
+  "require": {
+    "php": ">=5.6"
+  }
+}

@@ -8,7 +8,7 @@
  * @since     1.0
  */
 
-namespace EDD_SL_SDK;
+namespace EDD_SL_SDK\Registry;
 
 class ProductRegistry extends Registry {
 

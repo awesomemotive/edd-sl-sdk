@@ -7,7 +7,7 @@
  * @license   GPL2+
  */
 
-namespace EDD_SL_SDK;
+namespace EDD_SL_SDK\Registry;
 
 use EDD_SL_SDK\Exceptions\ItemNotFoundException;
 

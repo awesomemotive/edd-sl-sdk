@@ -11,6 +11,7 @@ namespace EDD_SL_SDK;
 
 use EDD_SL_SDK\Exceptions\ItemNotFoundException;
 use EDD_SL_SDK\Models\Store;
+use EDD_SL_SDK\Registry\StoreRegistry;
 use EDD_SL_SDK\Updates;
 
 class SDK {
@@ -71,7 +72,7 @@ class SDK {
 				$directory = trailingslashit( $directory );
 			}
 
-			$file_path = trailingslashit( dirname( __FILE__ ) ) . 'src/' . $directory . $file_name . '.php';
+			$file_path = trailingslashit( dirname( __FILE__ ) ) . $directory . $file_name . '.php';
 
 			if ( file_exists( $file_path ) ) {
 				require $file_path;
