@@ -10,6 +10,6 @@
 
 namespace EDD_SL_SDK;
 
-class Product_Registry extends Registry {
+class ProductRegistry extends Registry {
 
 }

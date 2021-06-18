@@ -1,6 +1,6 @@
 <?php
 /**
- * Store_API.php
+ * StoreApi.php
  *
  * @package   EDD_SL_SDK
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
@@ -9,7 +9,7 @@
 
 namespace EDD_SL_SDK;
 
-class Store_API {
+class StoreApi {
 
 	/**
 	 * Store details.
@@ -23,12 +23,12 @@ class Store_API {
 	 *
 	 * @var bool
 	 */
-	private $verify_ssl;
+	private $verifySsl;
 
 	/**
 	 * Store_API constructor.
 	 *
-	 * @param Store $store_id
+	 * @param Store $store
 	 */
 	public function __construct( $store ) {
 		$this->store = $store;
@@ -36,38 +36,38 @@ class Store_API {
 		/**
 		 * Whether or not to verify SSL.
 		 *
-		 * @param bool  $verify_ssl
+		 * @param bool  $verifySsl
 		 * @param Store $store
 		 */
-		$this->verify_ssl = (bool) apply_filters( 'edd_sl_api_request_verify_ssl', true, $this->store );
+		$this->verifySsl = (bool) apply_filters( 'edd_sl_api_request_verify_ssl', true, $this->store );
 	}
 
 	/**
 	 * Retrieves the latest versions from the store.
 	 *
-	 * @param Product[] $store_products Registered products to get new versions for. If empty, then all
+	 * @param Product[] $storeProducts  Registered products to get new versions for. If empty, then all
 	 *                                  the store's products are checked.
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function check_versions( $store_products = [] ) {
-		$this->validate_url();
+	public function checkVersions( $storeProducts = [] ) {
+		$this->validateUrl();
 
-		if ( empty( $store_products ) ) {
-			$store_products = $this->store->get_products();
+		if ( empty( $storeProducts ) ) {
+			$storeProducts = $this->store->getProducts();
 		}
 
-		$update_array = array();
-		foreach ( $store_products as $product ) {
-			$update_array[ $product->id ] = $product->to_api_args();
+		$updateArray = array();
+		foreach ( $storeProducts as $product ) {
+			$updateArray[ $product->id ] = $product->toApiArgs();
 		}
 
 		$response = wp_remote_post( $this->store->api_url, array(
 			'timeout'   => 15,
-			'sslverify' => $this->verify_ssl,
+			'sslverify' => $this->verifySsl,
 			'body'      => json_encode( array(
-				'products' => $update_array
+				'products' => $updateArray
 			) )
 		) );
 
@@ -94,12 +94,10 @@ class Store_API {
 	 *
 	 * @throws \Exception
 	 */
-	private function validate_url() {
+	private function validateUrl() {
 		if ( empty( $this->store->api_url ) ) {
 			throw new \Exception( __( 'Missing store URL.' ) );
 		}
-
-		return; // @todo remove
 
 		if ( trailingslashit( home_url() ) === trailingslashit( $this->store->api_url ) ) {
 			throw new \Exception( __( 'A site cannot ping itself.' ) );

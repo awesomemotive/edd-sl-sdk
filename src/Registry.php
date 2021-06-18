@@ -23,18 +23,18 @@ class Registry extends \ArrayObject {
 	 *
 	 * @param array $items
 	 */
-	public function set_items( $items ) {
+	public function setItems( $items ) {
 		$this->items = $items;
 	}
 
 	/**
 	 * Adds a single item to the registry.
 	 *
-	 * @param int|string $item_id    Item ID.
+	 * @param int|string $itemId     Item ID.
 	 * @param mixed      $attributes Item attributes/value.
 	 */
-	public function add_item( $item_id, $attributes ) {
-		$this->items[ $item_id ] = $attributes;
+	public function addItem( $itemId, $attributes ) {
+		$this->items[ $itemId ] = $attributes;
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Registry extends \ArrayObject {
 	 *
 	 * @param int|string $item_id Item ID.
 	 */
-	public function remove_item( $item_id ) {
+	public function removeItem( $item_id ) {
 		unset( $this->items[ $item_id ] );
 	}
 
@@ -66,7 +66,7 @@ class Registry extends \ArrayObject {
 	 *
 	 * @return array
 	 */
-	public function get_items() {
+	public function getItems() {
 		return $this->items;
 	}
 
@@ -110,7 +110,7 @@ class Registry extends \ArrayObject {
 	public function query( $args ) {
 		$results = array();
 
-		$all_items = $this->get_items();
+		$all_items = $this->getItems();
 
 		// Filter out IDs before starting.
 		if ( isset( $args['key__in'] ) ) {

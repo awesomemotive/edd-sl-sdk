@@ -71,18 +71,18 @@ class Product {
 	 */
 	public function __construct( $args ) {
 		// Verify we have all the required arguments.
-		$required_args = [ 'type', 'item_id', 'file', 'version' ];
+		$requiredArgs = [ 'type', 'item_id', 'file', 'version' ];
 
 		// Slug is required for themes.
 		if ( 'theme' === $args['type'] ) {
-			$required_args[] = 'slug';
+			$requiredArgs[] = 'slug';
 		}
 
-		foreach ( $required_args as $required_arg ) {
-			if ( empty( $args[ $required_arg ] ) ) {
+		foreach ( $requiredArgs as $requiredArg ) {
+			if ( empty( $args[ $requiredArg ] ) ) {
 				throw new \InvalidArgumentException( sprintf(
 					__( 'Missing required argument: %s' ),
-					$required_arg
+					$requiredArg
 				) );
 			}
 		}
@@ -101,7 +101,7 @@ class Product {
 			$this->{$key} = $value;
 		}
 
-		$this->id = $this->get_id();
+		$this->id = $this->getId();
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Product {
 	 * @since 1.0
 	 * @return string
 	 */
-	private function get_id() {
+	private function getId() {
 		return 'plugin' === $this->type ? plugin_basename( $this->file ) : $this->slug;
 	}
 
@@ -121,14 +121,14 @@ class Product {
 	 * @since 1.0
 	 * @return array
 	 */
-	public function to_api_args() {
+	public function toApiArgs() {
 		return array(
-			'license'   => $this->license,
-			'item_id'   => $this->item_id,
-			'version'   => $this->version,
-			'slug'      => $this->slug,
-			'beta'      => $this->beta,
-			'url'       => home_url()
+			'license' => $this->license,
+			'item_id' => $this->item_id,
+			'version' => $this->version,
+			'slug'    => $this->slug,
+			'beta'    => $this->beta,
+			'url'     => home_url()
 		);
 	}
 

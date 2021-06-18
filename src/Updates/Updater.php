@@ -13,7 +13,7 @@ namespace EDD_SL_SDK\Updates;
 use EDD_SL_SDK\Product;
 use EDD_SL_SDK\SDK;
 use EDD_SL_SDK\Store;
-use EDD_SL_SDK\Store_API;
+use EDD_SL_SDK\StoreApi;
 
 abstract class Updater {
 
@@ -38,60 +38,56 @@ abstract class Updater {
 	 *
 	 * @todo  Caching?
 	 *
-	 * @param object $transient_data
+	 * @param object $transientData
 	 *
 	 * @since 1.0
 	 * @return object
 	 */
-	public function check_updates( $transient_data ) {
-		if ( ! is_object( $transient_data ) ) {
-			$transient_data = new \stdClass();
+	public function checkUpdates( $transientData ) {
+		if ( ! is_object( $transientData ) ) {
+			$transientData = new \stdClass();
 		}
 
 		// Get latest versions for each store.
-		foreach ( SDK::instance()->store_registry->get_items() as $store_id => $store ) {
-			/**
-			 * @var Store $store
-			 */
-
-			$api           = new Store_API( $store );
-			$store_products = $store->get_products( array(
+		foreach ( SDK::instance()->storeRegistry->getItems() as $store_id => $store ) {
+			$api           = new StoreApi( $store );
+			$storeProducts = $store->getProducts( array(
 				'type' => $this->type
 			) );
 
-			if ( empty( $store_products ) ) {
+			if ( empty( $storeProducts ) ) {
 				continue;
 			}
 
 			try {
-				$latest_versions = $api->check_versions( $store_products );
+				$latestVersions = $api->checkVersions( $storeProducts );
 			} catch ( \Exception $e ) {
 				continue;
 			}
 
-			$transient_data = $this->maybe_add_version_details( $transient_data, $latest_versions, $store_products );
+			$transientData = $this->maybeAddVersionDetails( $transientData, $latestVersions, $storeProducts );
 		}
 
-		return $transient_data;
+		return $transientData;
 	}
 
 	/**
 	 * Updates the provided transient object with new version information for all supplied products.
 	 *
-	 * @param object    $transient_data
-	 * @param array     $latest_versions
-	 * @param Product[] $store_products
+	 * @param object    $transientData
+	 * @param array     $latestVersions
+	 * @param Product[] $storeProducts
 	 *
 	 * @since 1.0
 	 * @return object
 	 */
-	protected function maybe_add_version_details( $transient_data, $latest_versions, $store_products ) {
-		foreach ( $store_products as $product ) {
-			if ( ! isset( $latest_versions[ $product->id ]['new_version'] ) ) {
+	protected function maybeAddVersionDetails( $transientData, $latestVersions, $storeProducts ) {
+		foreach ( $storeProducts as $product ) {
+			if ( ! isset( $latestVersions[ $product->id ]['new_version'] ) ) {
 				continue;
 			}
 
-			$update_data = $latest_versions[ $product->id ];
+			$update_data = $latestVersions[ $product->id ];
 			$new_version = $update_data['new_version'];
 
 			if ( 'theme' === $this->type ) {
@@ -104,13 +100,13 @@ abstract class Updater {
 			}
 
 			if ( ! empty( $new_version ) && version_compare( $product->version, $new_version, '<' ) ) {
-				$transient_data->response[ $product->id ] = $update_data;
+				$transientData->response[ $product->id ] = $update_data;
 			} else {
-				$transient_data->no_update[ $product->id ] = $update_data;
+				$transientData->no_update[ $product->id ] = $update_data;
 			}
 		}
 
-		return $transient_data;
+		return $transientData;
 	}
 
 }

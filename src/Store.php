@@ -29,7 +29,7 @@ class Store {
 	/**
 	 * Contains all of this store's products.
 	 *
-	 * @var Product_Registry
+	 * @var ProductRegistry
 	 */
 	private $products;
 
@@ -50,7 +50,7 @@ class Store {
 			'products' => []
 		] );
 
-		$this->set_products( $args['products'] );
+		$this->setProducts( $args['products'] );
 	}
 
 	/**
@@ -60,12 +60,12 @@ class Store {
 	 *
 	 * @since 1.0
 	 */
-	private function set_products( $products ) {
-		$this->products = new Product_Registry();
+	private function setProducts( $products ) {
+		$this->products = new ProductRegistry();
 
 		if ( ! empty( $products ) && is_array( $products ) ) {
 			foreach ( $products as $product_key => $product_args ) {
-				$this->add_product( $product_args );
+				$this->addProduct( $product_args );
 			}
 		}
 	}
@@ -78,8 +78,8 @@ class Store {
 	 * @since 1.0
 	 * @return Product[]
 	 */
-	public function get_products( $query_args = [] ) {
-		return ! empty( $query_args ) ? $this->products->query( $query_args ) : $this->products->get_items();
+	public function getProducts( $query_args = [] ) {
+		return ! empty( $query_args ) ? $this->products->query( $query_args ) : $this->products->getItems();
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Store {
 	 * @since 1.0
 	 * @return Product
 	 */
-	public function add_product( $product_args ) {
+	public function addProduct( $product_args ) {
 		$product = new Product( $product_args );
 
 		$existing_product = $this->products->get( $product->id );
@@ -98,7 +98,7 @@ class Store {
 			return $existing_product;
 		}
 
-		$this->products->add_item( $product->id, $product );
+		$this->products->addItem( $product->id, $product );
 
 		return $product;
 	}

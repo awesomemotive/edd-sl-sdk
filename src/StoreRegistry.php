@@ -1,31 +1,32 @@
 <?php
 /**
- * Store_Registry.php
+ * StoreRegistry.php
  *
  * @package   EDD_SL_SDK
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
  * @license   GPL2+
+ * @since     1.0
  */
 
 namespace EDD_SL_SDK;
 
-class Store_Registry extends Registry {
+class StoreRegistry extends Registry {
 
 	/**
 	 * Adds a new store to the registry.
 	 *
 	 * @since 1.0
 	 *
-	 * @param string $item_id
+	 * @param string $itemId
 	 * @param array  $attributes
 	 */
-	public function add_item( $item_id, $attributes ) {
+	public function addItem( $itemId, $attributes ) {
 		// Add the ID as an attribute.
-		$attributes['id'] = $item_id;
+		$attributes['id'] = $itemId;
 
 		$store = new Store( $attributes );
 
-		parent::add_item( $item_id, $store );
+		parent::addItem( $itemId, $store );
 
 		/**
 		 * Triggers after a store has been registered.
@@ -42,8 +43,8 @@ class Store_Registry extends Registry {
 	/**
 	 * @return Store[]
 	 */
-	public function get_items() {
-		return parent::get_items();
+	public function getItems() {
+		return parent::getItems();
 	}
 
 }

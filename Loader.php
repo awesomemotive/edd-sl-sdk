@@ -21,14 +21,14 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 		 *
 		 * @var array
 		 */
-		private $registered_sdks = array();
+		private $registeredSdks = array();
 
 		/**
 		 * Contains information about the latest version of the SDK (version and path to file).
 		 *
 		 * @var array
 		 */
-		private $latest_sdk = array();
+		private $latestSdk = array();
 
 		/**
 		 * Returns an instance of Loader.
@@ -53,7 +53,7 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 		 * @since 1.0
 		 */
 		public function hooks() {
-			add_action( 'plugins_loaded', array( $this, 'set_and_load_latest' ), 99999 );
+			add_action( 'plugins_loaded', array( $this, 'setAndLoadLatest' ), 99999 );
 		}
 
 		/**
@@ -61,15 +61,15 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		public function set_and_load_latest() {
-			foreach ( $this->registered_sdks as $registered_sdk ) {
-				if ( $this->is_later_version( $registered_sdk ) ) {
-					$this->latest_sdk = $registered_sdk;
+		public function setAndLoadLatest() {
+			foreach ( $this->registeredSdks as $registered_sdk ) {
+				if ( $this->isLaterVersion( $registered_sdk ) ) {
+					$this->latestSdk = $registered_sdk;
 				}
 			}
 
-			if ( ! empty( $this->latest_sdk['path'] ) && file_exists( $this->latest_sdk['path'] ) ) {
-				require_once $this->latest_sdk['path'];
+			if ( ! empty( $this->latestSdk['path'] ) && file_exists( $this->latestSdk['path'] ) ) {
+				require_once $this->latestSdk['path'];
 
 				if ( class_exists( '\\EDD_SL_SDK\\SDK' ) && ! did_action( 'edd_sl_sdk_loaded' ) ) {
 					/**
@@ -92,16 +92,16 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 		 * @since 1.0
 		 * @return bool
 		 */
-		private function is_later_version( $sdk ) {
+		private function isLaterVersion( $sdk ) {
 			if ( empty( $sdk['version'] ) || empty( $sdk['path'] ) ) {
 				return false;
 			}
 
-			if ( empty( $this->latest_sdk ) ) {
+			if ( empty( $this->latestSdk ) ) {
 				return true;
 			}
 
-			return version_compare( $sdk['version'], $this->latest_sdk['version'], '>' );
+			return version_compare( $sdk['version'], $this->latestSdk['version'], '>' );
 		}
 
 		/**
@@ -117,8 +117,8 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 		 * @since 1.0
 		 * @return Loader
 		 */
-		public function register_sdk( $args ) {
-			$this->registered_sdks[] = $args;
+		public function registerSdk( $args ) {
+			$this->registeredSdks[] = $args;
 
 			return $this;
 		}
@@ -126,7 +126,7 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 }
 
 Loader::instance()
-	->register_sdk( array(
+	->registerSdk( array(
 		'version' => '1.0',
 		'path'    => dirname( __FILE__ ) . '/SDK.php'
 	) );

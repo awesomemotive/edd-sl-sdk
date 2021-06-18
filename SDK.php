@@ -19,9 +19,9 @@ class SDK {
 	private static $instance;
 
 	/**
-	 * @var Store_Registry
+	 * @var StoreRegistry
 	 */
-	public $store_registry;
+	public $storeRegistry;
 
 	/**
 	 * Returns the SDK instance.
@@ -34,7 +34,7 @@ class SDK {
 		}
 
 		self::$instance = new SDK;
-		self::$instance->setup_instance();
+		self::$instance->setupInstance();
 
 		return self::$instance;
 	}
@@ -42,7 +42,7 @@ class SDK {
 	/**
 	 * Sets up a new instance.
 	 */
-	private function setup_instance() {
+	private function setupInstance() {
 		self::$instance->autoload();
 		self::$instance->init();
 	}
@@ -69,7 +69,7 @@ class SDK {
 				$directory = trailingslashit( $directory );
 			}
 
-			$file_path = trailingslashit( dirname( __FILE__ ) ) . 'lib/' . $directory . $file_name . '.php';
+			$file_path = trailingslashit( dirname( __FILE__ ) ) . 'src/' . $directory . $file_name . '.php';
 
 			if ( file_exists( $file_path ) ) {
 				require $file_path;
@@ -87,10 +87,10 @@ class SDK {
 	 * @since 1.0
 	 */
 	private function init() {
-		self::$instance->store_registry = new Store_Registry();
+		self::$instance->storeRegistry = new StoreRegistry();
 
-		Updates\Plugin_Updater::instance()->init();
-		Updates\Theme_Updater::instance()->init();
+		Updates\PluginUpdater::instance()->init();
+		Updates\ThemeUpdater::instance()->init();
 	}
 
 	/**
@@ -110,7 +110,7 @@ class SDK {
 	 * @return Store
 	 * @throws \InvalidArgumentException
 	 */
-	public function register_store( $args ) {
+	public function registerStore( $args ) {
 		if ( empty( $args['api_url'] ) ) {
 			throw new \InvalidArgumentException( __( 'Missing required api_url argument.' ) );
 		}
@@ -120,18 +120,18 @@ class SDK {
 		}
 
 		// If the store already exists, add products to it.
-		$store = $this->store_registry->get( $args['id'] );
+		$store = $this->storeRegistry->get( $args['id'] );
 		if ( $store instanceof Store ) {
 			if ( ! empty( $args['products'] ) && is_array( $args['products'] ) ) {
 				foreach ( $args['products'] as $product_args ) {
-					$store->add_product( $product_args );
+					$store->addProduct( $product_args );
 				}
 			}
 
 			return $store;
 		}
 
-		return $this->store_registry->add_item( $args['id'], $args );
+		return $this->storeRegistry->addItem( $args['id'], $args );
 	}
 
 }

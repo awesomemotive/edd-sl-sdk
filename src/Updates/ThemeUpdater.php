@@ -1,6 +1,6 @@
 <?php
 /**
- * Theme_Updater.php
+ * ThemeUpdater.php
  *
  * @package   EDD_SL_SDK\Updates
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
@@ -12,7 +12,7 @@ namespace EDD_SL_SDK\Updates;
 
 use EDD_SL_SDK\Traits\Singleton;
 
-class Theme_Updater extends Updater {
+class ThemeUpdater extends Updater {
 
 	use Singleton;
 
@@ -28,6 +28,6 @@ class Theme_Updater extends Updater {
 	 * Initializes hooks.
 	 */
 	public function init() {
-		add_filter( 'site_transient_update_themes', [ $this, 'check_updates' ] );
+		add_filter( 'site_transient_update_themes', [ $this, 'checkUpdates' ] );
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin_Updater.php
+ * PluginUpdater.php
  *
  * @todo      Base Updater class for both plugin & theme?
  *
@@ -14,10 +14,10 @@ namespace EDD_SL_SDK\Updates;
 
 use EDD_SL_SDK\SDK;
 use EDD_SL_SDK\Store;
-use EDD_SL_SDK\Store_API;
+use EDD_SL_SDK\StoreApi;
 use EDD_SL_SDK\Traits\Singleton;
 
-class Plugin_Updater extends Updater {
+class PluginUpdater extends Updater {
 
 	use Singleton;
 
@@ -33,8 +33,8 @@ class Plugin_Updater extends Updater {
 	 * Initializes hooks.
 	 */
 	public function init() {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_updates' ) );
-		add_filter( 'plugins_api', array( $this, 'show_version_details' ), 10, 3 );
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'checkUpdates' ) );
+		add_filter( 'plugins_api', array( $this, 'showVersionDetails' ), 10, 3 );
 	}
 
 	/**
@@ -49,14 +49,14 @@ class Plugin_Updater extends Updater {
 	 * @since 1.0
 	 * @return object
 	 */
-	public function show_version_details( $data, $action = '', $args = null ) {
+	public function showVersionDetails( $data, $action = '', $args = null ) {
 		if ( 'plugin_information' !== $action || ! isset( $args->slug ) ) {
 			return $data;
 		}
 
-		foreach ( SDK::instance()->store_registry->get_items() as $store_id => $store ) {
-			$api           = new Store_API( $store );
-			$store_plugins = $store->get_products( array(
+		foreach ( SDK::instance()->storeRegistry->getItems() as $store_id => $store ) {
+			$api           = new StoreApi( $store );
+			$store_plugins = $store->getProducts( array(
 				'type' => 'plugin',
 				'slug' => $args->slug
 			) );
@@ -66,12 +66,12 @@ class Plugin_Updater extends Updater {
 			}
 
 			try {
-				$latest_versions = $api->check_versions( $store_plugins );
+				$latest_versions = $api->checkVersions( $store_plugins );
 			} catch ( \Exception $e ) {
 				continue;
 			}
 
-			return $this->format_version_details( reset( $latest_versions ) );
+			return $this->formatVersionDetails( reset( $latest_versions ) );
 		}
 
 		return $data;
@@ -88,20 +88,20 @@ class Plugin_Updater extends Updater {
 	 *
 	 * @return object
 	 */
-	private function format_version_details( $data ) {
+	private function formatVersionDetails( $data ) {
 		/*
 		 * Overall we want to return an object, but these properties should be arrays.
 		 * Let's save them while we have them.
 		 */
-		$array_properties = array(
+		$arrayProperties = array(
 			'sections'     => array(),
 			'banners'      => array(),
 			'icons'        => array(),
 			'contributors' => array()
 		);
-		foreach ( array_keys( $array_properties ) as $property_name ) {
-			if ( isset( $data[ $property_name ] ) && is_array( $data[ $property_name ] ) ) {
-				$array_properties[ $property_name ] = $data[ $property_name ];
+		foreach ( array_keys( $arrayProperties ) as $propertyName ) {
+			if ( isset( $data[ $propertyName ] ) && is_array( $data[ $propertyName ] ) ) {
+				$arrayProperties[ $propertyName ] = $data[ $propertyName ];
 			}
 		}
 
@@ -111,8 +111,8 @@ class Plugin_Updater extends Updater {
 		}
 
 		// Now put our array values back.
-		foreach ( $array_properties as $property_name => $property_value ) {
-			$data->{$property_name} = $property_value;
+		foreach ( $arrayProperties as $propertyName => $propertyValue ) {
+			$data->{$propertyName} = $propertyValue;
 		}
 
 		return $data;
