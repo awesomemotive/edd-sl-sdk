@@ -9,6 +9,8 @@
 
 namespace EDD_SL_SDK;
 
+use EDD_SL_SDK\Exceptions\ItemNotFoundException;
+use EDD_SL_SDK\Models\Store;
 use EDD_SL_SDK\Updates;
 
 class SDK {
@@ -120,8 +122,9 @@ class SDK {
 		}
 
 		// If the store already exists, add products to it.
-		$store = $this->storeRegistry->get( $args['id'] );
-		if ( $store instanceof Store ) {
+		try {
+			$store = $this->storeRegistry->get( $args['id'] );
+
 			if ( ! empty( $args['products'] ) && is_array( $args['products'] ) ) {
 				foreach ( $args['products'] as $product_args ) {
 					$store->addProduct( $product_args );
@@ -129,9 +132,9 @@ class SDK {
 			}
 
 			return $store;
+		} catch ( ItemNotFoundException $e ) {
+			return $this->storeRegistry->addItem( $args['id'], $args );
 		}
-
-		return $this->storeRegistry->addItem( $args['id'], $args );
 	}
 
 }

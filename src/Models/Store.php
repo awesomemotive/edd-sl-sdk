@@ -8,7 +8,10 @@
  * @since     1.0
  */
 
-namespace EDD_SL_SDK;
+namespace EDD_SL_SDK\Models;
+
+use EDD_SL_SDK\Exceptions;
+use EDD_SL_SDK\ProductRegistry;
 
 class Store {
 
@@ -64,7 +67,7 @@ class Store {
 		$this->products = new ProductRegistry();
 
 		if ( ! empty( $products ) && is_array( $products ) ) {
-			foreach ( $products as $product_key => $product_args ) {
+			foreach ( $products as $product_args ) {
 				$this->addProduct( $product_args );
 			}
 		}
@@ -91,16 +94,17 @@ class Store {
 	 * @return Product
 	 */
 	public function addProduct( $product_args ) {
+		$product_args['store_id'] = $this->id;
+
 		$product = new Product( $product_args );
 
-		$existing_product = $this->products->get( $product->id );
-		if ( $existing_product instanceof Product ) {
-			return $existing_product;
+		try {
+			return $this->products->get( $product->id );
+		} catch ( Exceptions\ItemNotFoundException $e ) {
+			$this->products->addItem( $product->id, $product );
+
+			return $product;
 		}
-
-		$this->products->addItem( $product->id, $product );
-
-		return $product;
 	}
 
 }

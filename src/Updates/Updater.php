@@ -10,9 +10,8 @@
 
 namespace EDD_SL_SDK\Updates;
 
-use EDD_SL_SDK\Product;
+use EDD_SL_SDK\Models\Product;
 use EDD_SL_SDK\SDK;
-use EDD_SL_SDK\Store;
 use EDD_SL_SDK\StoreApi;
 
 abstract class Updater {
@@ -51,7 +50,7 @@ abstract class Updater {
 		}
 
 		// Get latest versions for each store.
-		foreach ( SDK::instance()->storeRegistry->getItems() as $store_id => $store ) {
+		foreach ( SDK::instance()->storeRegistry->getItems() as $store ) {
 			$api           = new StoreApi( $store );
 			$storeProducts = $store->getProducts( array(
 				'type' => $this->type
@@ -96,9 +95,12 @@ abstract class Updater {
 				$update_data['theme'] = $product->slug;
 			} else {
 				// Plugins expect an object.
-				$update_data         = (object) $update_data;
+				$update_data         = json_decode( json_encode( $update_data ) );
 				$update_data->plugin = $product->id;
 				$update_data->id     = $product->id;
+
+				// Make sure the slug is set to the current one.
+				$update_data->slug = $product->slug;
 			}
 
 			if ( ! empty( $new_version ) && version_compare( $product->version, $new_version, '<' ) ) {

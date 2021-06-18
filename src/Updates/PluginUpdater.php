@@ -2,8 +2,6 @@
 /**
  * PluginUpdater.php
  *
- * @todo      Base Updater class for both plugin & theme?
- *
  * @package   EDD_SL_SDK\Updates
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
  * @license   GPL2+
@@ -13,7 +11,6 @@
 namespace EDD_SL_SDK\Updates;
 
 use EDD_SL_SDK\SDK;
-use EDD_SL_SDK\Store;
 use EDD_SL_SDK\StoreApi;
 use EDD_SL_SDK\Traits\Singleton;
 
@@ -54,7 +51,9 @@ class PluginUpdater extends Updater {
 			return $data;
 		}
 
-		foreach ( SDK::instance()->storeRegistry->getItems() as $store_id => $store ) {
+		error_log(sprintf('Data: %s; Args: %s', var_export($data, true), var_export($args, true)));
+
+		foreach ( SDK::instance()->storeRegistry->getItems() as $store ) {
 			$api           = new StoreApi( $store );
 			$store_plugins = $store->getProducts( array(
 				'type' => 'plugin',
@@ -107,7 +106,7 @@ class PluginUpdater extends Updater {
 
 		// Convert the main data to an object.
 		if ( is_array( $data ) ) {
-			$data = json_decode( jsone_encode( $data ) );
+			$data = json_decode( json_encode( $data ) );
 		}
 
 		// Now put our array values back.

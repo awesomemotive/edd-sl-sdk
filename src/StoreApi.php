@@ -9,6 +9,11 @@
 
 namespace EDD_SL_SDK;
 
+use EDD_SL_SDK\Exceptions\ApiException;
+use EDD_SL_SDK\Models\Environment;
+use EDD_SL_SDK\Models\Product;
+use EDD_SL_SDK\Models\Store;
+
 class StoreApi {
 
 	/**
@@ -24,6 +29,16 @@ class StoreApi {
 	 * @var bool
 	 */
 	private $verifySsl;
+
+	/**
+	 * @var int
+	 */
+	private $lastResponseCode;
+
+	/**
+	 * @var string
+	 */
+	private $lastResponseBody;
 
 	/**
 	 * Store_API constructor.
@@ -43,6 +58,106 @@ class StoreApi {
 	}
 
 	/**
+	 * Performs an API request.
+	 *
+	 * @param string $path   Endpoint URI.
+	 * @param array  $body   Body to send with the request.
+	 * @param string $method HTTP method.
+	 *
+	 * @return array|\WP_Error
+	 * @throws \Exception
+	 */
+	private function makeRequest( $path, $body = array(), $method = 'POST' ) {
+		// Reset last properties.
+		$this->lastResponseCode = 0;
+		$this->lastResponseBody = null;
+
+		$this->validateUrl();
+
+		$response = wp_remote_request( sprintf( '%s/%s', untrailingslashit( $this->store->api_url ), $path ), array(
+			'method'    => $method,
+			'headers'   => array(
+				'Content-Type' => 'application/json'
+			),
+			'timeout'   => 15,
+			'sslverify' => $this->verifySsl,
+			'body'      => json_encode( $body )
+		) );
+
+		if ( is_wp_error( $response ) ) {
+			throw new ApiException( $response->get_error_message() );
+		}
+
+		$this->lastResponseCode = wp_remote_retrieve_response_code( $response );
+		$this->lastResponseBody = wp_remote_retrieve_body( $response );
+
+		return $response;
+	}
+
+	/**
+	 * Activates a license key.
+	 *
+	 * @since 1.0
+	 *
+	 * @param Product $product
+	 *
+	 * @return array
+	 * @throws ApiException
+	 */
+	public function activateLicense( Product $product ) {
+		if ( empty( $product->license ) ) {
+			throw new \Exception( 'No license to activate.' );
+		}
+		if ( empty( $product->item_id ) ) {
+			throw new \Exception( 'An item_id is required to activate a license.' );
+		}
+
+		$environment = new Environment();
+
+		$this->makeRequest( sprintf( 'license/%s/activate', urlencode( $product->license ) ), array(
+			'item_id'     => $product->item_id,
+			'url'         => $environment->url,
+			'environment' => $environment->environment
+		) );
+
+		if ( 201 !== $this->lastResponseCode ) {
+			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->lastResponseCode, $this->lastResponseBody ) );
+		}
+
+		return json_decode( $this->lastResponseBody, true );
+	}
+
+	/**
+	 * Deactivates a license key.
+	 *
+	 * @since 1.0
+	 *
+	 * @param Product $product
+	 *
+	 * @return array
+	 * @throws ApiException
+	 */
+	public function deactivateLicense( Product $product ) {
+		if ( empty( $product->license ) ) {
+			throw new \Exception( 'No license to deactivate.' );
+		}
+
+		$environment = new Environment();
+
+		$this->makeRequest( sprintf( 'license/%s/deactivate', urlencode( $product->license ) ), array(
+			'item_id'     => $product->item_id,
+			'url'         => $environment->url,
+			'environment' => $environment->environment
+		) );
+
+		if ( 201 !== $this->lastResponseCode ) {
+			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->lastResponseCode, $this->lastResponseBody ) );
+		}
+
+		return json_decode( $this->lastResponseBody, true );
+	}
+
+	/**
 	 * Retrieves the latest versions from the store.
 	 *
 	 * @param Product[] $storeProducts  Registered products to get new versions for. If empty, then all
@@ -52,41 +167,31 @@ class StoreApi {
 	 * @throws \Exception
 	 */
 	public function checkVersions( $storeProducts = [] ) {
-		$this->validateUrl();
-
 		if ( empty( $storeProducts ) ) {
 			$storeProducts = $this->store->getProducts();
 		}
 
 		$updateArray = array();
 		foreach ( $storeProducts as $product ) {
-			$updateArray[ $product->id ] = $product->toApiArgs();
+			$updateArray[ $product->id ] = $product->toArray();
 		}
 
-		$response = wp_remote_post( $this->store->api_url, array(
-			'timeout'   => 15,
-			'sslverify' => $this->verifySsl,
-			'body'      => json_encode( array(
-				'products' => $updateArray
-			) )
+		$this->makeRequest( 'products/versions', array(
+			'environment' => ( new Environment() )->toArray(),
+			'products'    => $updateArray
 		) );
 
-		if ( is_wp_error( $response ) ) {
-			throw new \Exception( $response->get_error_message() );
+		if ( 200 !== $this->lastResponseCode ) {
+			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->lastResponseCode, $this->lastResponseBody ) );
 		}
 
-		$response_code = wp_remote_retrieve_response_code( $response );
-		if ( 200 !== $response_code ) {
-			throw new \Exception( sprintf( __( 'Invalid HTTP response code: %d' ), $response_code ) );
+		$responseBody = json_decode( $this->lastResponseBody, true );
+
+		if ( empty( $responseBody['products'] ) || ! is_array( $responseBody['products'] ) ) {
+			throw new ApiException( sprintf( 'Invalid response from API: %s', $this->lastResponseBody ) );
 		}
 
-		$response = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( empty( $response['products'] ) || ! is_array( $response['products'] ) ) {
-			throw new \Exception( __( 'Invalid response.' ) );
-		}
-
-		return $response['products'];
+		return $responseBody['products'];
 	}
 
 	/**

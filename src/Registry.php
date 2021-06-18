@@ -9,6 +9,8 @@
 
 namespace EDD_SL_SDK;
 
+use EDD_SL_SDK\Exceptions\ItemNotFoundException;
+
 class Registry extends \ArrayObject {
 
 	/**
@@ -51,14 +53,15 @@ class Registry extends \ArrayObject {
 	 *
 	 * @param int|string $item_id
 	 *
-	 * @return mixed|false
+	 * @return mixed
+	 * @throws ItemNotFoundException
 	 */
 	public function get( $item_id ) {
 		if ( isset( $this->items[ $item_id ] ) ) {
 			return $this->items[ $item_id ];
 		}
 
-		return false;
+		throw new ItemNotFoundException( sprintf( 'No item with ID %s', $item_id ) );
 	}
 
 	/**

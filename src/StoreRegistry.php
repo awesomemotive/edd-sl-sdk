@@ -10,6 +10,8 @@
 
 namespace EDD_SL_SDK;
 
+use EDD_SL_SDK\Models\Store;
+
 class StoreRegistry extends Registry {
 
 	/**
