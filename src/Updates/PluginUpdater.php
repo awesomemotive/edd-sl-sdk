@@ -33,7 +33,8 @@ class PluginUpdater extends Updater {
 	 * Initializes hooks.
 	 */
 	public function init() {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'checkUpdates' ) );
+		parent::init();
+		
 		add_filter( 'plugins_api', array( $this, 'showVersionDetails' ), 10, 3 );
 	}
 

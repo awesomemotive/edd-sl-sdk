@@ -23,11 +23,4 @@ class ThemeUpdater extends Updater {
 	 * @var string
 	 */
 	private $type = 'theme';
-
-	/**
-	 * Initializes hooks.
-	 */
-	public function init() {
-		add_filter( 'site_transient_update_themes', [ $this, 'checkUpdates' ] );
-	}
 }
