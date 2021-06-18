@@ -31,7 +31,9 @@ abstract class Updater {
 	 * @since 1.0
 	 * @return void
 	 */
-	abstract public function init();
+	public function init() {
+		add_filter( 'pre_set_site_transient_update_' . $this->type . 's', array( $this, 'checkUpdates' ) );
+	}
 
 	/**
 	 * Checks for product updates. This does one API request per store.
