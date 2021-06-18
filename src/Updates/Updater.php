@@ -23,7 +23,7 @@ abstract class Updater {
 	 * @since 1.0
 	 * @var string
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * Initialize hooks

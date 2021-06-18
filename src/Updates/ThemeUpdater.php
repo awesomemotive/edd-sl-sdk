@@ -22,5 +22,5 @@ class ThemeUpdater extends Updater {
 	 * @since 1.0
 	 * @var string
 	 */
-	private $type = 'theme';
+	protected $type = 'theme';
 }

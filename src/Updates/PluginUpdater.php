@@ -27,14 +27,13 @@ class PluginUpdater extends Updater {
 	 * @since 1.0
 	 * @var string
 	 */
-	private $type = 'plugin';
+	protected $type = 'plugin';
 
 	/**
 	 * Initializes hooks.
 	 */
 	public function init() {
 		parent::init();
-		
 		add_filter( 'plugins_api', array( $this, 'showVersionDetails' ), 10, 3 );
 	}
 
