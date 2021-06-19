@@ -17,6 +17,8 @@ use EDD_SL_SDK\Traits\Serializable;
 /**
  * Class Product
  *
+ * @property string|false $license
+ *
  * @package EDD_SL_SDK
  */
 class Product {
@@ -248,9 +250,9 @@ class Product {
 
 		if ( $this->license_setter instanceof \Closure ) {
 			call_user_func( $this->license_setter, $this->license, $previousLicense );
+		} else {
+			update_option( $this->license_option_name, sanitize_text_field( $this->license ) );
 		}
-
-		update_option( $this->license_option_name, sanitize_text_field( $this->license ) );
 	}
 
 	/**

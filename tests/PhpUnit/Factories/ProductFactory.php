@@ -29,6 +29,7 @@ class ProductFactory extends \WP_UnitTest_Factory_For_Thing {
 			'file'     => new \WP_UnitTest_Generator_Sequence( '/path/to/%s.php' ),
 			'version'  => '1.0',
 			'slug'     => new \WP_UnitTest_Generator_Sequence( 'slug-%s' ),
+			'beta'     => false
 		];
 	}
 
