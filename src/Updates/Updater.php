@@ -12,7 +12,6 @@ namespace EDD_SL_SDK\Updates;
 
 use EDD_SL_SDK\Models\Product;
 use EDD_SL_SDK\SDK;
-use EDD_SL_SDK\StoreApi;
 
 abstract class Updater {
 
@@ -51,7 +50,6 @@ abstract class Updater {
 
 		// Get latest versions for each store.
 		foreach ( SDK::instance()->storeRegistry->getItems() as $store ) {
-			$api           = new StoreApi( $store );
 			$storeProducts = $store->getProducts( array(
 				'type' => $this->type
 			) );
@@ -61,7 +59,7 @@ abstract class Updater {
 			}
 
 			try {
-				$latestVersions = $api->checkVersions( $storeProducts );
+				$latestVersions = $store->getApiHandler()->checkVersions( $storeProducts );
 			} catch ( \Exception $e ) {
 				continue;
 			}

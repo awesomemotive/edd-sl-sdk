@@ -124,6 +124,7 @@ class SDK {
 
 		// If the store already exists, add products to it.
 		try {
+			/** @var Store $store */
 			$store = $this->storeRegistry->get( $args['id'] );
 
 			if ( ! empty( $args['products'] ) && is_array( $args['products'] ) ) {

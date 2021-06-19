@@ -11,7 +11,6 @@
 namespace EDD_SL_SDK\Updates;
 
 use EDD_SL_SDK\SDK;
-use EDD_SL_SDK\StoreApi;
 use EDD_SL_SDK\Traits\Singleton;
 
 class PluginUpdater extends Updater {
@@ -54,7 +53,6 @@ class PluginUpdater extends Updater {
 		error_log(sprintf('Data: %s; Args: %s', var_export($data, true), var_export($args, true)));
 
 		foreach ( SDK::instance()->storeRegistry->getItems() as $store ) {
-			$api           = new StoreApi( $store );
 			$store_plugins = $store->getProducts( array(
 				'type' => 'plugin',
 				'slug' => $args->slug
@@ -65,7 +63,7 @@ class PluginUpdater extends Updater {
 			}
 
 			try {
-				$latest_versions = $api->checkVersions( $store_plugins );
+				$latest_versions = $store->getApiHandler()->checkVersions( $store_plugins );
 			} catch ( \Exception $e ) {
 				continue;
 			}

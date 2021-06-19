@@ -12,6 +12,8 @@ namespace EDD_SL_SDK\Models;
 
 use EDD_SL_SDK\Exceptions;
 use EDD_SL_SDK\Registry\ProductRegistry;
+use EDD_SL_SDK\Remote\ApiHandler;
+use EDD_SL_SDK\Remote\RemoteStoreRequest;
 
 class Store {
 
@@ -105,6 +107,17 @@ class Store {
 
 			return $product;
 		}
+	}
+
+	/**
+	 * Returns the API handler for this store.
+	 *
+	 * @since 1.0
+	 *
+	 * @return ApiHandler
+	 */
+	public function getApiHandler() {
+		return new ApiHandler( new RemoteStoreRequest( $this ) );
 	}
 
 }

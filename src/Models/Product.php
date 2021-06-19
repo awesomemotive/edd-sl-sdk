@@ -10,9 +10,8 @@
 
 namespace EDD_SL_SDK\Models;
 
+use EDD_SL_SDK\AdminPages\PageRegistration;
 use EDD_SL_SDK\Exceptions;
-use EDD_SL_SDK\SDK;
-use EDD_SL_SDK\StoreApi;
 use EDD_SL_SDK\Traits\Serializable;
 
 /**
@@ -42,7 +41,7 @@ class Product {
 	/**
 	 * @var string
 	 */
-	public $license;
+	private $license;
 
 	/**
 	 * @var int
@@ -65,14 +64,34 @@ class Product {
 	public $slug;
 
 	/**
-	 * @var string
+	 * @var string Option name where the license key is stored.
 	 */
-	public $cache_key;
+	public $license_option_name;
+
+	/**
+	 * @var string Option name where the license object (full API response data) is stored.
+	 */
+	public $license_object_option_name;
 
 	/**
 	 * @var bool
 	 */
 	public $beta = false;
+
+	/**
+	 * @var \Closure|null
+	 */
+	private $license_getter = null;
+
+	/**
+	 * @var \Closure|null
+	 */
+	private $license_setter = null;
+
+	/**
+	 * @var array
+	 */
+	public $i18n = [];
 
 	/**
 	 * Product constructor.
@@ -92,6 +111,42 @@ class Product {
 		}
 
 		$this->id = $this->getId();
+
+		if ( ! empty( $args['menu'] ) ) {
+			new PageRegistration( $this, $args['menu'] );
+		}
+	}
+
+	/**
+	 * Magic getter for retrieving the license key.
+	 *
+	 * @param string $property
+	 *
+	 * @return mixed
+	 */
+	public function __get( $property ) {
+		if ( 'license' === $property ) {
+			return $this->getLicense();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Magic setter.
+	 *
+	 * @param string $property
+	 *
+	 * @return bool
+	 */
+	public function __isset( $property ) {
+		if ( 'license' === $property ) {
+			return (bool) $this->getLicense();
+		} elseif ( property_exists( $this, $property ) ) {
+			return false === empty( $this->{$property} );
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -118,9 +173,15 @@ class Product {
 			$args['slug'] = basename( $args['file'], '.php' );
 		}
 
-		// If there's no cache key, make one.
-		if ( empty( $args['cache_key'] ) && ! empty( $args['type'] ) && ! empty( $args['slug'] ) ) {
-			$args['cache_key'] = sprintf( 'sl_%s_data_%s', $args['type'], $args['slug'] );
+		// If there are no option keys, make them.
+		if ( ! empty( $args['type'] ) && ! empty( $args['slug'] ) ) {
+			if ( empty( $args['license_option_name'] ) ) {
+				$args['license_option_name'] = sanitize_key( sprintf( 'sl_%s_%s_license', $args['type'], $args['slug'] ) );
+			}
+
+			if ( empty( $args['license_object_option_name'] ) ) {
+				$args['license_object_option_name'] = sanitize_key( sprintf( 'sl_%s_%s_license_object', $args['type'], $args['slug'] ) );
+			}
 		}
 
 		return $args;
@@ -160,6 +221,39 @@ class Product {
 	}
 
 	/**
+	 * Retrieves the license key from the database.
+	 *
+	 * @since 1.0
+	 *
+	 * @return string|false
+	 */
+	public function getLicense() {
+		if ( $this->license_getter instanceof \Closure ) {
+			return call_user_func( $this->license_getter );
+		}
+
+		return get_option( $this->license_option_name );
+	}
+
+	/**
+	 * Sets a new license key.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $newLicenseKey
+	 */
+	public function setLicense( $newLicenseKey ) {
+		$previousLicense = $this->getLicense();
+		$this->license   = $newLicenseKey;
+
+		if ( $this->license_setter instanceof \Closure ) {
+			call_user_func( $this->license_setter, $this->license, $previousLicense );
+		}
+
+		update_option( $this->license_option_name, sanitize_text_field( $this->license ) );
+	}
+
+	/**
 	 * Builds API arguments for the product.
 	 *
 	 * @since 1.0
@@ -185,19 +279,7 @@ class Product {
 	private function updateLicenseData( $data ) {
 		$data['last_sync'] = gmdate( 'Y-m-d H:i:s' );
 
-		update_option( $this->cache_key, json_encode( $data ) );
-	}
-
-	/**
-	 * Retrieves a store API for this product.
-	 *
-	 * @since 1.0
-	 *
-	 * @return StoreApi
-	 * @throws Exceptions\ItemNotFoundException
-	 */
-	private function getStoreApi() {
-		return new StoreApi( SDK::instance()->storeRegistry->get( $this->store_id ) );
+		update_option( $this->license_object_option_name, json_encode( $data ) );
 	}
 
 	/**
@@ -210,7 +292,9 @@ class Product {
 	 * @throws Exceptions\ItemNotFoundException
 	 */
 	public function activateLicense() {
-		$licenseData = $this->getStoreApi()->activateLicense( $this );
+		$licenseData = \EDD_SL_SDK\Helpers\Store::getById( $this->store_id )
+			->getApiHandler()
+			->activateLicense( $this );
 
 		if ( ! empty( $licenseData['license'] ) ) {
 			$this->updateLicenseData( $licenseData['license'] );
@@ -229,7 +313,9 @@ class Product {
 	 * @throws Exceptions\ItemNotFoundException
 	 */
 	public function deactivateLicense() {
-		$licenseData = $this->getStoreApi()->deactivateLicense( $this );
+		$licenseData = \EDD_SL_SDK\Helpers\Store::getById( $this->store_id )
+			->getApiHandler()
+			->deactivateLicense( $this );
 
 		if ( ! empty( $licenseData['license'] ) ) {
 			$this->updateLicenseData( $licenseData['license'] );
@@ -247,7 +333,7 @@ class Product {
 	 * @throws Exceptions\ItemNotFoundException
 	 */
 	public function getLicenseData() {
-		return License::fromJson( get_option( $this->cache_key ) );
+		return License::fromJson( get_option( $this->license_object_option_name ) );
 	}
 
 }
