@@ -46,7 +46,7 @@ class ApiHandler {
 
 		$environment = new Environment();
 
-		$this->apiRequester->makeRequest( sprintf( 'license/%s/activate', urlencode( $product->license ) ), array(
+		$this->apiRequester->makeRequest( sprintf( 'licenses/%s/activations', urlencode( $product->license ) ), array(
 			'item_id'     => $product->item_id,
 			'url'         => $environment->url,
 			'environment' => $environment->environment
@@ -77,11 +77,11 @@ class ApiHandler {
 
 		$environment = new Environment();
 
-		$this->apiRequester->makeRequest( sprintf( 'license/%s/deactivate', urlencode( $product->license ) ), array(
+		$this->apiRequester->makeRequest( sprintf( 'licenses/%s/activations', urlencode( $product->license ) ), array(
 			'item_id'     => $product->item_id,
 			'url'         => $environment->url,
 			'environment' => $environment->environment
-		) );
+		), 'DELETE' );
 
 		if ( 201 !== $this->apiRequester->lastResponseCode ) {
 			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->apiRequester->lastResponseCode, $this->apiRequester->lastResponseBody ) );
