@@ -93,7 +93,7 @@ class AjaxHandler {
 	}
 
 	/**
-	 * Retrieves the product from the request.
+	 * Validates the request and retrieves the relevant product.
 	 *
 	 * @since 1.0
 	 *
@@ -113,6 +113,15 @@ class AjaxHandler {
 			$this->product = \EDD_SL_SDK\Helpers\Product::getTheme( $_POST['productId'] );
 		} else {
 			$this->product = \EDD_SL_SDK\Helpers\Product::getPlugin( $_POST['productId'] );
+		}
+
+		$requiredCapability = 'manage_options';
+		if ( ! empty( $this->product->menu['capability'] ) ) {
+			$requiredCapability = $this->product->menu['capability'];
+		}
+
+		if ( ! current_user_can( $requiredCapability ) ) {
+			throw new \Exception( 'You do not have permission to perform this action', 403 );
 		}
 	}
 
