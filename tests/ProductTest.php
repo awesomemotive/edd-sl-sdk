@@ -37,6 +37,15 @@ class ProductTest extends TestCase {
 	}
 
 	/**
+	 * @covers Product::validateArgs
+	 */
+	public function test_creating_product_with_missing_args_throws_exception() {
+		$this->setExpectedException( \InvalidArgumentException::class );
+
+		new Product( [] );
+	}
+
+	/**
 	 * @covers Product::getLicense
 	 */
 	public function test_product_with_license_getter_returns_license() {

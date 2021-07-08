@@ -11,6 +11,7 @@
 namespace EDD_SL_SDK\Updates;
 
 use EDD_SL_SDK\Models\Product;
+use EDD_SL_SDK\Repositories\LatestVersionCache;
 use EDD_SL_SDK\SDK;
 
 abstract class Updater {
@@ -36,8 +37,6 @@ abstract class Updater {
 	/**
 	 * Checks for product updates. This does one API request per store.
 	 *
-	 * @todo  Caching?
-	 *
 	 * @param object $transientData
 	 *
 	 * @since 1.0
@@ -59,7 +58,8 @@ abstract class Updater {
 			}
 
 			try {
-				$latestVersions = $store->getApiHandler()->checkVersions( $storeProducts );
+				$repository     = new LatestVersionCache( $store );
+				$latestVersions = $repository->getLatestVersions();
 			} catch ( \Exception $e ) {
 				continue;
 			}

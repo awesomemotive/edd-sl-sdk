@@ -32,6 +32,11 @@ class Store {
 	public $api_url;
 
 	/**
+	 * @var int Cache duration in seconds.
+	 */
+	public $update_cache_duration;
+
+	/**
 	 * Contains all of this store's products.
 	 *
 	 * @var ProductRegistry
@@ -44,16 +49,17 @@ class Store {
 	 * @param array $args
 	 */
 	public function __construct( $args ) {
+		$args = wp_parse_args( $args, [
+			'update_cache_duration' => 3 * HOUR_IN_SECONDS,
+			'products'              => [],
+		] );
+
 		foreach ( $args as $key => $value ) {
 			// Products is skipped because we set that further down.
 			if ( 'products' !== 'key' ) {
 				$this->{$key} = $value;
 			}
 		}
-
-		$args = wp_parse_args( $args, [
-			'products' => []
-		] );
 
 		$this->setProducts( $args['products'] );
 	}

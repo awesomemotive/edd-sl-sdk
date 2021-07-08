@@ -207,14 +207,13 @@ class Product {
 	 */
 	private function validateArgs( $args ) {
 		$requiredArgs = [ 'type', 'product_id', 'file', 'version', 'store_id' ];
+		$missingArgs  = array_diff( $requiredArgs, array_keys( $args ) );
 
-		foreach ( $requiredArgs as $requiredArg ) {
-			if ( empty( $args[ $requiredArg ] ) ) {
-				throw new \InvalidArgumentException( sprintf(
-					__( 'Missing required argument: %s' ),
-					$requiredArg
-				) );
-			}
+		if ( ! empty( $missingArgs ) ) {
+			throw new \InvalidArgumentException( sprintf(
+				'Missing required arguments: %s',
+				json_encode( $missingArgs )
+			) );
 		}
 	}
 

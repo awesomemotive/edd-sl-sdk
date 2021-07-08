@@ -47,6 +47,14 @@ add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 } );
 ```
 
+## Store Arguments
+
+- `id` - Optional. Unique ID for your store. If omitted, it's generated from your API URL.
+- `api_url` - **Required.** API endpoint. Should be `https://yoursite.com/wp-json/edd-sl/v2`
+- `author` - Optional. Plugin author name.
+- `products` - Optional. Array of product registrations.
+- `update_cache_duration` - Optional. Length of time, in seconds, to cache update API responses. Default is `180` (3 hours). Set to `0` to disable caching. If disabled, a fresh API request is made every time WordPress core checks for plugin/theme updates.
+
 ## Product Arguments
 
 - `type` - **Required.** Either `plugin` or `theme`
