@@ -40,14 +40,14 @@ class ApiHandler {
 		if ( empty( $product->license ) ) {
 			throw new \Exception( 'No license to activate.' );
 		}
-		if ( empty( $product->item_id ) ) {
-			throw new \Exception( 'An item_id is required to activate a license.' );
+		if ( empty( $product->product_id ) ) {
+			throw new \Exception( 'A product ID is required to activate a license.' );
 		}
 
 		$environment = new Environment();
 
 		$this->apiRequester->makeRequest( sprintf( 'licenses/%s/activations', urlencode( $product->license ) ), array(
-			'item_id'     => $product->item_id,
+			'product_id'  => $product->product_id,
 			'url'         => $environment->url,
 			'environment' => $environment->environment
 		) );
@@ -82,7 +82,7 @@ class ApiHandler {
 		$environment = new Environment();
 
 		$this->apiRequester->makeRequest( sprintf( 'licenses/%s/activations', urlencode( $product->license ) ), array(
-			'item_id'     => $product->item_id,
+			'product_id'  => $product->product_id,
 			'url'         => $environment->url,
 			'environment' => $environment->environment
 		), 'DELETE' );

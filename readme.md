@@ -15,13 +15,12 @@ add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 			'author'    => 'Sandhills Development, LLC',
 			'products'  => array(
 				array(
-					'type'      => 'plugin',
-					'item_name' => 'My Product',
-					'item_id'   => 123,
-					'file'      => __FILE__,
-					'version'   => '1.0',
-					'license'   => '',
-					'beta'      => false
+					'type'       => 'plugin',
+					'product_id' => 123,
+					'file'       => __FILE__,
+					'version'    => '1.0',
+					'license'    => '',
+					'beta'       => false
 				)
 			)
 		) );

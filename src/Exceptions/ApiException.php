@@ -59,9 +59,11 @@ class ApiException extends \Exception {
 
 		if ( ! empty( $responseBody->error_message ) ) {
 			return $responseBody->error_message;
+		} elseif ( ! empty( $responseBody->message ) ) {
+			return $responseBody->message;
 		}
 
-		return null;
+		return $this->getMessage();
 	}
 
 }

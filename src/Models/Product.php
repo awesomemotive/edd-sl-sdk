@@ -49,7 +49,7 @@ class Product {
 	/**
 	 * @var int
 	 */
-	public $item_id;
+	public $product_id;
 
 	/**
 	 * @var string
@@ -200,7 +200,7 @@ class Product {
 	 * @throws \InvalidArgumentException
 	 */
 	private function validateArgs( $args ) {
-		$requiredArgs = [ 'type', 'item_id', 'file', 'version', 'store_id' ];
+		$requiredArgs = [ 'type', 'product_id', 'file', 'version', 'store_id' ];
 
 		foreach ( $requiredArgs as $requiredArg ) {
 			if ( empty( $args[ $requiredArg ] ) ) {
@@ -269,7 +269,7 @@ class Product {
 	public function toArray() {
 		return array(
 			'license'    => $this->getLicense(),
-			'product_id' => $this->item_id,
+			'product_id' => $this->product_id,
 			'version'    => $this->version,
 			'slug'       => $this->slug,
 			'beta'       => $this->beta,

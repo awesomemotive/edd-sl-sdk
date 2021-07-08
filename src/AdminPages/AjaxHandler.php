@@ -135,7 +135,7 @@ class AjaxHandler {
 		}
 
 		if ( empty( $errorMessage ) ) {
-			$errorMessage = $e->getMessage();
+			$errorMessage = $e->getApiErrorMessage();
 		}
 
 		wp_send_json_error( $errorMessage );
