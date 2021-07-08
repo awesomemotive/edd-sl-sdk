@@ -9,6 +9,8 @@
 
 namespace EDD_SL_SDK;
 
+use EDD_SL_SDK\AdminPages\AjaxHandler;
+use EDD_SL_SDK\AdminPages\AssetLoader;
 use EDD_SL_SDK\Exceptions\ItemNotFoundException;
 use EDD_SL_SDK\Models\Store;
 use EDD_SL_SDK\Registry\StoreRegistry;
@@ -20,6 +22,16 @@ class SDK {
 	 * @var SDK
 	 */
 	private static $instance;
+
+	/**
+	 * @var string Version of this SDK.
+	 */
+	public static $version = '1.0';
+
+	/**
+	 * @var string Path to the SDK directory.
+	 */
+	public static $dir;
 
 	/**
 	 * @var StoreRegistry
@@ -47,6 +59,7 @@ class SDK {
 	 */
 	private function setupInstance() {
 		self::$instance->autoload();
+		self::$instance->setStaticProperties();
 		self::$instance->init();
 	}
 
@@ -84,6 +97,10 @@ class SDK {
 		} );
 	}
 
+	private function setStaticProperties() {
+		self::$dir = dirname( __FILE__ );
+	}
+
 	/**
 	 * Initializes classes.
 	 *
@@ -94,6 +111,14 @@ class SDK {
 
 		Updates\PluginUpdater::instance()->init();
 		Updates\ThemeUpdater::instance()->init();
+
+		add_action( 'admin_enqueue_scripts', function () {
+			new AssetLoader();
+		}, 5 );
+
+		if ( is_admin() ) {
+			new AjaxHandler();
+		}
 	}
 
 	/**

@@ -12,6 +12,7 @@ namespace EDD_SL_SDK\Models;
 
 use EDD_SL_SDK\AdminPages\PageRegistration;
 use EDD_SL_SDK\Exceptions;
+use EDD_SL_SDK\Helpers\Strings;
 use EDD_SL_SDK\Traits\Serializable;
 
 /**
@@ -251,7 +252,11 @@ class Product {
 		if ( $this->license_setter instanceof \Closure ) {
 			call_user_func( $this->license_setter, $this->license, $previousLicense );
 		} else {
-			update_option( $this->license_option_name, sanitize_text_field( $this->license ) );
+			if ( $this->license ) {
+				update_option( $this->license_option_name, sanitize_text_field( $this->license ) );
+			} else {
+				delete_option( $this->license_option_name );
+			}
 		}
 	}
 
@@ -263,7 +268,7 @@ class Product {
 	 */
 	public function toArray() {
 		return array(
-			'license'    => $this->license,
+			'license'    => $this->getLicense(),
 			'product_id' => $this->item_id,
 			'version'    => $this->version,
 			'slug'       => $this->slug,
@@ -278,7 +283,7 @@ class Product {
 	 *
 	 * @param array $data
 	 */
-	private function updateLicenseData( $data ) {
+	public function updateLicenseData( $data ) {
 		$data['last_sync'] = gmdate( 'Y-m-d H:i:s' );
 
 		update_option( $this->license_object_option_name, json_encode( $data ) );
@@ -289,7 +294,7 @@ class Product {
 	 *
 	 * @since 1.0
 	 *
-	 * @return array
+	 * @return License
 	 * @throws Exceptions\ApiException
 	 * @throws Exceptions\ItemNotFoundException
 	 */
@@ -299,10 +304,14 @@ class Product {
 			->activateLicense( $this );
 
 		if ( ! empty( $licenseData['license'] ) ) {
-			$this->updateLicenseData( $licenseData['license'] );
+			$this->updateLicenseData( array_merge( $licenseData['license'], [ 'activated' => true ] ) );
 		}
 
-		return $licenseData;
+		try {
+			return $this->getLicenseData();
+		} catch ( Exceptions\ItemNotFoundException $e ) {
+			return License::fromJson( json_encode( $licenseData ) );
+		}
 	}
 
 	/**
@@ -310,7 +319,7 @@ class Product {
 	 *
 	 * @since 1.0
 	 *
-	 * @returns array
+	 * @returns License
 	 * @throws Exceptions\ApiException
 	 * @throws Exceptions\ItemNotFoundException
 	 */
@@ -320,10 +329,35 @@ class Product {
 			->deactivateLicense( $this );
 
 		if ( ! empty( $licenseData['license'] ) ) {
-			$this->updateLicenseData( $licenseData['license'] );
+			$this->updateLicenseData( array_merge( $licenseData['license'], [ 'activated' => false ] ) );
 		}
 
-		return $licenseData;
+		try {
+			return $this->getLicenseData();
+		} catch ( Exceptions\ItemNotFoundException $e ) {
+			return License::fromJson( json_encode( $licenseData ) );
+		}
+	}
+
+	/**
+	 * Determines whether or not a license key has been activated.
+	 * Note this does not determine if the license is actually *valid* (not expired), just if it's
+	 * been successfully activated remotely.
+	 *
+	 * @since 1.0
+	 *
+	 * @return bool
+	 */
+	public function licenseIsActivated() {
+		if ( ! $this->getLicense() ) {
+			return false;
+		}
+
+		try {
+			return $this->getLicenseData()->activated;
+		} catch ( Exceptions\ItemNotFoundException $e ) {
+			return false;
+		}
 	}
 
 	/**
@@ -336,6 +370,19 @@ class Product {
 	 */
 	public function getLicenseData() {
 		return License::fromJson( get_option( $this->license_object_option_name ) );
+	}
+
+	/**
+	 * Retrieves a string, with overrides for this product.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public function getString( $string ) {
+		return Strings::getString( $string, $this->i18n );
 	}
 
 }

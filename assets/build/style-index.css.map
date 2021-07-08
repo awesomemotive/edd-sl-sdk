@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./assets/css/style.scss"],"names":[],"mappings":"AAAA;EACI;AACJ;AACI;EACI;AACR;AAEI;EACI;AAAR,C","file":"style-index.css","sourcesContent":[".edd-sl-sdk-license-response {\n    margin-top: 5px;\n\n    &__valid {\n        color: #008a20;\n    }\n\n    &__invalid {\n        color: #d63638;\n    }\n}\n"],"sourceRoot":""}

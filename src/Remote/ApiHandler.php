@@ -53,7 +53,11 @@ class ApiHandler {
 		) );
 
 		if ( 201 !== $this->apiRequester->lastResponseCode ) {
-			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->apiRequester->lastResponseCode, $this->apiRequester->lastResponseBody ) );
+			throw new ApiException(
+				'Invalid HTTP response code.',
+				$this->apiRequester->lastResponseCode,
+				$this->apiRequester->lastResponseBody
+			);
 		}
 
 		return json_decode( $this->apiRequester->lastResponseBody, true );
@@ -84,7 +88,11 @@ class ApiHandler {
 		), 'DELETE' );
 
 		if ( 201 !== $this->apiRequester->lastResponseCode ) {
-			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->apiRequester->lastResponseCode, $this->apiRequester->lastResponseBody ) );
+			throw new ApiException(
+				'Invalid HTTP response code.',
+				$this->apiRequester->lastResponseCode,
+				$this->apiRequester->lastResponseBody
+			);
 		}
 
 		return json_decode( $this->apiRequester->lastResponseBody, true );
@@ -111,13 +119,21 @@ class ApiHandler {
 		) );
 
 		if ( 200 !== $this->apiRequester->lastResponseCode ) {
-			throw new ApiException( sprintf( 'Invalid HTTP response code: %d. Response: %s', $this->apiRequester->lastResponseCode, $this->apiRequester->lastResponseBody ) );
+			throw new ApiException(
+				'Invalid HTTP response code.',
+				$this->apiRequester->lastResponseCode,
+				$this->apiRequester->lastResponseBody
+			);
 		}
 
 		$responseBody = json_decode( $this->apiRequester->lastResponseBody, true );
 
 		if ( empty( $responseBody['products'] ) || ! is_array( $responseBody['products'] ) ) {
-			throw new ApiException( sprintf( 'Invalid response from API: %s', $this->apiRequester->lastResponseBody ) );
+			throw new ApiException(
+				'Invalid response from API.',
+				$this->apiRequester->lastResponseCode,
+				$this->apiRequester->lastResponseBody
+			);
 		}
 
 		return $responseBody['products'];

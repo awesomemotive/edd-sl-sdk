@@ -11,6 +11,7 @@
 namespace EDD_SL_SDK\Models;
 
 use EDD_SL_SDK\Exceptions\ItemNotFoundException;
+use EDD_SL_SDK\Helpers\Strings;
 
 class License {
 
@@ -23,6 +24,11 @@ class License {
 	 * @var string License key.
 	 */
 	public $license_key;
+
+	/**
+	 * @var bool Whether or not the license is activated on this site.
+	 */
+	public $activated;
 
 	/**
 	 * @var string Status of the license.
@@ -105,6 +111,29 @@ class License {
 		}
 
 		return new self( $licenseArray );
+	}
+
+	public function getStatusHtml( $productStrings = [] ) {
+		switch ( $this->status ) {
+			case 'active' :
+				if ( $this->expiration ) {
+					return sprintf(
+						Strings::getString( 'license_active_expires', $productStrings ),
+						date_i18n( get_option( 'date_format' ), strtotime( $this->expiration, current_time( 'timestamp' ) ) )
+					);
+				} else {
+					return Strings::getString( 'license_active', $productStrings );
+				}
+
+			case 'disabled' :
+				return Strings::getString( 'license_disabled', $productStrings );
+
+			case 'expired' :
+				return Strings::getString( 'license_expired', $productStrings );
+
+			default :
+				return Strings::getString( 'license_inactive', $productStrings );
+		}
 	}
 
 }
