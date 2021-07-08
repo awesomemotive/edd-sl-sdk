@@ -49,7 +49,7 @@ class LatestVersionCache {
 			return false;
 		}
 
-		if ( $cache['time_stored'] + $this->store->update_cache_duration < time() ) {
+		if ( ( $cache['time_stored'] + $this->store->update_cache_duration ) < time() ) {
 			return false;
 		}
 
@@ -63,13 +63,29 @@ class LatestVersionCache {
 	 *
 	 * @param array $data
 	 */
-	private function setCachedData( $data ) {
+	private function maybeUpdateCache( $data ) {
+		if ( ! $this->store->update_cache_duration ) {
+			return;
+		}
+
 		$cache = [
 			'time_stored' => time(),
 			'data'        => $data
 		];
 
 		update_option( $this->cacheKey, json_encode( $cache ) );
+	}
+
+	/**
+	 * Retrieves remote versions from the API.
+	 *
+	 * @since 1.0
+	 *
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function getRemoteData() {
+		return $this->store->getApiHandler()->checkVersions( $this->store->getProducts() );
 	}
 
 	/**
@@ -83,19 +99,19 @@ class LatestVersionCache {
 	public function getLatestVersions() {
 		$cachedVersions = $this->getCachedData();
 
-		if ( $cachedVersions ) {
+		if ( false !== $cachedVersions ) {
 			return $cachedVersions;
 		}
 
 		try {
-			$latestVersions = $this->store->getApiHandler()->checkVersions( $this->store->getProducts() );
+			$latestVersions = $this->getRemoteData();
 
-			$this->setCachedData( $latestVersions );
+			$this->maybeUpdateCache( $latestVersions );
 
 			return $latestVersions;
 		} catch ( \Exception $e ) {
 			// Cache no results on error.
-			$this->setCachedData( [] );
+			$this->maybeUpdateCache( [] );
 
 			throw $e;
 		}
