@@ -105,17 +105,16 @@ class ProductTest extends TestCase {
 	 * @covers Product::toArray
 	 */
 	public function test_product_to_array_returns_array() {
-		$product      = self::factory()->product->create( [
-			'license' => 'license_key',
-			'item_id' => 5,
-			'version' => '2.5',
-			'slug'    => 'my-product',
-			'beta'    => true
+		$product = self::factory()->product->create( [
+			'product_id' => 5,
+			'version'    => '2.5',
+			'slug'       => 'my-product',
+			'beta'       => true
 		] );
 		$productArray = $product->toArray();
 
 		$expected = [
-			'license'    => 'license_key',
+			'license'    => false,
 			'product_id' => 5,
 			'version'    => '2.5',
 			'slug'       => 'my-product',

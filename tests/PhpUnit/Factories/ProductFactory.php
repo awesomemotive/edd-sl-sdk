@@ -23,13 +23,13 @@ class ProductFactory extends \WP_UnitTest_Factory_For_Thing {
 		parent::__construct( $factory );
 
 		$this->default_generation_definitions = [
-			'store_id' => new \WP_UnitTest_Generator_Sequence( 'store-%s' ),
-			'type'     => 'plugin',
-			'item_id'  => new \WP_UnitTest_Generator_Sequence( '%d' ),
-			'file'     => new \WP_UnitTest_Generator_Sequence( '/path/to/%s.php' ),
-			'version'  => '1.0',
-			'slug'     => new \WP_UnitTest_Generator_Sequence( 'slug-%s' ),
-			'beta'     => false
+			'store_id'   => new \WP_UnitTest_Generator_Sequence( 'store-%s' ),
+			'type'       => 'plugin',
+			'product_id' => new \WP_UnitTest_Generator_Sequence( '%d' ),
+			'file'       => new \WP_UnitTest_Generator_Sequence( '/path/to/%s.php' ),
+			'version'    => '1.0',
+			'slug'       => new \WP_UnitTest_Generator_Sequence( 'slug-%s' ),
+			'beta'       => false
 		];
 	}
 
