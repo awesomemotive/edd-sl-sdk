@@ -162,12 +162,18 @@ class Product {
 	 * @return array
 	 */
 	private function fillMissingArgs( $args ) {
-		// If this is a theme and we don't have a version, we can get it.
-		if ( isset( $args['type'] ) && 'theme' === $args['type'] && ! isset( $args['version'] ) && ! empty( $args['slug'] ) ) {
-			$theme = wp_get_theme( $args['slug'] );
+		// If this is a theme and we don't have a a slug or version, we can get them.
+		if ( isset( $args['type'] ) && 'theme' === $args['type'] ) {
+			if ( empty( $args['slug'] ) ) {
+				$args['slug'] = get_stylesheet();
+			}
 
-			if ( $theme ) {
-				$args['version'] = $theme->get( 'Version' );
+			if ( ! isset( $args['version'] ) ) {
+				$theme = wp_get_theme( $args['slug'] );
+
+				if ( $theme ) {
+					$args['version'] = $theme->get( 'Version' );
+				}
 			}
 		}
 
