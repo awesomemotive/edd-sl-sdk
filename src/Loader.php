@@ -53,7 +53,7 @@ if ( ! class_exists( '\\EDD_SL_SDK\\Loader' ) ) {
 		 * @since 1.0
 		 */
 		public function hooks() {
-			add_action( 'plugins_loaded', array( $this, 'setAndLoadLatest' ), 99999 );
+			add_action( 'after_setup_theme', array( $this, 'setAndLoadLatest' ), 99999 );
 		}
 
 		/**
