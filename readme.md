@@ -34,6 +34,7 @@ add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 						'menu_slug'   => 'my-plugin-license',
 					],
 				],
+				/* Theme Example */
 				[
 					'type'       => 'theme',
 					'product_id' => 125,
