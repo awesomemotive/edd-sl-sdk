@@ -206,7 +206,7 @@ class Product {
 	 * @throws \InvalidArgumentException
 	 */
 	private function validateArgs( $args ) {
-		$requiredArgs = [ 'type', 'product_id', 'file', 'version', 'store_id' ];
+		$requiredArgs = [ 'type', 'product_id', 'version', 'store_id' ];
 		$missingArgs  = array_diff( $requiredArgs, array_keys( $args ) );
 
 		if ( ! empty( $missingArgs ) ) {
@@ -214,6 +214,10 @@ class Product {
 				'Missing required arguments: %s',
 				json_encode( $missingArgs )
 			) );
+		}
+
+		if ( 'plugin' === $args['type'] && empty( $args['file'] ) ) {
+			throw new \InvalidArgumentException( 'Plugins must include the "file" parameter.' );
 		}
 	}
 
