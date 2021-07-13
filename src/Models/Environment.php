@@ -20,13 +20,13 @@ class Environment {
 	 * @var string Current PHP version.
 	 * @since 1.0
 	 */
-	public $php;
+	public $php_version;
 
 	/**
 	 * @var string Current WordPress version.
 	 * @since 1.0
 	 */
-	public $wp;
+	public $wp_version;
 
 	/**
 	 * @var string Site URL.
@@ -44,8 +44,8 @@ class Environment {
 	 * Environment constructor.
 	 */
 	public function __construct() {
-		$this->php         = phpversion();
-		$this->wp          = get_bloginfo( 'version' );
+		$this->php_version = phpversion();
+		$this->wp_version  = get_bloginfo( 'version' );
 		$this->url         = home_url();
 		$this->environment = function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production';
 	}
