@@ -62,7 +62,7 @@ class PageRegistration {
 		$title = $this->product->getString( 'admin_page_title_' . $this->product->type );
 
 		return wp_parse_args( $args, [
-			'parent_slug'      => null,
+			'parent_slug'      => 'theme' === $this->product->type ? 'themes.php' : null,
 			'page_title'       => $title,
 			'menu_title'       => $title,
 			'capability'       => 'manage_options',
