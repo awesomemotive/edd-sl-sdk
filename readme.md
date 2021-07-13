@@ -10,35 +10,35 @@ require_once 'sdk/Loader.php';
 add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 	try {
 		$sdk->registerStore( array(
-			'id' => 'sandhillsdev.com',
-			'api_url' => 'https://sandhillsdev.com/wp-json/edd-sl/v2',
-			'author'    => 'Sandhills Development, LLC',
-			'products'  => array(
-			    /* Plugin Example */
+			'id'       => 'sandhillsdev.com',
+			'api_url'  => 'https://sandhillsdev.com/wp-json/edd-sl/v2',
+			'author'   => 'Sandhills Development, LLC',
+			'products' => array(
+				/* Plugin Example */
 				[
-				    'type'       => 'plugin',
+					'type'       => 'plugin',
 					'product_id' => 123,
 					'file'       => __FILE__,
 					'version'    => '1.0',
 					'beta'       => false,
-					
+
 					/*
 					 * Optionally have an admin menu managed for you. 
 					 * Accepts all the same arguments as `add_submenu_page()`
 					 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/
 					 */
-					'menu' => [
-					    'parent_slug' => 'options-general.php',
-					    'page_title'  => 'My Plugin License',
-					    'menu_title'  => 'My Plugin License',
-					    'menu_slug'   => 'my-plugin-license',
-                    ],
-                ],
-                [
-                    'type'       => 'theme',
+					'menu'       => [
+						'parent_slug' => 'options-general.php',
+						'page_title'  => 'My Plugin License',
+						'menu_title'  => 'My Plugin License',
+						'menu_slug'   => 'my-plugin-license',
+					],
+				],
+				[
+					'type'       => 'theme',
 					'product_id' => 125,
 					'beta'       => false
-                ]
+				]
 			)
 		) );
 	} catch ( \Exception $e ) {
