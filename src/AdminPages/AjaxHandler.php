@@ -48,7 +48,7 @@ class AjaxHandler {
 			$this->product->activateLicense();
 
 			wp_send_json_success( [
-				'message'       => $this->product->getLicenseData()->getStatusHtml( $this->product->i18n ),
+				'message'       => $this->product->getLicenseData()->getStatusDisplay( $this->product->i18n ),
 				'newFormInputs' => [
 					'action'     => self::DEACTIVATE_LICENSE,
 					'_wpnonce'   => wp_create_nonce( self::DEACTIVATE_LICENSE ),

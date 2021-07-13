@@ -71,7 +71,7 @@ class License {
 	public $activation_limit;
 
 	/**
-	 * @var int Number of activation remaining, or `0` if no limit.
+	 * @var int Number of activations remaining, or `0` if no limit.
 	 */
 	public $activations_remaining;
 
@@ -113,7 +113,16 @@ class License {
 		return new self( $licenseArray );
 	}
 
-	public function getStatusHtml( $productStrings = [] ) {
+	/**
+	 * Returns display-ready version of the license status.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array $productStrings
+	 *
+	 * @return string
+	 */
+	public function getStatusDisplay( $productStrings = [] ) {
 		switch ( $this->status ) {
 			case 'active' :
 				if ( $this->expiration ) {
