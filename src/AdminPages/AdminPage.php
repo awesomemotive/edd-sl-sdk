@@ -15,14 +15,15 @@ use EDD_SL_SDK\Models\Product;
 
 class AdminPage {
 
+	public $pageHook;
+	public $capability = 'manage_options';
+
 	/**
 	 * @var Product
 	 */
 	private $product;
-
 	private $page_title;
 	private $menu_title;
-	public $capability = 'manage_options';
 	private $menu_slug;
 	private $display_callback;
 	private $icon;
@@ -80,7 +81,7 @@ class AdminPage {
 	 */
 	public function registerPage() {
 		if ( empty( $this->parent_slug ) ) {
-			add_menu_page(
+			$this->pageHook = add_menu_page(
 				$this->page_title,
 				$this->menu_title,
 				$this->capability,
@@ -90,7 +91,7 @@ class AdminPage {
 				$this->position
 			);
 		} else {
-			add_submenu_page(
+			$this->pageHook = add_submenu_page(
 				$this->parent_slug,
 				$this->page_title,
 				$this->menu_title,
@@ -103,8 +104,11 @@ class AdminPage {
 	}
 
 	public function enqueueAssets() {
-		wp_enqueue_script( 'edd-sl-sdk-js' );
-		wp_enqueue_style( 'edd-sl-sdk-css' );
+		$screen = get_current_screen();
+		if ( $screen instanceof \WP_Screen && $this->pageHook === $screen->id ) {
+			wp_enqueue_script( 'edd-sl-sdk-js' );
+			wp_enqueue_style( 'edd-sl-sdk-css' );
+		}
 	}
 
 	/**
@@ -158,6 +162,13 @@ class AdminPage {
 		<?php
 	}
 
+	/**
+	 * Retrieves class names to use, based on license status.
+	 *
+	 * @since 1.0
+	 *
+	 * @return array
+	 */
 	private function getStatusClasses() {
 		$classes = [
 			'edd-sl-sdk-license-response'
@@ -191,7 +202,7 @@ class AdminPage {
 		}
 
 		try {
-			echo esc_html( $this->product->getLicenseData()->getStatusHtml( $this->product->i18n ) );
+			echo esc_html( $this->product->getLicenseData()->getStatusDisplay( $this->product->i18n ) );
 		} catch ( \Exception $e ) {
 			echo esc_html( $this->product->getString( 'license_inactive' ) );
 		}
