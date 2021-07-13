@@ -115,9 +115,13 @@ class AjaxHandler {
 			$this->product = \EDD_SL_SDK\Helpers\Product::getPlugin( $_POST['productId'] );
 		}
 
-		$requiredCapability = 'manage_options';
-		if ( ! empty( $this->product->menu['capability'] ) ) {
-			$requiredCapability = $this->product->menu['capability'];
+		$requiredCapability = $this->product->adminPage instanceof AdminPage
+			? $this->product->adminPage->capability
+			: 'manage_options';
+
+		// Capability shouldn't be empty, but just in case...
+		if ( empty( $requiredCapability ) ) {
+			$requiredCapability = 'manage_options';
 		}
 
 		if ( ! current_user_can( $requiredCapability ) ) {

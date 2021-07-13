@@ -10,7 +10,7 @@
 
 namespace EDD_SL_SDK\Models;
 
-use EDD_SL_SDK\AdminPages\PageRegistration;
+use EDD_SL_SDK\AdminPages\AdminPage;
 use EDD_SL_SDK\Exceptions;
 use EDD_SL_SDK\Helpers\Strings;
 use EDD_SL_SDK\Traits\Serializable;
@@ -97,6 +97,11 @@ class Product {
 	public $i18n = [];
 
 	/**
+	 * @var AdminPage|null Admin page, if one was created.
+	 */
+	public $adminPage = null;
+
+	/**
 	 * Product constructor.
 	 *
 	 * @param array $args
@@ -116,7 +121,7 @@ class Product {
 		$this->id = $this->getId();
 
 		if ( ! empty( $args['menu'] ) ) {
-			new PageRegistration( $this, $args['menu'] );
+			$this->adminPage = new AdminPage( $this, $args['menu'] );
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * PageRegistration.php
+ * AdminPage.php
  *
  * @package   edd-sl-sdk
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
@@ -13,7 +13,7 @@ namespace EDD_SL_SDK\AdminPages;
 use EDD_SL_SDK\Helpers\Strings;
 use EDD_SL_SDK\Models\Product;
 
-class PageRegistration {
+class AdminPage {
 
 	/**
 	 * @var Product
@@ -22,7 +22,7 @@ class PageRegistration {
 
 	private $page_title;
 	private $menu_title;
-	private $capability = 'manage_options';
+	public $capability = 'manage_options';
 	private $menu_slug;
 	private $display_callback;
 	private $icon;
