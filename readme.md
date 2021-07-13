@@ -86,6 +86,81 @@ Here's an example of how to use a custom getter and setter. In this example, the
 ]
 ```
 
+### Main plugin with add-ons example
+
+If you sell "add-on" plugins to a main plugin (such as Easy Digital Downloads with its various extensions) then you can optionally only register your store in the main plugin file. Then each add-on adds a product to that existing store.
+
+The benefit of this is that you only need to declare your API URL once in the "parent plugin".
+
+Here's how that would look:
+
+The parent plugin would register the store like this:
+
+```php
+add_action( 'edd_sl_sdk_loaded', function ( \EDD_SL_SDK\SDK $sdk ) {
+	try {
+		$sdk->registerStore( [
+			// ID: Replace `yoursite.com` with the domain name of the site that has Software Licensing installed.
+			'id'      => 'yoursite.com',
+			// API URL: Replace `yoursite.com` with the domain of the site that has Software Licensing installed.
+			'api_url' => 'https://yoursite.com/wp-json/edd-sl/v2',
+			// Author: Your company's name.
+			'author'  => 'Sandhills Development, LLC',
+		] );
+	} catch ( \Exception $e ) {
+
+	}
+} );
+```
+
+Note that if your parent plugin is also a product in itself and not hosted in the .org repo, you'll also need to register the parent plugin's product like so:
+
+```php 
+add_action( 'edd_sl_sdk_loaded', function ( \EDD_SL_SDK\SDK $sdk ) {
+	try {
+		$sdk->registerStore( [
+			// ID: Replace `yoursite.com` with the domain name of the site that has Software Licensing installed.
+			'id'       => 'yoursite.com',
+			// API URL: Replace `yoursite.com` with the domain of the site that has Software Licensing installed.
+			'api_url'  => 'https://yoursite.com/wp-json/edd-sl/v2',
+			// Author: Your company's name.
+			'author'   => 'Sandhills Development, LLC',
+			'products' => [
+				[
+					'type'       => 'plugin',
+					'product_id' => 123, // @todo replace
+					'file'       => __FILE__,
+					'version'    => '1.0', // @todo replace
+				]
+			]
+		] );
+	} catch ( \Exception $e ) {
+
+	}
+} );
+```
+
+Then, each add-on can skip the store registration and piggyback off the parent, like this:
+
+```php 
+add_action( 'edd_sl_after_store_registered', function ( \EDD_SL_SDK\Models\Store $store ) {
+	if ( 'yoursite.com' === $store->id ) {
+		try {
+			$store->addProduct( [
+				'type'       => 'plugin',
+				'product_id' => 123, // @todo replace
+				'file'       => __FILE__,
+				'version'    => '1.0', // @todo replace
+			] );
+		} catch ( \Exception $e ) {
+
+		}
+	}
+} );
+```
+
+This product will be registered to the store that was created in the parent plugin and use the same API URL.
+
 ## Strings
 
 If using an admin menu, all the strings used for displaying statuses and response messages can be customized or made translation-ready.
