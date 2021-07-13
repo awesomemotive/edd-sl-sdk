@@ -5,7 +5,7 @@
 ```php
 use EDD_SL_SDK\SDK;
 
-require_once 'sdk/Loader.php';
+require_once 'edd-sl-sdk-main/src/Loader.php';
 
 add_action( 'edd_sl_sdk_loaded', function ( SDK $sdk ) {
 	try {
