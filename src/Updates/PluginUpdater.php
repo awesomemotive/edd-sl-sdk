@@ -10,6 +10,8 @@
 
 namespace EDD_SL_SDK\Updates;
 
+use EDD_SL_SDK\Models\Product;
+use EDD_SL_SDK\Repositories\LatestVersionCache;
 use EDD_SL_SDK\SDK;
 use EDD_SL_SDK\Traits\Singleton;
 
@@ -36,8 +38,6 @@ class PluginUpdater extends Updater {
 	/**
 	 * Updates information on the "View version x.x details" page with custom data.
 	 *
-	 * @todo  Caching
-	 *
 	 * @param object      $data
 	 * @param string      $action
 	 * @param object|null $args
@@ -46,7 +46,7 @@ class PluginUpdater extends Updater {
 	 * @return object
 	 */
 	public function showVersionDetails( $data, $action = '', $args = null ) {
-		if ( 'plugin_information' !== $action || ! isset( $args->slug ) ) {
+		if ( 'plugin_information' !== $action || empty( $args->slug ) ) {
 			return $data;
 		}
 
@@ -60,13 +60,31 @@ class PluginUpdater extends Updater {
 				continue;
 			}
 
-			try {
-				$latest_versions = $store->getApiHandler()->checkVersions( $store_plugins );
-			} catch ( \Exception $e ) {
+			$thisPlugin = reset( $store_plugins );
+			if ( ! $thisPlugin instanceof Product ) {
 				continue;
 			}
 
-			return $this->formatVersionDetails( reset( $latest_versions ) );
+			try {
+				$repository     = new LatestVersionCache( $store );
+				$latestVersions = $repository->getLatestVersions();
+
+				if ( empty( $latestVersions ) ) {
+					continue;
+				}
+
+				/*
+				 * `$latestVersions` actually contains update data for all plugins for
+				 * this store, so we need to just grab the version details for `$thisPlugin`.
+				 */
+				foreach ( $latestVersions as $pluginId => $pluginData ) {
+					if ( $pluginId === $thisPlugin->id ) {
+						return $this->formatVersionDetails( $pluginData );
+					}
+				}
+			} catch ( \Exception $e ) {
+				continue;
+			}
 		}
 
 		return $data;
