@@ -146,7 +146,7 @@ class AdminPage {
 							class="regular-text"
 							name="license_key"
 							value="<?php echo esc_attr( $this->product->license ); ?>"
-							required
+							<?php echo AjaxHandler::ACTIVATE_LICENSE === $action ? 'required' : ''; ?>
 						/>
 
 						<button

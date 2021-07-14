@@ -44,6 +44,11 @@ class AjaxHandler {
 
 		try {
 			$this->validateRequestAndSetProduct();
+
+			if ( empty( $_POST['license_key'] ) ) {
+				throw new \Exception( 'Missing license key.' );
+			}
+
 			$this->product->setLicense( $_POST['license_key'] );
 			$this->product->activateLicense();
 
@@ -74,7 +79,11 @@ class AjaxHandler {
 
 		try {
 			$this->validateRequestAndSetProduct();
-			$this->product->deactivateLicense();
+
+			if ( ! empty( $_POST['license_key'] ) ) {
+				$this->product->deactivateLicense();
+			}
+
 			$this->product->setLicense( null );
 
 			wp_send_json_success( [
@@ -103,10 +112,6 @@ class AjaxHandler {
 	private function validateRequestAndSetProduct() {
 		if ( empty( $_POST['productId'] ) || empty( $_POST['productType'] ) ) {
 			throw new \Exception( 'Missing product ID or type.' );
-		}
-
-		if ( empty( $_POST['license_key'] ) ) {
-			throw new \Exception( 'Missing license key.' );
 		}
 
 		if ( 'theme' === $_POST['productType'] ) {

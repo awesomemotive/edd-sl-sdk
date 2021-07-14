@@ -50,8 +50,6 @@ class PluginUpdater extends Updater {
 			return $data;
 		}
 
-		error_log(sprintf('Data: %s; Args: %s', var_export($data, true), var_export($args, true)));
-
 		foreach ( SDK::instance()->storeRegistry->getItems() as $store ) {
 			$store_plugins = $store->getProducts( array(
 				'type' => 'plugin',

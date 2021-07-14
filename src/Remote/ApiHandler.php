@@ -113,7 +113,7 @@ class ApiHandler {
 			$updateArray[ $product->id ] = $product->toArray();
 		}
 
-		$this->apiRequester->makeRequest( 'products/versions', array(
+		$this->apiRequester->makeRequest( 'products/releases/latest', array(
 			'environment' => ( new Environment() )->toArray(),
 			'products'    => $updateArray
 		) );

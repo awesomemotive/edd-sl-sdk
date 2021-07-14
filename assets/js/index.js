@@ -23,11 +23,6 @@ function submitLicenseForm( e ) {
 
 	const form = this;
 	const button = form.querySelector( 'button[type="submit"]' );
-	const license = form.querySelector( 'input[name="license_key"]' );
-
-	if ( ! license || ! license.value ) {
-		return;
-	}
 
 	const statusWrapper = form.querySelector( '.edd-sl-sdk-license-response' );
 
