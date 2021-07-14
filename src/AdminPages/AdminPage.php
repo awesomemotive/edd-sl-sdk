@@ -103,6 +103,11 @@ class AdminPage {
 		}
 	}
 
+	/**
+	 * Enqueues assets.
+	 *
+	 * @since 1.0
+	 */
 	public function enqueueAssets() {
 		$screen = get_current_screen();
 		if ( $screen instanceof \WP_Screen && $this->pageHook === $screen->id ) {
@@ -113,6 +118,8 @@ class AdminPage {
 
 	/**
 	 * Displays the admin page.
+	 *
+	 * @since 1.0
 	 */
 	public function display() {
 		$action = $this->product->licenseIsActivated() ? AjaxHandler::DEACTIVATE_LICENSE : AjaxHandler::ACTIVATE_LICENSE;
