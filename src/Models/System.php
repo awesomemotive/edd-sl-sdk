@@ -1,6 +1,8 @@
 <?php
 /**
- * Environment.php
+ * System.php
+ *
+ * Contains information about the current system (PHP version, etc.).
  *
  * @package   edd-sl-sdk
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
@@ -12,7 +14,7 @@ namespace EDD_SL_SDK\Models;
 
 use EDD_SL_SDK\Traits\Serializable;
 
-class Environment {
+class System {
 
 	use Serializable;
 
@@ -41,7 +43,7 @@ class Environment {
 	public $environment;
 
 	/**
-	 * Environment constructor.
+	 * System constructor.
 	 */
 	public function __construct() {
 		$this->php_version = phpversion();

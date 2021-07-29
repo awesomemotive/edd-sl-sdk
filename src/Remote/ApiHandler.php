@@ -11,7 +11,7 @@
 namespace EDD_SL_SDK\Remote;
 
 use EDD_SL_SDK\Exceptions\ApiException;
-use EDD_SL_SDK\Models\Environment;
+use EDD_SL_SDK\Models\System;
 use EDD_SL_SDK\Models\Product;
 
 class ApiHandler {
@@ -44,7 +44,7 @@ class ApiHandler {
 			throw new \Exception( 'A product ID is required to activate a license.' );
 		}
 
-		$environment = new Environment();
+		$environment = new System();
 
 		$this->apiRequester->makeRequest( sprintf( 'licenses/%s/activations', urlencode( $product->license ) ), array(
 			'product_id'  => $product->product_id,
@@ -79,7 +79,7 @@ class ApiHandler {
 			throw new \Exception( 'No license to deactivate.' );
 		}
 
-		$environment = new Environment();
+		$environment = new System();
 
 		$this->apiRequester->makeRequest( sprintf( 'licenses/%s/activations', urlencode( $product->license ) ), array(
 			'product_id'  => $product->product_id,
@@ -114,8 +114,8 @@ class ApiHandler {
 		}
 
 		$this->apiRequester->makeRequest( 'products/releases/latest', array(
-			'environment' => ( new Environment() )->toArray(),
-			'products'    => $updateArray
+			'system'   => ( new System() )->toArray(),
+			'products' => $updateArray
 		) );
 
 		if ( 200 !== $this->apiRequester->lastResponseCode ) {
