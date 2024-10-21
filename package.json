@@ -2,7 +2,7 @@
   "name": "edd-sl-sdk",
   "version": "1.0.0",
   "description": "EDD Software Licensing WordPress SDK.",
-  "author": "Sandhills Development, LLC",
+  "author": "Easy Digital Downloads",
   "license": "GPL-3.0-or-later",
   "keywords": [
     "wordpress", "edd", "licensing"
@@ -16,16 +16,13 @@
     "url": "https://github.com/easydigitaldownloads/edd-sl-sdk/issues"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^16.0.0",
-    "ignore-emit-webpack-plugin": "^2.0.6"
+    "@wordpress/scripts": "^26.2.0",
+    "mini-css-extract-plugin": "^2.7.6",
+    "path": "^0.12.7",
+    "webpack-fix-style-only-entries": "^0.6.1"
   },
   "scripts": {
-    "build": "wp-scripts build --webpack-no-externalsn",
-    "format": "wp-scripts format",
-    "lint:css": "wp-scripts lint-style",
-    "lint:js": "wp-scripts lint-js",
-    "lint:pkg-json": "wp-scripts lint-pkg-json",
-    "start": "wp-scripts start --webpack-no-externals",
-    "dev": "npm run start"
+    "build": "wp-scripts build",
+    "dev": "wp-scripts start"
   }
 }
