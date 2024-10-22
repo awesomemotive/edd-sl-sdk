@@ -32,7 +32,8 @@ abstract class Updater {
 	 */
 	public function __construct( $api_url, $args = array() ) {
 		$this->api_url = $api_url;
-		$this->args    = array_intersect_key( $this->get_api_request_defaults(), $args );
+		$defaults      = $this->get_api_request_defaults();
+		$this->args    = array_merge( $defaults, array_intersect_key( $args, $defaults ) );
 		$this->add_listeners();
 	}
 
