@@ -51,12 +51,7 @@ class Handler {
 	}
 
 	public function setting() {
-		?>
-		<div class="edd-sl-sdk__license-control">
-			<input type="password" autocomplete="off" class="regular-text" id="edd_sl_sdk[<?php echo_esc_attr( $this->license->item_id ); ?>]" name="<?php echo_esc_attr( $this->license->get_option_name() ); ?>" value="<?php echo_esc_attr( $this->license->get_license_key() ); ?>" data-item="<?php echo_esc_attr( $this->license->item_id ); ?>" data-key="<?php echo esc_attr( $this->license->get_option_name() ); ?>">
-			<?php $this->get_actions( get_option( $this->license->get_option_name() . '_status' ), get_option( $this->license->get_option_name() ), true ); ?>
-		</div>
-		<?php
+		EasyDigitalDownloads\Updater\Templates::load( 'license-control' );
 	}
 
 	public function activate_license() {

@@ -10,11 +10,8 @@ const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 module.exports = {
 	...defaultConfig,
 	entry: {
-		"css/edd-wl": path.resolve( process.cwd(), 'assets/src/css', 'edd-wl.scss' ),
-		"js/jquery.validate": path.resolve( process.cwd(), 'assets/src/js', 'jquery.validate.js' ),
-		"js/edd-wl": path.resolve( process.cwd(), 'assets/src/js', 'edd-wl.js' ),
-		"js/modal": path.resolve( process.cwd(), 'assets/src/js', 'modal.js' ),
-		"js/wl-delete": path.resolve( process.cwd(), 'assets/src/js', 'wl-delete.js' ),
+		"css/edd-sl-sdk": path.resolve( process.cwd(), 'assets/src/css', 'style.scss' ),
+		"js/edd-sl-sdk": path.resolve( process.cwd(), 'assets/src/js', 'index.js' ),
 	},
 	output: {
 		path: path.resolve( __dirname, 'assets/build' ),

@@ -51,6 +51,7 @@ class Plugin {
 				'file'    => '',
 				'item_id' => false,
 				'version' => false,
+				'slug'    => '',
 			)
 		);
 
@@ -69,6 +70,8 @@ class Plugin {
 	 */
 	protected function add_listeners(): void {
 		add_action( 'init', array( $this, 'auto_updater' ) );
+		$plugin_basename = plugin_basename( $this->args['file'] );
+		add_filter( "plugin_action_links_{$plugin_basename}", array( $this, 'plugin_links' ), 100, 4 );
 	}
 
 	/**
@@ -100,6 +103,45 @@ class Plugin {
 			$this->api_url,
 			$args
 		);
+	}
+
+	/**
+	 * Adds the activation link to the plugin list.
+	 *
+	 * @since <next-version>
+	 * @param array  $actions     The plugin actions.
+	 * @param string $plugin_file The plugin file.
+	 * @param array  $plugin_data The plugin data.
+	 * @param string $context     The context.
+	 * @return array
+	 */
+	public function plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
+		if ( ! empty( $this->args['keyless'] ) ) {
+			return $actions;
+		}
+		$actions['edd_sdk_manage'] = sprintf(
+			'<button type="button" class="button-link edd-sdk__notice__trigger edd-sdk__notice__trigger--ajax" data-id="license-control" data-product="%1$s" data-slug="%2$s">%3$s</button>',
+			$this->args['item_id'],
+			$this->get_slug(),
+			__( 'Manage License', 'edd-sl-sdk' )
+		);
+
+		add_action( 'admin_footer', array( $this, 'license_modal' ) );
+
+		return $actions;
+	}
+
+	public function license_modal() {
+		static $did_run;
+		if ( $did_run ) {
+			return;
+		}
+		$did_run = true;
+		?>
+		<div class="edd-sdk-notice--overlay"></div>
+		<?php
+		wp_enqueue_script( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/js/edd-sl-sdk.js', array(), '1.0.0', true );
+		wp_enqueue_style( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/css/style-edd-sl-sdk.css', array(), '1.0.0' );
 	}
 
 	/**

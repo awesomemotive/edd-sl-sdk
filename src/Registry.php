@@ -29,6 +29,8 @@ class Registry extends \ArrayObject {
 	public static function instance() {
 		if ( ! self::$instance ) {
 			self::$instance = new self();
+
+			new Admin\Notices();
 		}
 
 		return self::$instance;

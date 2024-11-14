@@ -50,3 +50,13 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_a
 		EasyDigitalDownloads\Updater\Versions::initialize_latest_version();
 	}
 }
+
+// Plugin Folder Path.
+if ( ! defined( 'EDD_SL_SDK_DIR' ) ) {
+	define( 'EDD_SL_SDK_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+// Plugin Folder URL.
+if ( ! defined( 'EDD_SL_SDK_URL' ) ) {
+	define( 'EDD_SL_SDK_URL', plugin_dir_url( __FILE__ ) );
+}
