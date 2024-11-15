@@ -3,7 +3,6 @@
 namespace EasyDigitalDownloads\Updater\Handlers;
 
 use EasyDigitalDownloads\Updater\Updaters\Plugin as PluginUpdater;
-use EasyDigitalDownloads\Updater\Licensing\License;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
@@ -11,57 +10,7 @@ defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 /**
  * Represents the handler for plugins.
  */
-class Plugin {
-
-	/**
-	 * The URL for the API.
-	 *
-	 * @var string
-	 */
-	private $api_url;
-
-	/**
-	 * The arguments for the updater.
-	 *
-	 * @var array
-	 */
-	private $args;
-
-	/**
-	 * The slug for the plugin.
-	 *
-	 * @var string
-	 */
-	private $slug;
-
-	private $license;
-
-	/**
-	 * The class constructor.
-	 *
-	 * @since <next-version>
-	 * @param string $api_url The URL for the API.
-	 * @param array  $args    Optional; used only for requests to non-EDD sites.
-	 */
-	public function __construct( string $api_url, array $args = array() ) {
-		$this->api_url      = $api_url;
-		$this->args         = wp_parse_args(
-			$args,
-			array(
-				'file'    => '',
-				'item_id' => false,
-				'version' => false,
-				'api_url' => $api_url,
-			)
-		);
-		$this->args['slug'] = $this->get_slug();
-
-		if ( empty( $this->args['keyless'] ) ) {
-			$this->license = new License( $this->args['slug'], $this->args );
-		}
-
-		$this->add_listeners();
-	}
+class Plugin extends Handler {
 
 	/**
 	 * Adds the listeners for the updater.
@@ -73,10 +22,6 @@ class Plugin {
 		add_action( 'init', array( $this, 'auto_updater' ) );
 		$plugin_basename = plugin_basename( $this->args['file'] );
 		add_filter( "plugin_action_links_{$plugin_basename}", array( $this, 'plugin_links' ), 100, 3 );
-		add_action( 'wp_ajax_edd_sdk_get_notice', array( $this, 'ajax_get_license_overlay' ) );
-		add_action( 'wp_ajax_edd_sl_sdk_deactivate', array( $this->license, 'ajax_deactivate' ) );
-		add_action( 'wp_ajax_edd_sl_sdk_activate', array( $this->license, 'ajax_activate' ) );
-		add_action( 'wp_ajax_edd_sl_sdk_delete', array( $this->license, 'ajax_delete' ) );
 	}
 
 	/**
