@@ -21,6 +21,7 @@ if ( overlayNotice ) {
 					template: event.target.dataset.id,
 					product_id: event.target.dataset.product,
 					slug: event.target.dataset.slug,
+					name: event.target.dataset.name,
 				};
 
 				fetch( `${ ajaxurl }?${ new URLSearchParams( data ) }` )

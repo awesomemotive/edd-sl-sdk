@@ -30,7 +30,6 @@ class Notices {
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'render' ), 100 );
-		add_action( 'wp_ajax_edd_sdk_get_notice', array( $this, 'ajax_get_notice' ) );
 	}
 
 	/**
@@ -84,28 +83,5 @@ class Notices {
 			</div>
 			<?php
 		}
-	}
-
-	public function ajax_get_notice() {
-		$template = filter_input( INPUT_GET, 'template', FILTER_SANITIZE_SPECIAL_CHARS );
-		if ( ! $template ) {
-			wp_send_json_error( 'No template provided.' );
-		}
-
-		$args = array(
-			'item_id' => filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT ),
-			'slug'    => filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_SPECIAL_CHARS ),
-		);
-
-		ob_start();
-		?>
-		<button class="button-link edd-sdk__notice--dismiss">
-			×
-			<span class="screen-reader-text"><?php esc_html_e( 'Dismiss notice', 'edd-sl-sdk' ); ?></span>
-		</button>
-		<?php
-		\EasyDigitalDownloads\Updater\Templates::load( $template, $args );
-
-		wp_send_json_success( ob_get_clean() );
 	}
 }

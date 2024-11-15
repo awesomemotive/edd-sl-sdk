@@ -1,103 +1,145 @@
-; ( function ( document, $ ) {
+( function ( document ) {
 	'use strict';
 
-	$( '.edd-sl-sdk__license-control' ).on( 'click', '.edd-sl-sdk__action', function ( e ) {
+	// Helper function for selecting elements
+	const $ = ( selector ) => document.querySelector( selector );
+	const $$ = ( selector ) => document.querySelectorAll( selector );
+
+	// Helper function for event delegation
+	function on ( parent, event, selector, handler ) {
+		parent.addEventListener( event, ( e ) => {
+			if ( e.target.closest( selector ) ) {
+				handler( e );
+			}
+		} );
+	}
+
+	// Handle license control actions (activate/deactivate)
+	on( document, 'click', '.edd-sl-sdk__action', function ( e ) {
 		e.preventDefault();
 
-		var $btn = $( this ),
-			action = $btn.attr( 'data-action' ),
-			ajaxAction = '',
-			text = $btn.text();
+		const btn = e.target;
+		const action = btn.getAttribute( 'data-action' );
+		let ajaxAction = '';
+		const text = btn.textContent;
 
-		if ( $btn.attr( 'disabled' ) ) {
+		if ( btn.hasAttribute( 'disabled' ) ) {
 			return;
 		}
 
 		switch ( action ) {
 			case 'activate':
-				ajaxAction = 'eddsdk_activate';
-				$btn.text( EDDPassManager.activating );
+				ajaxAction = 'edd_sl_sdk_activate';
+				btn.textContent = edd_sdk_notice.activating;
 				break;
-
 			case 'deactivate':
-				ajaxAction = 'eddsdk_deactivate';
-				$btn.text( EDDPassManager.deactivating );
+				ajaxAction = 'edd_sl_sdk_deactivate';
+				btn.textContent = edd_sdk_notice.deactivating;
 				break;
-
 			default:
 				return;
 		}
 
-		$( '.edd-sl-sdk__license-control + .notice' ).remove();
-		$( '.edd-sl-sdk__license-control + p' ).remove();
-		$btn.removeClass( 'button-primary' ).attr( 'disabled', true ).addClass( 'updating-message' );
+		// Remove previous notices
+		$$( '.edd-sl-sdk__license-control + .notice, .edd-sl-sdk__license-control + p' ).forEach( ( el ) => el.remove() );
+		btn.classList.remove( 'button-primary' );
+		btn.setAttribute( 'disabled', 'true' );
+		btn.classList.add( 'updating-message' );
 
-		var data = {
+		const data = {
 			action: ajaxAction,
-			token: $btn.attr( 'data-token' ),
-			timestamp: $btn.attr( 'data-timestamp' ),
-			nonce: $btn.attr( 'data-nonce' ),
-			license: $( '#edd_pass_key' ).val(),
+			token: btn.getAttribute( 'data-token' ),
+			timestamp: btn.getAttribute( 'data-timestamp' ),
+			nonce: btn.getAttribute( 'data-nonce' ),
+			license: $( '.edd-sl-sdk__license--input' ).value,
 		};
 
-		$.post( ajaxurl, data )
-			.done( function ( res ) {
+		// AJAX request
+		fetch( ajaxurl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: new URLSearchParams( data ),
+		} )
+			.then( ( response ) => response.json() )
+			.then( ( res ) => {
 				if ( res.success ) {
-					$( '.edd-sl-sdk__actions' ).replaceWith( res.data.actions );
+					$( '.edd-sl-sdk-licensing__actions' ).outerHTML = res.data.actions;
 					if ( res.data.message ) {
-						$( '.edd-sl-sdk__license-control' ).after( res.data.message );
+						$( '.edd-sl-sdk__license-control' ).insertAdjacentHTML(
+							'afterend',
+							`<div class="notice inline-notice notice-success">${ res.data.message }</div>`
+						);
 					}
-					if ( data.license.length && 'deactivate' === action ) {
-						$( '#edd_pass_key' ).attr( 'readonly', false );
-					} else if ( 'activate' === action || 'verify' === action ) {
-						$( '#edd_pass_key' ).attr( 'readonly', true );
+					if ( data.license.length && action === 'deactivate' ) {
+						$( '.edd-sl-sdk__license--input' ).removeAttribute( 'readonly' );
+					} else if ( action === 'activate' || action === 'verify' ) {
+						$( '.edd-sl-sdk__license--input' ).setAttribute( 'readonly', 'true' );
 						if ( res.data.url && res.data.url.length ) {
-							setTimeout( function () {
+							setTimeout( () => {
 								window.location.href = res.data.url;
 							}, 1500 );
 							return;
 						}
 					}
 				} else {
-					$btn.text( text );
-					$( '.edd-sl-sdk__license-control' ).after( '<div class="notice inline-notice notice-warning edd-sl-sdk__notice">' + res.data.message + '</div>' );
+					btn.textContent = text;
+					$( '.edd-sl-sdk__license-control' ).insertAdjacentHTML(
+						'afterend',
+						`<div class="notice inline-notice notice-warning edd-sl-sdk__notice">${ res.data.message }</div>`
+					);
 				}
-				$btn.attr( 'disabled', false ).removeClass( 'updating-message' );
+				btn.removeAttribute( 'disabled' );
+				btn.classList.remove( 'updating-message' );
 			} );
 	} );
 
-	$( '.edd-sl-sdk__license-control' ).on( 'click', '.edd-sl-sdk__delete', function ( e ) {
+	// Handle license deletion
+	on( document, 'click', '.edd-sl-sdk-license__delete', function ( e ) {
 		e.preventDefault();
 
-		var $btn = $( this ),
-			ajaxAction = 'eddsdk_delete';
+		const btn = e.target;
+		const ajaxAction = 'edd_sl_sdk_delete';
 
-		var data = {
+		const data = {
 			action: ajaxAction,
-			token: $btn.attr( 'data-token' ),
-			timestamp: $btn.attr( 'data-timestamp' ),
-			nonce: $btn.attr( 'data-nonce' ),
-			license: $( '#edd_pass_key' ).val(),
+			token: btn.getAttribute( 'data-token' ),
+			timestamp: btn.getAttribute( 'data-timestamp' ),
+			nonce: btn.getAttribute( 'data-nonce' ),
+			license: $( '.edd-sl-sdk__license--input' ).value,
 		};
 
 		if ( !data.license ) {
 			return;
 		}
 
-		$( '.edd-sl-sdk__license-control + .notice' ).remove();
-		$( '.edd-sl-sdk__license-control + p' ).remove();
-		$btn.attr( 'disabled', true ).addClass( 'updating-message' );
-		$( '#edd_pass_key' ).val( '' );
+		// Remove previous notices
+		$$( '.edd-sl-sdk__license-control + .notice, .edd-sl-sdk__license-control + p' ).forEach( ( el ) => el.remove() );
+		btn.setAttribute( 'disabled', 'true' );
+		btn.classList.add( 'updating-message' );
 
-		$.post( ajaxurl, data )
-			.done( function ( res ) {
+		// AJAX request
+		fetch( ajaxurl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: new URLSearchParams( data ),
+		} )
+			.then( ( response ) => response.json() )
+			.then( ( res ) => {
 				if ( res.success ) {
-					$( '.edd-sl-sdk__license-control' ).after( res.data.message );
-					$btn.hide();
+					$( '.edd-sl-sdk__license-control' ).insertAdjacentHTML(
+						'afterend',
+						`<div class="notice inline-notice notice-success">${ res.data.message }</div>`
+					);
+					btn.style.display = 'none';
+					$( '.edd-sl-sdk__license--input' ).value = '';
 				} else {
-					$( '.edd-sl-sdk__license-control' ).after( '<div class="notice inline-notice notice-warning">' + res.data.message + '</div>' );
+					$( '.edd-sl-sdk__license-control' ).insertAdjacentHTML(
+						'afterend',
+						`<div class="notice inline-notice notice-warning">${ res.data.message }</div>`
+					);
 				}
-				$btn.attr( 'disabled', false ).removeClass( 'updating-message' );
+				btn.removeAttribute( 'disabled' );
+				btn.classList.remove( 'updating-message' );
 			} );
 	} );
-} )( document, jQuery );
+} )( document );

@@ -8,6 +8,16 @@
 	align-items: center;
 	justify-content: center;
 	display: none;
+
+	.auto-fold & {
+		margin-left: 160px;
+		width: calc(100% - 160px);
+	}
+
+	.folded & {
+		margin-left: 36px;
+		width: calc(100% - 36px);
+	}
 }
 
 .edd-sdk-notice--overlay {
@@ -24,6 +34,10 @@
 		font-size: 2em;
 		top: 0;
 		right: 0.5em;
+	}
+
+	.inline-notice {
+		margin: 1em 0 0;
 	}
 }
 

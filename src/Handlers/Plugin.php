@@ -44,19 +44,20 @@ class Plugin {
 	 * @param array  $args    Optional; used only for requests to non-EDD sites.
 	 */
 	public function __construct( string $api_url, array $args = array() ) {
-		$this->api_url = $api_url;
-		$this->args    = wp_parse_args(
+		$this->api_url      = $api_url;
+		$this->args         = wp_parse_args(
 			$args,
 			array(
 				'file'    => '',
 				'item_id' => false,
 				'version' => false,
-				'slug'    => '',
+				'api_url' => $api_url,
 			)
 		);
+		$this->args['slug'] = $this->get_slug();
 
 		if ( empty( $this->args['keyless'] ) ) {
-			$this->license = new License( $this->get_slug(), $this->args );
+			$this->license = new License( $this->args['slug'], $this->args );
 		}
 
 		$this->add_listeners();
@@ -71,7 +72,11 @@ class Plugin {
 	protected function add_listeners(): void {
 		add_action( 'init', array( $this, 'auto_updater' ) );
 		$plugin_basename = plugin_basename( $this->args['file'] );
-		add_filter( "plugin_action_links_{$plugin_basename}", array( $this, 'plugin_links' ), 100, 4 );
+		add_filter( "plugin_action_links_{$plugin_basename}", array( $this, 'plugin_links' ), 100, 3 );
+		add_action( 'wp_ajax_edd_sdk_get_notice', array( $this, 'ajax_get_license_overlay' ) );
+		add_action( 'wp_ajax_edd_sl_sdk_deactivate', array( $this->license, 'ajax_deactivate' ) );
+		add_action( 'wp_ajax_edd_sl_sdk_activate', array( $this->license, 'ajax_activate' ) );
+		add_action( 'wp_ajax_edd_sl_sdk_delete', array( $this->license, 'ajax_delete' ) );
 	}
 
 	/**
@@ -112,18 +117,18 @@ class Plugin {
 	 * @param array  $actions     The plugin actions.
 	 * @param string $plugin_file The plugin file.
 	 * @param array  $plugin_data The plugin data.
-	 * @param string $context     The context.
 	 * @return array
 	 */
-	public function plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
+	public function plugin_links( $actions, $plugin_file, $plugin_data ) {
 		if ( ! empty( $this->args['keyless'] ) ) {
 			return $actions;
 		}
 		$actions['edd_sdk_manage'] = sprintf(
-			'<button type="button" class="button-link edd-sdk__notice__trigger edd-sdk__notice__trigger--ajax" data-id="license-control" data-product="%1$s" data-slug="%2$s">%3$s</button>',
+			'<button type="button" class="button-link edd-sdk__notice__trigger edd-sdk__notice__trigger--ajax" data-id="license-control" data-product="%1$s" data-slug="%2$s" data-name="%4$s">%3$s</button>',
 			$this->args['item_id'],
-			$this->get_slug(),
-			__( 'Manage License', 'edd-sl-sdk' )
+			$this->args['slug'],
+			__( 'Manage License', 'edd-sl-sdk' ),
+			$plugin_data['Name']
 		);
 
 		add_action( 'admin_footer', array( $this, 'license_modal' ) );
@@ -131,6 +136,12 @@ class Plugin {
 		return $actions;
 	}
 
+	/**
+	 * Outputs the license modal.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
 	public function license_modal() {
 		static $did_run;
 		if ( $did_run ) {
@@ -142,6 +153,50 @@ class Plugin {
 		<?php
 		wp_enqueue_script( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/js/edd-sl-sdk.js', array(), '1.0.0', true );
 		wp_enqueue_style( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/css/style-edd-sl-sdk.css', array(), '1.0.0' );
+		wp_localize_script(
+			'edd-sdk-notice',
+			'edd_sdk_notice',
+			array(
+				'ajax_url'     => admin_url( 'admin-ajax.php' ),
+				'nonce'        => wp_create_nonce( 'edd_sdk_notice' ),
+				'activating'   => esc_html__( 'Activating...', 'edd-sl-sdk' ),
+				'deactivating' => esc_html__( 'Deactivating...', 'edd-sl-sdk' ),
+			)
+		);
+	}
+
+	/**
+	 * AJAX handler for getting a notice.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function ajax_get_license_overlay() {
+		$template = filter_input( INPUT_GET, 'template', FILTER_SANITIZE_SPECIAL_CHARS );
+		if ( ! $template ) {
+			wp_send_json_error( 'No template provided.' );
+		}
+
+		// $args = array(
+		//  'item_id' => filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT ),
+		//  'slug'    => filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_SPECIAL_CHARS ),
+		//  'name'    => filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS ),
+		// );
+
+		$args            = $this->args;
+		$args['license'] = $this->license;
+		$args['name']    = filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS );
+
+		ob_start();
+		?>
+		<button class="button-link edd-sdk__notice--dismiss">
+			×
+			<span class="screen-reader-text"><?php esc_html_e( 'Dismiss notice', 'edd-sl-sdk' ); ?></span>
+		</button>
+		<?php
+		\EasyDigitalDownloads\Updater\Templates::load( $template, $args );
+
+		wp_send_json_success( ob_get_clean() );
 	}
 
 	/**

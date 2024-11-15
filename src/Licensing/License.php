@@ -44,6 +44,7 @@ class License {
 	/**
 	 * Get the license key.
 	 *
+	 * @since <next-version>
 	 * @return string
 	 */
 	public function get_license_key() {
@@ -53,43 +54,45 @@ class License {
 	/**
 	 * Gets the license key option name.
 	 *
+	 * @since <next-version>
 	 * @return void
 	 */
 	public function get_key_option_name() {
-		return ! empty( $this->args['option_name'] ) ? $this->args['option_name'] : $this->slug . '_license_key';
+		return ! empty( $this->args['option_name'] ) ? $this->args['option_name'] : "{$this->slug}_license_key";
 	}
 
 	/**
 	 * Gets the button for the pass field.
 	 *
-	 * @since 3.1.1
+	 * @since <next-version>
 	 * @param string $status The pass status.
 	 * @param bool   $echo   Whether to echo the button.
 	 * @return string
 	 */
-	public function get_actions( $status, $echo = false ) {
+	public function get_actions( $should_echo = false ) {
+		$status    = get_option( $this->get_status_option_name() );
 		$button    = $this->get_button_args( $status );
 		$timestamp = time();
-		if ( ! $echo ) {
+		if ( ! $should_echo ) {
 			ob_start();
 		}
 		?>
-		<div class="edd-licensing__actions">
+		<div class="edd-sl-sdk-licensing__actions">
 			<button
-				class="button button-<?php echo esc_attr( $button['class'] ); ?> edd-license__action"
+				class="button button-<?php echo esc_attr( $button['class'] ); ?> edd-sl-sdk__action"
 				data-action="<?php echo esc_attr( $button['action'] ); ?>"
 				data-timestamp="<?php echo esc_attr( $timestamp ); ?>"
-				data-token="<?php echo esc_attr( \EDD\Utils\Tokenizer::tokenize( $timestamp ) ); ?>"
+				data-token="<?php echo esc_attr( \EasyDigitalDownloads\Updater\Utilities\Tokenizer::tokenize( $timestamp ) ); ?>"
 				data-nonce="<?php echo esc_attr( wp_create_nonce( 'edd_sl_sdk_license_handler' ) ); ?>"
 			>
 				<?php echo esc_html( $button['label'] ); ?>
 			</button>
-			<?php if ( ! empty( $this->license_key ) && 'activate' === $button['action'] ) : ?>
+			<?php if ( 'activate' === $button['action'] && ! empty( $this->get_license_key() ) ) : ?>
 				<button
-					class="button button-secondary edd-license__delete"
+					class="button button-secondary edd-sl-sdk-license__delete"
 					data-action="delete"
 					data-timestamp="<?php echo esc_attr( $timestamp ); ?>"
-					data-token="<?php echo esc_attr( \EDD\Utils\Tokenizer::tokenize( $timestamp ) ); ?>"
+					data-token="<?php echo esc_attr( \EasyDigitalDownloads\Updater\Utilities\Tokenizer::tokenize( $timestamp ) ); ?>"
 					data-nonce="<?php echo esc_attr( wp_create_nonce( 'edd_sl_sdk_license_handler-delete' ) ); ?>"
 				>
 					<?php esc_html_e( 'Delete', 'edd-sl-sdk' ); ?>
@@ -97,15 +100,125 @@ class License {
 			<?php endif; ?>
 		</div>
 		<?php
-		if ( ! $echo ) {
+		if ( ! $should_echo ) {
 			return ob_get_clean();
 		}
 	}
 
 	/**
+	 * AJAX handler for activating a license.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function ajax_activate() {
+		if ( ! $this->can_manage_license() ) {
+			wp_send_json_error(
+				array(
+					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+				)
+			);
+		}
+
+		$license_key  = filter_input( INPUT_POST, 'license', FILTER_SANITIZE_SPECIAL_CHARS );
+		$api_params   = array(
+			'edd_action' => 'activate_license',
+			'license'    => $license_key,
+			'item_id'    => $this->args['item_id'],
+		);
+		$api          = new \EasyDigitalDownloads\Updater\Requests\API( $this->args['api_url'] );
+		$license_data = $api->make_request( $api_params );
+
+		if ( empty( $license_data->success ) ) {
+			wp_send_json_error(
+				array(
+					'message' => wpautop( __( 'There was an error activating your license. Please try again.', 'edd-sl-sdk' ) ),
+				)
+			);
+		}
+
+		update_option( $this->get_key_option_name(), $license_key );
+		update_option( $this->get_status_option_name(), $license_data->license );
+
+		wp_send_json_success(
+			array(
+				'message' => wpautop( __( 'Your license was successfully activated.', 'easy-digital-downloads' ) ),
+				'actions' => $this->get_actions(),
+			)
+		);
+	}
+
+	/**
+	 * AJAX handler for deactivating a license.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function ajax_deactivate() {
+		if ( ! $this->can_manage_license() ) {
+			wp_send_json_error(
+				array(
+					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+				)
+			);
+		}
+
+		$license_key  = filter_input( INPUT_POST, 'license', FILTER_SANITIZE_SPECIAL_CHARS );
+		$api_params   = array(
+			'edd_action' => 'deactivate_license',
+			'license'    => $license_key,
+			'item_id'    => $this->args['item_id'],
+		);
+		$api          = new \EasyDigitalDownloads\Updater\Requests\API( $this->args['api_url'] );
+		$license_data = $api->make_request( $api_params );
+
+		if ( empty( $license_data->success ) ) {
+			wp_send_json_error(
+				array(
+					'message' => wpautop( __( 'There was an error deactivating your license. Please try again.', 'edd-sl-sdk' ) ),
+				)
+			);
+		}
+
+		delete_option( $this->get_status_option_name() );
+
+		wp_send_json_success(
+			array(
+				'message' => wpautop( __( 'Your license was successfully deactivated.', 'easy-digital-downloads' ) ),
+				'actions' => $this->get_actions(),
+			)
+		);
+	}
+
+	/**
+	 * AJAX handler for deleting a license.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function ajax_delete() {
+		if ( ! $this->can_manage_license( 'edd_sl_sdk_license_handler-delete' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+				)
+			);
+		}
+
+		delete_option( $this->get_key_option_name() );
+
+		wp_send_json_success(
+			array(
+				'message' => wpautop( __( 'Your license was successfully deleted.', 'easy-digital-downloads' ) ),
+				'actions' => $this->get_actions(),
+			)
+		);
+	}
+
+	/**
 	 * Get the button parameters based on the status.
 	 *
-	 * @since 3.1.1
+	 * @since <next-version>
 	 * @param string $state
 	 * @return array
 	 */
@@ -123,5 +236,39 @@ class License {
 			'label'  => __( 'Activate', 'edd-sl-sdk' ),
 			'class'  => 'secondary',
 		);
+	}
+
+	/**
+	 * Whether the current user can manage the pass.
+	 * Checks the user capabilities, tokenizer, and nonce.
+	 *
+	 * @since <next-version>
+	 * @param string $nonce The name of the specific nonce to validate.
+	 * @return bool
+	 */
+	private function can_manage_license( $nonce_name = 'edd_sl_sdk_license_handler' ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		$token     = filter_input( INPUT_POST, 'token', FILTER_SANITIZE_SPECIAL_CHARS );
+		$timestamp = filter_input( INPUT_POST, 'timestamp', FILTER_SANITIZE_SPECIAL_CHARS );
+		if ( empty( $timestamp ) || empty( $token ) ) {
+			return false;
+		}
+
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_SPECIAL_CHARS );
+
+		return \EasyDigitalDownloads\Updater\Utilities\Tokenizer::is_token_valid( $token, $timestamp ) && wp_verify_nonce( $nonce, $nonce_name );
+	}
+
+	/**
+	 * Gets the status option name.
+	 *
+	 * @since <next-version>
+	 * @return string
+	 */
+	private function get_status_option_name() {
+		return ! empty( $this->args['option_name'] ) ? "{$this->args['option_name']}_status" : "{$this->slug}_license_status";
 	}
 }
