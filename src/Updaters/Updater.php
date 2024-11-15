@@ -14,6 +14,9 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyDigitalDownloads\Updater\Requests\API;
 
+/**
+ * Represents the updater class.
+ */
 abstract class Updater {
 
 	/**

@@ -68,11 +68,7 @@ class Theme extends Updater {
 	 * @return string
 	 */
 	protected function get_slug(): string {
-		if ( empty( $this->args['file'] ) ) {
-			return '';
-		}
-
-		return basename( dirname( $this->args['file'] ) );
+		return wp_get_theme()->get_template();
 	}
 
 	/**
@@ -82,11 +78,7 @@ class Theme extends Updater {
 	 * @return string
 	 */
 	protected function get_name(): string {
-		if ( empty( $this->args['file'] ) ) {
-			return '';
-		}
-
-		return plugin_basename( $this->args['file'] );
+		return $this->get_slug();
 	}
 
 	/**
@@ -123,6 +115,19 @@ class Theme extends Updater {
 	}
 
 	/**
+	 * Gets the defaults for an API request.
+	 *
+	 * @since <next-version>
+	 * @return array
+	 */
+	protected function get_api_request_defaults() {
+		$defaults        = parent::get_api_request_defaults();
+		$defaults['url'] = '';
+
+		return $defaults;
+	}
+
+	/**
 	 * Gets a limited set of data from the API response.
 	 * This is used for the update_plugins transient.
 	 *
@@ -135,19 +140,14 @@ class Theme extends Updater {
 			return false;
 		}
 
-		$limited_data               = new \stdClass();
-		$limited_data->slug         = $this->get_slug();
-		$limited_data->plugin       = $this->get_name();
-		$limited_data->url          = $version_info->url ?? '';
-		$limited_data->package      = $version_info->package ?? '';
-		$limited_data->icons        = $this->convert_object_to_array( $version_info->icons );
-		$limited_data->banners      = $this->convert_object_to_array( $version_info->banners );
-		$limited_data->new_version  = $version_info->new_version ?? '';
-		$limited_data->tested       = $version_info->tested ?? '';
-		$limited_data->requires     = $version_info->requires;
-		$limited_data->requires_php = $version_info->requires_php;
-
-		return $limited_data;
+		return array(
+			'theme'        => $this->get_slug(),
+			'new_version'  => $version_info->new_version,
+			'url'          => $this->args['url'],
+			'package'      => $version_info->package,
+			'requires'     => $version_info->requires,
+			'requires_php' => $version_info->requires_php,
+		);
 	}
 
 	/**

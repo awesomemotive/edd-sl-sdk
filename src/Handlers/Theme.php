@@ -78,6 +78,7 @@ class Theme extends Handler {
 			'license' => $license_key,
 			'item_id' => $this->args['item_id'],
 			'beta'    => false,
+			'url'     => $this->args['url'],
 		);
 
 		// Set up the updater.
@@ -154,12 +155,6 @@ class Theme extends Handler {
 			wp_send_json_error( 'No template provided.' );
 		}
 
-		// $args = array(
-		//  'item_id' => filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT ),
-		//  'slug'    => filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_SPECIAL_CHARS ),
-		//  'name'    => filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS ),
-		// );
-
 		$args            = $this->args;
 		$args['license'] = $this->license;
 		$args['name']    = filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS );
@@ -205,14 +200,6 @@ class Theme extends Handler {
 	 * @return string
 	 */
 	protected function get_slug(): string {
-		if ( empty( $this->args['file'] ) ) {
-			return '';
-		}
-
-		if ( ! $this->slug ) {
-			$this->slug = basename( dirname( $this->args['file'] ) );
-		}
-
-		return $this->slug;
+		return $this->args['id'];
 	}
 }

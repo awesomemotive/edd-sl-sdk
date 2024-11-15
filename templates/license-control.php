@@ -5,7 +5,7 @@
  * @var $args array
  */
 $name = $args['name'];
-if ( 'theme' === $args['type'] ) {
+if ( ! empty( $args['type'] ) && 'theme' === $args['type'] ) {
 	$name = wp_get_theme()->get( 'Name' );
 }
 ?>
