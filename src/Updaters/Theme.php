@@ -1,8 +1,6 @@
 <?php
 /**
- * Plugin class.
- *
- * @since <next-version>
+ * Theme updater class.
  *
  * @package EasyDigitalDownloads\Updater\Updaters
  */
@@ -13,9 +11,9 @@ namespace EasyDigitalDownloads\Updater\Updaters;
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
 /**
- * Represents the Plugin class for handling licensing.
+ * Represents the Theme class for handling licensing.
  */
-class Plugin extends Updater {
+class Theme extends Updater {
 
 	/**
 	 * Check for Updates at the defined API endpoint and modify the update array.
@@ -54,146 +52,13 @@ class Plugin extends Updater {
 	}
 
 	/**
-	 * Updates information on the "View version x.x details" page with custom data.
-	 *
-	 * @param mixed   $_data
-	 * @param string  $_action
-	 * @param object  $_args
-	 * @return object $_data
-	 */
-	public function plugins_api_filter( $_data, $_action = '', $_args = null ) {
-
-		if ( 'plugin_information' !== $_action ) {
-			return $_data;
-		}
-
-		if ( ! isset( $_args->slug ) || ( $_args->slug !== $this->get_slug() ) ) {
-			return $_data;
-		}
-
-		// Get the transient where we store the api request for this plugin for 3 hours.
-		$edd_api_request_transient = $this->get_cached_version_info();
-
-		// If we have no transient-saved value, run the API, set a fresh transient with the API value, and return that value too right now.
-		if ( empty( $edd_api_request_transient ) ) {
-
-			$api_response = $this->get_version_from_remote();
-
-			// Expires in 3 hours
-			$this->set_version_info_cache( $api_response );
-
-			if ( false !== $api_response ) {
-				$_data = $api_response;
-			}
-		} else {
-			$_data = $edd_api_request_transient;
-		}
-
-		// Convert sections into an associative array, since we're getting an object, but Core expects an array.
-		if ( isset( $_data->sections ) && ! is_array( $_data->sections ) ) {
-			$_data->sections = $this->convert_object_to_array( $_data->sections );
-		}
-
-		// Convert banners into an associative array, since we're getting an object, but Core expects an array.
-		if ( isset( $_data->banners ) && ! is_array( $_data->banners ) ) {
-			$_data->banners = $this->convert_object_to_array( $_data->banners );
-		}
-
-		// Convert icons into an associative array, since we're getting an object, but Core expects an array.
-		if ( isset( $_data->icons ) && ! is_array( $_data->icons ) ) {
-			$_data->icons = $this->convert_object_to_array( $_data->icons );
-		}
-
-		// Convert contributors into an associative array, since we're getting an object, but Core expects an array.
-		if ( isset( $_data->contributors ) && ! is_array( $_data->contributors ) ) {
-			$_data->contributors = $this->convert_object_to_array( $_data->contributors );
-		}
-
-		if ( ! isset( $_data->plugin ) ) {
-			$_data->plugin = $this->get_name();
-		}
-
-		if ( ! isset( $_data->version ) && ! empty( $_data->new_version ) ) {
-			$_data->version = $_data->new_version;
-		}
-
-		return $_data;
-	}
-
-	/**
-	 * Show the update notification on multisite subsites.
-	 *
-	 * @param string  $file
-	 * @param array   $plugin
-	 */
-	public function show_update_notification( $file, $plugin ) {
-
-		// Return early if in the network admin, or if this is not a multisite install.
-		if ( is_network_admin() || ! is_multisite() ) {
-			return;
-		}
-
-		// Allow single site admins to see that an update is available.
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			return;
-		}
-
-		if ( $this->get_name() !== $file ) {
-			return;
-		}
-
-		// Do not print any message if update does not exist.
-		$update_cache = get_site_transient( 'update_plugins' );
-
-		if ( ! isset( $update_cache->response[ $this->get_name() ] ) ) {
-			if ( ! is_object( $update_cache ) ) {
-				$update_cache = new stdClass();
-			}
-			$update_cache->response[ $this->get_name() ] = $this->get_repo_api_data();
-		}
-
-		// Return early if this plugin isn't in the transient->response or if the site is running the current or newer version of the plugin.
-		if ( empty( $update_cache->response[ $this->get_name() ] ) || version_compare( $this->version, $update_cache->response[ $this->get_name() ]->new_version, '>=' ) ) {
-			return;
-		}
-
-		printf(
-			'<tr class="plugin-update-tr %3$s" id="%1$s-update" data-slug="%1$s" data-plugin="%2$s">',
-			esc_attr( $this->get_slug() ),
-			esc_attr( $file ),
-			esc_attr( in_array( $this->get_name(), $this->get_active_plugins(), true ) ? 'active' : 'inactive' )
-		);
-
-		?>
-		<td colspan="3" class="plugin-update colspanchange">
-			<div class="update-message notice inline notice-warning notice-alt">
-				<p>
-					<?php
-					printf(
-						/* translators: the plugin name. */
-						esc_html__( 'There is a new version of %1$s available.', 'easy-digital-downloads' ),
-						esc_html( $plugin['Name'] )
-					);
-					echo wp_kses_post( $this->get_message( $update_cache, $file ) );
-					do_action( "in_plugin_update_message-{$file}", $plugin, $plugin );  // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-					?>
-				</p>
-			</div>
-		</td>
-		</tr>
-		<?php
-	}
-
-	/**
-	 * Adds the hooks for the plugin updater.
+	 * Adds the hooks for the updater.
 	 *
 	 * @since <next-version>
 	 * @return void
 	 */
 	protected function add_listeners(): void {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
-		add_filter( 'plugins_api', array( $this, 'plugins_api_filter' ), 10, 3 );
-		add_action( 'after_plugin_row', array( $this, 'show_update_notification' ), 10, 2 );
+		add_filter( 'pre_set_site_transient_update_themes', array( $this, 'check_update' ) );
 	}
 
 	/**

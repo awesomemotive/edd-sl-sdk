@@ -1,4 +1,11 @@
 <?php
+/**
+ * Updater class.
+ *
+ * @since <next-version>
+ *
+ * @package EasyDigitalDownloads\Updater\Updaters
+ */
 
 namespace EasyDigitalDownloads\Updater\Updaters;
 

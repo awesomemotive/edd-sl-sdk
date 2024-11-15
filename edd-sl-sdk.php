@@ -22,9 +22,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
 
-	add_action( 'plugins_loaded', array( '\\EasyDigitalDownloads\\Updater\\Versions', 'initialize_latest_version' ), 1, 0 );
+	add_action( 'after_setup_theme', array( '\\EasyDigitalDownloads\\Updater\\Versions', 'initialize_latest_version' ), 1, 0 );
 
-	add_action( 'plugins_loaded', 'edd_sl_sdk_register_1_0_0', 0, 0 ); // WRCS: DEFINED_VERSION.
+	add_action( 'after_setup_theme', 'edd_sl_sdk_register_1_0_0', 0, 0 ); // WRCS: DEFINED_VERSION.
 
 	// phpcs:disable Generic.Functions.OpeningFunctionBraceKernighanRitchie.ContentAfterBrace
 	/**
@@ -45,7 +45,7 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_a
 	}
 
 	// Support usage in themes - load this version if no plugin has loaded a version yet.
-	if ( did_action( 'plugins_loaded' ) && ! doing_action( 'plugins_loaded' ) && ! class_exists( '\\EasyDigitalDownloads\\Updater\\Registry', false ) ) {
+	if ( did_action( 'after_setup_theme' ) && ! doing_action( 'after_setup_theme' ) && ! class_exists( '\\EasyDigitalDownloads\\Updater\\Registry', false ) ) {
 		edd_sl_sdk_initialize_1_0_0(); // WRCS: DEFINED_VERSION.
 		EasyDigitalDownloads\Updater\Versions::initialize_latest_version();
 	}

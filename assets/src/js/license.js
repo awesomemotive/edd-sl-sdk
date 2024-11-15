@@ -47,12 +47,14 @@
 		btn.classList.add( 'updating-message' );
 
 		const data = {
-			action: ajaxAction,
 			token: btn.getAttribute( 'data-token' ),
 			timestamp: btn.getAttribute( 'data-timestamp' ),
 			nonce: btn.getAttribute( 'data-nonce' ),
 			license: $( '.edd-sl-sdk__license--input' ).value,
+			slug: $( '.edd-sl-sdk__license--input' ).getAttribute( 'data-slug' ),
 		};
+
+		data.action = ajaxAction + '_' + data.slug;
 
 		// AJAX request
 		fetch( ajaxurl, {
