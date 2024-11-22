@@ -73,7 +73,6 @@ class Theme extends Handler {
 		}
 
 		$args = array(
-			'file'    => $this->args['file'],
 			'version' => $this->args['version'],
 			'license' => $license_key,
 			'item_id' => $this->args['item_id'],

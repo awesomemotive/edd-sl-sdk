@@ -51,12 +51,16 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_a
 	}
 }
 
-// Plugin Folder Path.
+// Folder Path.
 if ( ! defined( 'EDD_SL_SDK_DIR' ) ) {
 	define( 'EDD_SL_SDK_DIR', plugin_dir_path( __FILE__ ) );
 }
 
-// Plugin Folder URL.
+// Folder URL, based on this file.
 if ( ! defined( 'EDD_SL_SDK_URL' ) ) {
-	define( 'EDD_SL_SDK_URL', plugin_dir_url( __FILE__ ) );
+	$prefix = isset( $_SERVER['HTTPS'] ) ? 'https' : 'http';
+	$suffix = str_replace( realpath( $_SERVER['DOCUMENT_ROOT'] ), '', realpath( __DIR__ ) );
+	$suffix = str_replace( '\\', '/', $suffix );
+
+	define( 'EDD_SL_SDK_URL', trailingslashit( $prefix . '://' . $_SERVER['HTTP_HOST'] . '/' . $suffix ) );
 }

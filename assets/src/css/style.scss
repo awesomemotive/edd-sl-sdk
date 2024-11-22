@@ -18,10 +18,15 @@
 		margin-left: 36px;
 		width: calc(100% - 36px);
 	}
+
+	@media only screen and (max-width: 960px) {
+		margin-left: 36px !important;
+		width: calc(100% - 36px) !important;
+	}
 }
 
 .edd-sdk-notice--overlay {
-	padding: 1em;
+	padding: 2em;
 	background: white;
 	border-radius: 4px;
 	border: 1px solid #ddd;

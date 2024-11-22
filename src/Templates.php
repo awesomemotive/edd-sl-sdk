@@ -25,6 +25,6 @@ class Templates {
 	 * @return string
 	 */
 	private static function get_templates_path() {
-		return apply_filters( 'edd_sl_sdk_templates_path', EDD_SL_SDK_DIR . 'templates/' );
+		return apply_filters( 'edd_sl_sdk_templates_path', trailingslashit( EDD_SL_SDK_DIR ) . 'templates/' );
 	}
 }
