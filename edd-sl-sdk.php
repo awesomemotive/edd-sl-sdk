@@ -53,14 +53,18 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_a
 
 // Folder Path.
 if ( ! defined( 'EDD_SL_SDK_DIR' ) ) {
-	define( 'EDD_SL_SDK_DIR', plugin_dir_path( __FILE__ ) );
+	define( 'EDD_SL_SDK_DIR', __DIR__ );
 }
 
 // Folder URL, based on this file.
 if ( ! defined( 'EDD_SL_SDK_URL' ) ) {
-	$prefix = isset( $_SERVER['HTTPS'] ) ? 'https' : 'http';
-	$suffix = str_replace( realpath( $_SERVER['DOCUMENT_ROOT'] ), '', realpath( __DIR__ ) );
-	$suffix = str_replace( '\\', '/', $suffix );
+	$is_https = ( ! empty( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] ) ||
+				( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] );
 
-	define( 'EDD_SL_SDK_URL', trailingslashit( $prefix . '://' . $_SERVER['HTTP_HOST'] . '/' . $suffix ) );
+	$protocol      = $is_https ? 'https' : 'http';
+	$relative_path = str_replace( realpath( $_SERVER['DOCUMENT_ROOT'] ), '', __DIR__ );
+	$relative_path = ltrim( str_replace( '\\', '/', $relative_path ), '/' );
+
+	$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+	define( 'EDD_SL_SDK_URL', trailingslashit( "$protocol://$host/$relative_path" ) );
 }
