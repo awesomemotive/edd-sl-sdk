@@ -17,10 +17,10 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
-// Include the autoloader.
-require_once __DIR__ . '/vendor/autoload.php';
-
 if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
+
+	// Include the autoloader.
+	require_once __DIR__ . '/vendor/autoload.php';
 
 	add_action( 'after_setup_theme', array( '\\EasyDigitalDownloads\\Updater\\Versions', 'initialize_latest_version' ), 1, 0 );
 
