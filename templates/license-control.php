@@ -8,6 +8,7 @@ $name = $args['name'];
 if ( ! empty( $args['type'] ) && 'theme' === $args['type'] ) {
 	$name = wp_get_theme()->get( 'Name' );
 }
+do_action( "edd_sl_sdk_license_control_before_{$args['id']}", $args );
 ?>
 <p>
 	<?php
@@ -24,3 +25,6 @@ if ( ! empty( $args['type'] ) && 'theme' === $args['type'] ) {
 	$args['license']->get_actions( true );
 	?>
 </div>
+
+<?php
+do_action( "edd_sl_sdk_license_control_after_{$args['id']}", $args );
