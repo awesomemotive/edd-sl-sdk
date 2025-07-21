@@ -16,7 +16,7 @@
     "url": "https://github.com/easydigitaldownloads/edd-sl-sdk/issues"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^16.0.0",
+    "@wordpress/scripts": "^30.19.0",
     "ignore-emit-webpack-plugin": "^2.0.6"
   },
   "scripts": {
