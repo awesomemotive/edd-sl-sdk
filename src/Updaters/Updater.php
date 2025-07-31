@@ -34,6 +34,13 @@ abstract class Updater {
 	protected $args = array();
 
 	/**
+	 * The file for the updater.
+	 *
+	 * @var string
+	 */
+	protected $file = '';
+
+	/**
 	 * The class constructor.
 	 *
 	 * @since <next-version>
@@ -42,6 +49,7 @@ abstract class Updater {
 	 */
 	public function __construct( $api_url, $args = array() ) {
 		$this->api_url = $api_url;
+		$this->file    = $args['file'];
 		$defaults      = $this->get_api_request_defaults();
 		$this->args    = array_merge( $defaults, array_intersect_key( $args, $defaults ) );
 		$this->add_listeners();

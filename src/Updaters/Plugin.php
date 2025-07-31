@@ -203,11 +203,11 @@ class Plugin extends Updater {
 	 * @return string
 	 */
 	protected function get_slug(): string {
-		if ( empty( $this->args['file'] ) ) {
+		if ( empty( $this->file ) ) {
 			return '';
 		}
 
-		return basename( dirname( $this->args['file'] ) );
+		return basename( dirname( $this->file ) );
 	}
 
 	/**
@@ -217,11 +217,11 @@ class Plugin extends Updater {
 	 * @return string
 	 */
 	protected function get_name(): string {
-		if ( empty( $this->args['file'] ) ) {
+		if ( empty( $this->file ) ) {
 			return '';
 		}
 
-		return plugin_basename( $this->args['file'] );
+		return plugin_basename( $this->file );
 	}
 
 	/**
