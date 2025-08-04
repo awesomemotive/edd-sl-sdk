@@ -72,13 +72,7 @@ class Theme extends Handler {
 			return;
 		}
 
-		$args = array(
-			'version' => $this->args['version'],
-			'license' => $license_key,
-			'item_id' => $this->args['item_id'],
-			'beta'    => false,
-			'url'     => $this->args['url'],
-		);
+		$args = $this->get_default_api_request_args();
 
 		// Set up the updater.
 		new ThemeUpdater(

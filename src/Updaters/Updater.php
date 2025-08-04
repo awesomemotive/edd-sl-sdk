@@ -98,14 +98,15 @@ abstract class Updater {
 	 */
 	protected function get_api_request_defaults() {
 		return array(
-			'edd_action'  => 'get_version',
-			'item_id'     => '',
-			'version'     => '',
-			'license'     => '',
-			'php_version' => phpversion(),
-			'wp_version'  => get_bloginfo( 'version' ),
-			'slug'        => $this->get_slug(),
-			'beta'        => false,
+			'edd_action'     => 'get_version',
+			'item_id'        => '',
+			'version'        => '',
+			'license'        => '',
+			'php_version'    => phpversion(),
+			'wp_version'     => get_bloginfo( 'version' ),
+			'slug'           => $this->get_slug(),
+			'beta'           => false,
+			'allow_tracking' => false,
 		);
 	}
 

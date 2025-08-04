@@ -50,10 +50,20 @@ class Handler {
 		add_action( 'wp_ajax_eddsdk_activate', array( $this, 'activate_license' ) );
 	}
 
+	/**
+	 * Loads the license control template.
+	 *
+	 * @since <next-version>
+	 */
 	public function setting() {
 		EasyDigitalDownloads\Updater\Templates::load( 'license-control' );
 	}
 
+	/**
+	 * Activates the license.
+	 *
+	 * @since <next-version>
+	 */
 	public function activate_license() {
 
 		if ( ! $this->can_manage() ) {
@@ -223,6 +233,12 @@ class Handler {
 		return Tokenizer::is_token_valid( $token, $timestamp ) && wp_verify_nonce( $_POST['nonce'], $nonce );
 	}
 
+	/**
+	 * Makes a remote request to the API.
+	 *
+	 * @since <next-version>
+	 * @return array
+	 */
 	private function make_remote_request() {
 		$api_handler = new API( $this->api_url );
 

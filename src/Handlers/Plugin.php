@@ -49,12 +49,11 @@ class Plugin extends Handler {
 			return;
 		}
 
-		$args = array(
-			'file'    => $this->args['file'],
-			'version' => $this->args['version'],
-			'license' => $license_key,
-			'item_id' => $this->args['item_id'],
-			'beta'    => false,
+		$args = wp_parse_args(
+			array(
+				'file' => $this->args['file'],
+			),
+			$this->get_default_api_request_args()
 		);
 
 		// Set up the updater.

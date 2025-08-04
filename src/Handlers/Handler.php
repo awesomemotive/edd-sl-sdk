@@ -152,6 +152,7 @@ abstract class Handler {
 		add_action( 'wp_ajax_edd_sl_sdk_deactivate_' . $slug, array( $this->license, 'ajax_deactivate' ) );
 		add_action( 'wp_ajax_edd_sl_sdk_activate_' . $slug, array( $this->license, 'ajax_activate' ) );
 		add_action( 'wp_ajax_edd_sl_sdk_delete_' . $slug, array( $this->license, 'ajax_delete' ) );
+		add_action( 'wp_ajax_edd_sl_sdk_update_tracking_' . $slug, array( $this->license, 'ajax_update_tracking' ) );
 	}
 
 	/**
@@ -166,6 +167,24 @@ abstract class Handler {
 			'nonce'        => wp_create_nonce( 'edd_sdk_notice' ),
 			'activating'   => esc_html__( 'Activating...', 'edd-sl-sdk' ),
 			'deactivating' => esc_html__( 'Deactivating...', 'edd-sl-sdk' ),
+			'error'        => esc_html__( 'An unknown error occurred.', 'edd-sl-sdk' ),
+		);
+	}
+
+	/**
+	 * Gets the default API request arguments.
+	 *
+	 * @since <next-version>
+	 * @return array
+	 */
+	protected function get_default_api_request_args() {
+		return array(
+			'version'        => $this->args['version'],
+			'license'        => $this->license->get_license_key(),
+			'item_id'        => $this->args['item_id'],
+			'beta'           => false,
+			'url'            => $this->args['url'],
+			'allow_tracking' => $this->license->get_allow_tracking(),
 		);
 	}
 }

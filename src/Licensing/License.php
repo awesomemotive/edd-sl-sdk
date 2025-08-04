@@ -4,8 +4,10 @@
  *
  * @since <next-version>
  *
- * @package EasyDigitalDownloads\Updater
- * @subpackage Licensing
+ * @package EasyDigitalDownloads\Updater\Licensing\License
+ * @copyright (c) 2025, Sandhills Development, LLC
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * @since <next-version>
  */
 
 namespace EasyDigitalDownloads\Updater\Licensing;
@@ -213,6 +215,65 @@ class License {
 				'actions' => $this->get_actions(),
 			)
 		);
+	}
+
+	/**
+	 * AJAX handler for updating data tracking preference.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function ajax_update_tracking() {
+		if ( ! $this->can_manage_license( 'edd_sl_sdk_data_tracking' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => wpautop( __( 'You do not have permission to manage this setting.', 'edd-sl-sdk' ) ),
+				)
+			);
+		}
+
+		$allow_tracking = filter_input( INPUT_POST, 'allow_tracking', FILTER_VALIDATE_BOOLEAN );
+
+		// Save the preference with timestamp
+		$option_name = $this->get_key_option_name() . '_allow_tracking';
+		$data        = array(
+			'allowed'   => $allow_tracking,
+			'timestamp' => time(),
+		);
+
+		update_option( $option_name, $data );
+
+		$message = $allow_tracking
+			? __( 'Data tracking has been enabled.', 'edd-sl-sdk' )
+			: __( 'Data tracking has been disabled.', 'edd-sl-sdk' );
+
+		wp_send_json_success(
+			array(
+				'message' => wpautop( $message ),
+			)
+		);
+	}
+
+	/**
+	 * Gets the allow tracking option name.
+	 *
+	 * @since <next-version>
+	 * @return string
+	 */
+	public function get_allow_tracking() {
+		$data = get_option( $this->get_key_option_name() . '_allow_tracking' );
+
+		// Handle legacy boolean values
+		if ( is_bool( $data ) ) {
+			return $data;
+		}
+
+		// Handle new array format with timestamp
+		if ( is_array( $data ) && isset( $data['allowed'] ) ) {
+			return $data['allowed'];
+		}
+
+		return false;
 	}
 
 	/**
