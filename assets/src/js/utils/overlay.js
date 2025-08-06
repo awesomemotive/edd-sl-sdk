@@ -42,18 +42,21 @@ if ( overlayNotice ) {
 	} );
 }
 
-// Convert NodeList to an array and iterate over each notice
-document.querySelectorAll( '.edd-sdk__notice__overlay' ).forEach( ( notice ) => {
-	notice.addEventListener( 'click', ( event ) => {
-		if ( event.target.classList.contains( 'edd-sdk__notice--dismiss' ) ) {
-			// Only prevent default behavior for buttons, not links.
-			if ( !event.target.href ) {
-				event.preventDefault();
-			}
-
-			triggerNoticeDismiss( overlayNoticeWrapper || notice );
+// Use event delegation for dismiss buttons on dynamically created overlays
+document.addEventListener( 'click', ( event ) => {
+	if ( ! event.target.classList.contains( 'edd-sdk__notice--dismiss' ) ) {
+		return;
+	}
+	// Find the closest overlay wrapper
+	const overlayWrapper = event.target.closest( '.edd-sdk__notice__overlay' );
+	if ( overlayWrapper ) {
+		// Only prevent default behavior for buttons, not links.
+		if ( !event.target.href ) {
+			event.preventDefault();
 		}
-	} );
+
+		triggerNoticeDismiss( overlayWrapper );
+	}
 } );
 
 /**
@@ -90,6 +93,11 @@ function triggerNoticeDismiss ( el ) {
 	el.addEventListener( 'transitionend', () => {
 		el.style.display = 'none';
 	}, { once: true } );
+
+	const overlay = document.querySelector( '.edd-sdk-notice--overlay' );
+	if ( overlay ) {
+		overlay.innerHTML = '';
+	}
 
 	// Trigger native custom event
 	document.dispatchEvent( new CustomEvent( 'edd_sdk_notice_dismiss', { detail: { notice: el } } ) );

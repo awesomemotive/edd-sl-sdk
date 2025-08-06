@@ -36,14 +36,23 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1.5em;
+	max-width: 500px;
 
 	button.edd-sdk__notice--dismiss {
 		position: absolute;
 		color: #555;
 		text-decoration: none;
 		font-size: 2em;
-		top: 0;
+		top: 0.5em;
 		right: 0.5em;
+		line-height: 1;
+		padding: 4px;
+
+		&:before {
+			font-family: dashicons;
+			font-weight: normal;
+			content: "\f335";
+		}
 	}
 
 	.inline-notice {
@@ -71,4 +80,8 @@
 	&__invalid {
 		color: #d63638;
 	}
+}
+
+.edd-sl-sdk__license-status-message {
+	font-style: italic;
 }

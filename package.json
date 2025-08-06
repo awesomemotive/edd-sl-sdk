@@ -5,7 +5,9 @@
   "author": "Easy Digital Downloads",
   "license": "GPL-3.0-or-later",
   "keywords": [
-    "wordpress", "edd", "licensing"
+    "wordpress",
+    "edd",
+    "licensing"
   ],
   "homepage": "https://github.com/easydigitaldownloads/edd-sl-sdk",
   "repository": {

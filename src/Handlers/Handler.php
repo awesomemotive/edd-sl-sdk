@@ -114,7 +114,6 @@ abstract class Handler {
 		ob_start();
 		?>
 		<button class="button-link edd-sdk__notice--dismiss">
-			×
 			<span class="screen-reader-text"><?php esc_html_e( 'Dismiss notice', 'edd-sl-sdk' ); ?></span>
 		</button>
 		<?php

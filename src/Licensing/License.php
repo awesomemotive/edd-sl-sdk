@@ -15,6 +15,11 @@ namespace EasyDigitalDownloads\Updater\Licensing;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * License class.
+ *
+ * @since <next-version>
+ */
 class License {
 
 	/**
@@ -140,7 +145,7 @@ class License {
 		}
 
 		update_option( $this->get_key_option_name(), $license_key );
-		update_option( $this->get_status_option_name(), $license_data->license );
+		update_option( $this->get_status_option_name(), $license_data );
 
 		wp_send_json_success(
 			array(
@@ -274,6 +279,32 @@ class License {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Gets the license status message.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function get_license_status_message() {
+		$status = get_option( $this->get_status_option_name() );
+		if ( empty( $status ) || empty( $status->license ) ) {
+			return;
+		}
+
+		$messages = new Messages(
+			array(
+				'status'      => $status->license,
+				'license_key' => $this->get_license_key(),
+				'expires'     => $status->expires,
+				'name'        => $status->item_name,
+			)
+		);
+		$message  = $messages->get_message();
+		if ( $message ) {
+			echo '<div class="edd-sl-sdk__license-status-message">' . wp_kses_post( wpautop( $message ) ) . '</div>';
+		}
 	}
 
 	/**

@@ -99,15 +99,16 @@
 	on( document, 'click', '.edd-sl-sdk-license__delete', function ( e ) {
 		e.preventDefault();
 
-		const btn = e.target;
-		const ajaxAction = 'edd_sl_sdk_delete';
+		const btn = e.target,
+			input = $( '.edd-sl-sdk__license--input' );
+		const ajaxAction = 'edd_sl_sdk_delete_' + input.getAttribute( 'data-slug' );
 
 		const data = {
 			action: ajaxAction,
 			token: btn.getAttribute( 'data-token' ),
 			timestamp: btn.getAttribute( 'data-timestamp' ),
 			nonce: btn.getAttribute( 'data-nonce' ),
-			license: $( '.edd-sl-sdk__license--input' ).value,
+			license: input.value,
 		};
 
 		if ( !data.license ) {
