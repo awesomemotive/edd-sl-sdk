@@ -21,6 +21,13 @@ defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 class API {
 
 	/**
+	 * The API URL.
+	 *
+	 * @var string
+	 */
+	private $api_url;
+
+	/**
 	 * The class constructor.
 	 *
 	 * @since <next-version>
