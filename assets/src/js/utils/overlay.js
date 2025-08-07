@@ -14,6 +14,7 @@ if ( overlayNotice ) {
 	document.addEventListener( 'click', ( event ) => {
 		if ( event.target.classList.contains( 'edd-sdk__notice__trigger' ) ) {
 			if ( event.target.classList.contains( 'edd-sdk__notice__trigger--ajax' ) ) {
+				event.target.disabled = true;
 				event.preventDefault();
 
 				const data = {
@@ -34,6 +35,7 @@ if ( overlayNotice ) {
 							overlayNoticeWrapper.classList.add( 'edd-sdk__notice--ajax' );
 						}
 						triggerNoticeEnter( overlayNoticeWrapper );
+						event.target.disabled = false;
 					} );
 			} else {
 				triggerNoticeEnter( overlayNoticeWrapper );

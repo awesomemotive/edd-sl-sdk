@@ -1,4 +1,4 @@
-@use 'toggle';
+@use "toggle";
 
 .edd-sdk__notice__overlay {
 	position: fixed;
@@ -24,6 +24,11 @@
 	@media only screen and (max-width: 960px) {
 		margin-left: 36px !important;
 		width: calc(100% - 36px) !important;
+	}
+
+	@media only screen and (max-width: 782px) {
+		margin-left: 0 !important;
+		width: 100% !important;
 	}
 }
 
@@ -58,6 +63,10 @@
 	.inline-notice {
 		margin: 1em 0 0;
 	}
+
+	@media only screen and (max-width: 782px) {
+		max-width: 100%;
+	}
 }
 
 .edd-sl-sdk__license-control {
@@ -67,6 +76,14 @@
 
 	button {
 		margin: 0 !important;
+	}
+
+	@media only screen and (max-width: 600px) {
+		flex-wrap: wrap;
+
+		input {
+			width: 100%;
+		}
 	}
 }
 
@@ -84,4 +101,9 @@
 
 .edd-sl-sdk__license-status-message {
 	font-style: italic;
+}
+
+.edd-sl-sdk-licensing__actions {
+	display: flex;
+	gap: 4px;
 }
