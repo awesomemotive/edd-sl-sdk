@@ -77,9 +77,10 @@ class License {
 	 * @return string
 	 */
 	public function get_actions( $should_echo = false ) {
-		$status    = get_option( $this->get_status_option_name() );
-		$button    = $this->get_button_args( $status );
-		$timestamp = time();
+		$license_data = get_option( $this->get_status_option_name() );
+		$status       = $license_data->license ?? 'inactive';
+		$button       = $this->get_button_args( $status );
+		$timestamp    = time();
 		if ( ! $should_echo ) {
 			ob_start();
 		}
@@ -361,6 +362,6 @@ class License {
 	 * @return string
 	 */
 	private function get_status_option_name() {
-		return ! empty( $this->args['option_name'] ) ? "{$this->args['option_name']}_status" : "{$this->slug}_license_status";
+		return ! empty( $this->args['option_name'] ) ? "{$this->args['option_name']}_license" : "{$this->slug}_license";
 	}
 }

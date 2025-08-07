@@ -26,14 +26,16 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_a
 
 	add_action( 'after_setup_theme', 'edd_sl_sdk_register_1_0_0', 0, 0 ); // WRCS: DEFINED_VERSION.
 
-	// phpcs:disable Generic.Functions.OpeningFunctionBraceKernighanRitchie.ContentAfterBrace
 	/**
 	 * Registers this version of Action Scheduler.
 	 */
 	function edd_sl_sdk_register_1_0_0() {
-		// WRCS: DEFINED_VERSION.
+		$version  = '1.0.0';
 		$versions = EasyDigitalDownloads\Updater\Versions::instance();
-		$versions->register( '1.0.0', 'edd_sl_sdk_initialize_1_0_0' ); // WRCS: DEFINED_VERSION.
+		$versions->register( $version, 'edd_sl_sdk_initialize_1_0_0' ); // WRCS: DEFINED_VERSION.
+		if ( ! defined( 'EDD_SL_SDK_VERSION' ) ) {
+			define( 'EDD_SL_SDK_VERSION', $version );
+		}
 	}
 
 	// phpcs:disable Generic.Functions.OpeningFunctionBraceKernighanRitchie.ContentAfterBrace

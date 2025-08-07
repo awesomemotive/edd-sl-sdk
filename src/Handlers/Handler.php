@@ -86,8 +86,8 @@ abstract class Handler {
 		?>
 		<div class="edd-sdk-notice--overlay"></div>
 		<?php
-		wp_enqueue_script( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/js/edd-sl-sdk.js', array(), '1.0.0', true );
-		wp_enqueue_style( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/css/style-edd-sl-sdk.css', array(), '1.0.0' );
+		wp_enqueue_script( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/js/edd-sl-sdk.js', array(), EDD_SL_SDK_VERSION, true );
+		wp_enqueue_style( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/css/style-edd-sl-sdk.css', array(), EDD_SL_SDK_VERSION );
 		wp_localize_script(
 			'edd-sdk-notice',
 			'edd_sdk_notice',
@@ -185,5 +185,23 @@ abstract class Handler {
 			'url'            => $this->args['url'],
 			'allow_tracking' => $this->license->get_allow_tracking(),
 		);
+	}
+
+	/**
+	 * Gets the slug for the API request.
+	 *
+	 * @since <next-version>
+	 * @return string
+	 */
+	protected function get_slug(): string {
+		if ( empty( $this->args['file'] ) ) {
+			return '';
+		}
+
+		if ( ! $this->slug ) {
+			$this->slug = basename( dirname( $this->args['file'] ) );
+		}
+
+		return $this->slug;
 	}
 }

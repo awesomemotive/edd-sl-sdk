@@ -74,7 +74,8 @@
 					}
 					if ( data.license.length && action === 'deactivate' ) {
 						$( '.edd-sl-sdk__license--input' ).removeAttribute( 'readonly' );
-					} else if ( action === 'activate' || action === 'verify' ) {
+						$( '.edd-sl-sdk__license-status-message' ).remove();
+					} else if ( action === 'activate' ) {
 						$( '.edd-sl-sdk__license--input' ).setAttribute( 'readonly', 'true' );
 						if ( res.data.url && res.data.url.length ) {
 							setTimeout( () => {
