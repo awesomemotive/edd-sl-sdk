@@ -147,7 +147,7 @@ class Plugin extends Updater {
 
 		if ( ! isset( $update_cache->response[ $this->get_name() ] ) ) {
 			if ( ! is_object( $update_cache ) ) {
-				$update_cache = new stdClass();
+				$update_cache = new \stdClass();
 			}
 			$update_cache->response[ $this->get_name() ] = $this->get_repo_api_data();
 		}
