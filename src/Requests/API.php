@@ -89,12 +89,49 @@ class API {
 	 * @return array
 	 */
 	private function get_body( array $api_params ) {
-		return wp_parse_args(
-			$api_params,
-			array(
-				'url' => rawurlencode( home_url() ),
-			)
+
+		/**
+		 * Filters the API parameters. The hook is specific to the API URL.
+		 * For example, if the API URL is https://example.com, the hook will be `edd_sl_sdk_api_params_example`.
+		 *
+		 * @since <next-version>
+		 * @param array $api_params The parameters for the specific request.
+		 * @param string $api_url The API URL.
+		 * @return array
+		 */
+		return apply_filters(
+			$this->get_api_filter_hook(),
+			wp_parse_args(
+				$api_params,
+				array(
+					'url'         => rawurlencode( home_url() ),
+					'environment' => wp_get_environment_type(),
+				)
+			),
+			$this->api_url
 		);
+	}
+
+	/**
+	 * Gets the API hook.
+	 *
+	 * @since <next-version>
+	 * @return string
+	 */
+	private function get_api_filter_hook() {
+		$url = wp_parse_url( $this->api_url );
+		if ( empty( $url['host'] ) ) {
+			return 'edd_sl_sdk_api_params';
+		}
+
+		$base = explode( '.', $url['host'] );
+
+		// If the base is a subdomain, use the main domain.
+		if ( count( $base ) > 2 ) {
+			$base = array_slice( $base, 1 );
+		}
+
+		return 'edd_sl_sdk_api_params_' . reset( $base );
 	}
 
 	/**
