@@ -62,7 +62,7 @@ class License {
 	 * Gets the license key option name.
 	 *
 	 * @since <next-version>
-	 * @return void
+	 * @return string
 	 */
 	public function get_key_option_name() {
 		return ! empty( $this->args['option_name'] ) ? $this->args['option_name'] : "{$this->slug}_license_key";
@@ -72,8 +72,7 @@ class License {
 	 * Gets the button for the pass field.
 	 *
 	 * @since <next-version>
-	 * @param string $status The pass status.
-	 * @param bool   $echo   Whether to echo the button.
+	 * @param bool $should_echo Whether to echo the button.
 	 * @return string
 	 */
 	public function get_actions( $should_echo = false ) {
