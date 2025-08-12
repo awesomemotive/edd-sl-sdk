@@ -59,9 +59,21 @@ class Registry extends \ArrayObject {
 	 * @return void
 	 */
 	private function add( array $integration ) {
-		if ( ! isset( $integration['id'] ) ) {
+		if ( empty( $integration['id'] ) ) {
 			throw new \InvalidArgumentException(
 				'The integration ID is required.'
+			);
+		}
+
+		if ( empty( $integration['url'] ) ) {
+			throw new \InvalidArgumentException(
+				'The integration URL is required.'
+			);
+		}
+
+		if ( empty( $integration['item_id'] ) ) {
+			throw new \InvalidArgumentException(
+				'The integration item ID is required.'
 			);
 		}
 

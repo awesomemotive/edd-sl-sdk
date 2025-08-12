@@ -92,7 +92,8 @@ class API {
 		return wp_parse_args(
 			$api_params,
 			array(
-				'url' => rawurlencode( home_url() ),
+				'url'         => rawurlencode( home_url() ),
+				'environment' => wp_get_environment_type(),
 			)
 		);
 	}
