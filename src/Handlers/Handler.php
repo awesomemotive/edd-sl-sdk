@@ -57,10 +57,11 @@ abstract class Handler {
 		$this->args         = wp_parse_args(
 			$args,
 			array(
-				'file'    => '',
-				'item_id' => false,
-				'version' => false,
-				'api_url' => $api_url,
+				'file'         => '',
+				'item_id'      => false,
+				'version'      => false,
+				'api_url'      => $api_url,
+				'weekly_check' => true,
 			)
 		);
 		$this->args['slug'] = $this->get_slug();
@@ -123,6 +124,36 @@ abstract class Handler {
 	}
 
 	/**
+	 * Checks the license weekly.
+	 *
+	 * @since <next-version>
+	 * @return void
+	 */
+	public function weekly_license_check() {
+		if ( ! defined( 'DOING_CRON' ) || ! DOING_CRON ) {
+			return;
+		}
+
+		if ( empty( $this->license->get_license_key() ) ) {
+			return;
+		}
+
+		$api_params   = wp_parse_args(
+			array(
+				'edd_action' => 'check_license',
+			),
+			$this->get_default_api_request_args()
+		);
+		$api          = new \EasyDigitalDownloads\Updater\Requests\API( $this->args['api_url'] );
+		$license_data = $api->make_request( $api_params );
+		if ( empty( $license_data->success ) ) {
+			return;
+		}
+
+		$this->license->save( $license_data );
+	}
+
+	/**
 	 * Initializes the auto updater.
 	 *
 	 * @since <next-version>
@@ -152,6 +183,12 @@ abstract class Handler {
 		add_action( 'wp_ajax_edd_sl_sdk_activate_' . $slug, array( $this->license, 'ajax_activate' ) );
 		add_action( 'wp_ajax_edd_sl_sdk_delete_' . $slug, array( $this->license, 'ajax_delete' ) );
 		add_action( 'wp_ajax_edd_sl_sdk_update_tracking_' . $slug, array( $this->license, 'ajax_update_tracking' ) );
+		if ( ! empty( $this->args['weekly_check'] ) ) {
+			if ( ! wp_next_scheduled( 'edd_sl_sdk_weekly_license_check_' . $slug ) ) {
+				wp_schedule_event( time(), 'weekly', 'edd_sl_sdk_weekly_license_check_' . $slug );
+			}
+			add_action( 'edd_sl_sdk_weekly_license_check_' . $slug, array( $this, 'weekly_license_check' ) );
+		}
 	}
 
 	/**
