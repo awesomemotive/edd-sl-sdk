@@ -146,7 +146,7 @@ class License {
 		}
 
 		update_option( $this->get_key_option_name(), $license_key );
-		update_option( $this->get_status_option_name(), $license_data );
+		$this->save( $license_data );
 
 		wp_send_json_success(
 			array(
@@ -309,6 +309,17 @@ class License {
 	}
 
 	/**
+	 * Saves the license data.
+	 *
+	 * @since <next-version>
+	 * @param \stdClass $license_data The license data.
+	 * @return void
+	 */
+	public function save( $license_data ) {
+		update_option( $this->get_status_option_name(), $license_data );
+	}
+
+	/**
 	 * Get the button parameters based on the status.
 	 *
 	 * @since <next-version>
@@ -361,7 +372,7 @@ class License {
 	 * @since <next-version>
 	 * @return string
 	 */
-	private function get_status_option_name() {
+	public function get_status_option_name() {
 		return ! empty( $this->args['option_name'] ) ? "{$this->args['option_name']}_license" : "{$this->slug}_license";
 	}
 }
