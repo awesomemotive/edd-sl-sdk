@@ -1,0 +1,163 @@
+# Copyright (C) 2025 Easy Digital Downloads
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: EDD SL SDK 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/edd-sl-sdk\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-08-19T17:45:21+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: edd-sl-sdk\n"
+
+#. Plugin Name of the plugin
+#: edd-sl-sdk.php
+msgid "EDD SL SDK"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: edd-sl-sdk.php
+msgid "https://easydigitaldownloads.com"
+msgstr ""
+
+#. Description of the plugin
+#: edd-sl-sdk.php
+msgid "The Software Licensing SDK for plugins and themes using Software Licensing."
+msgstr ""
+
+#. Author of the plugin
+#: edd-sl-sdk.php
+msgid "Easy Digital Downloads"
+msgstr ""
+
+#: src/Handlers/Handler.php:118
+msgid "Dismiss notice"
+msgstr ""
+
+#: src/Handlers/Handler.php:204
+msgid "Activating..."
+msgstr ""
+
+#: src/Handlers/Handler.php:205
+msgid "Deactivating..."
+msgstr ""
+
+#: src/Handlers/Handler.php:206
+msgid "An unknown error occurred."
+msgstr ""
+
+#: src/Handlers/Plugin.php:83
+msgid "Manage License"
+msgstr ""
+
+#: src/Handlers/Theme.php:50
+msgid "Theme License"
+msgstr ""
+
+#: src/Licensing/License.php:105
+msgid "Delete"
+msgstr ""
+
+#: src/Licensing/License.php:125
+#: src/Licensing/License.php:168
+#: src/Licensing/License.php:210
+msgid "You do not have permission to manage this license."
+msgstr ""
+
+#: src/Licensing/License.php:142
+msgid "There was an error activating your license. Please try again."
+msgstr ""
+
+#: src/Licensing/License.php:185
+msgid "There was an error deactivating your license. Please try again."
+msgstr ""
+
+#: src/Licensing/License.php:235
+msgid "You do not have permission to manage this setting."
+msgstr ""
+
+#: src/Licensing/License.php:252
+msgid "Data tracking has been enabled."
+msgstr ""
+
+#: src/Licensing/License.php:253
+msgid "Data tracking has been disabled."
+msgstr ""
+
+#: src/Licensing/License.php:332
+msgid "Deactivate"
+msgstr ""
+
+#: src/Licensing/License.php:339
+msgid "Activate"
+msgstr ""
+
+#. translators: 1: license expiration date.
+#: src/Licensing/Messages.php:94
+msgid "Your license key expired on %1$s. Please renew your license key."
+msgstr ""
+
+#: src/Licensing/Messages.php:101
+msgid "Your license key has been disabled."
+msgstr ""
+
+#: src/Licensing/Messages.php:105
+msgid "Invalid license. Please verify it."
+msgstr ""
+
+#: src/Licensing/Messages.php:109
+msgid "Your license key is not active for this URL."
+msgstr ""
+
+#. translators: the extension name.
+#: src/Licensing/Messages.php:119
+msgid "This appears to be an invalid license key for %s."
+msgstr ""
+
+#: src/Licensing/Messages.php:123
+msgid "This appears to be an invalid license key."
+msgstr ""
+
+#: src/Licensing/Messages.php:128
+msgid "Your license key has reached its activation limit."
+msgstr ""
+
+#: src/Licensing/Messages.php:132
+msgid "The key you entered belongs to a bundle, please use the product specific license key."
+msgstr ""
+
+#: src/Licensing/Messages.php:136
+msgid "Your license key has been deactivated."
+msgstr ""
+
+#: src/Licensing/Messages.php:144
+msgid "Unlicensed: currently not receiving updates."
+msgstr ""
+
+#: src/Licensing/Messages.php:159
+msgid "License key never expires."
+msgstr ""
+
+#. translators: the license expiration date.
+#: src/Licensing/Messages.php:165
+msgid "Your license key expires soon! It expires on %s."
+msgstr ""
+
+#. translators: the license expiration date.
+#: src/Licensing/Messages.php:172
+msgid "Your license key expires on %s."
+msgstr ""
+
+#. translators: %s: item name
+#: templates/license-control.php:18
+msgid "License key for %s:"
+msgstr ""
+
+#: templates/license-control.php:46
+msgid "Allow the licensing API to collect usage data about your site, such as the PHP and WordPress versions."
+msgstr ""
