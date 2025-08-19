@@ -49,7 +49,7 @@ abstract class Updater {
 	 */
 	public function __construct( $api_url, $args = array() ) {
 		$this->api_url = $api_url;
-		$this->file    = $args['file'];
+		$this->file    = $args['file'] ?? '';
 		$defaults      = $this->get_api_request_defaults();
 		$this->args    = array_merge( $defaults, array_intersect_key( $args, $defaults ) );
 		$this->add_listeners();
