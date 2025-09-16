@@ -71,6 +71,10 @@ add_action(
 		);
 	}
 );
+
+if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php' ) ) {
+	require_once __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php';
+}
 ```
 
 Theme:
@@ -89,6 +93,10 @@ add_action(
 		);
 	}
 );
+
+if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php' ) ) {
+	require_once __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php';
+}
 ```
 
 ### Arguments
