@@ -38,7 +38,7 @@ class Notices {
 	 * @since <next-version>
 	 * @param array $args The notice arguments.
 	 */
-	public static function add( array $args ) {
+	public function add( array $args ) {
 		$args = wp_parse_args(
 			$args,
 			array(
