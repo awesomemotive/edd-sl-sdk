@@ -111,21 +111,42 @@ if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sd
 
 ## Admin Notices
 
-The SDK includes a `Notices` class for displaying admin notices. To use it, create an instance and add notices:
+The SDK includes a `Notices` class for displaying admin notices.
+
+### Initialization
+
+First, initialize the notices system in your plugin (typically during `admin_init`):
 
 ```php
 use EasyDigitalDownloads\Updater\Admin\Notices;
 
-// Create notices instance
-$notices = new Notices();
+// Initialize notices rendering (typically in your plugin's main file or during admin_init)
+add_action( 'admin_init', function() {
+    new Notices();
+} );
+```
 
-// Add a notice
-$notices->add( array(
+### Adding Notices
+
+Once initialized, you can add notices statically from anywhere in your code:
+
+```php
+// Add a notice (static method)
+Notices::add( array(
     'id'      => 'my-notice-id',
     'type'    => 'success', // 'success', 'error', 'warning', 'info'
     'message' => 'Your license has been activated successfully!',
     'classes' => array( 'my-custom-class' ) // Optional additional CSS classes
 ) );
+
+// Example: Add notice from an action
+add_action( 'some_action', function() {
+    Notices::add( array(
+        'id'      => 'license-activated',
+        'type'    => 'success',
+        'message' => 'License activated successfully!',
+    ) );
+} );
 ```
 
-The notice will be automatically displayed on admin pages. The `Notices` class handles rendering and styling according to WordPress admin notice standards.
+The notices will be automatically displayed on admin pages. The `Notices` class handles rendering and styling according to WordPress admin notice standards.

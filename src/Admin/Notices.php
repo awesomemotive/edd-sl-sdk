@@ -26,10 +26,19 @@ class Notices {
 	private $notices = array();
 
 	/**
+	 * Static notices storage.
+	 *
+	 * @var array
+	 */
+	private static $static_notices = array();
+
+	/**
 	 * Notices constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'render' ), 100 );
+		// Merge static notices into instance notices for rendering
+		$this->notices = array_merge( $this->notices, self::$static_notices );
 	}
 
 	/**
@@ -38,7 +47,7 @@ class Notices {
 	 * @since <next-version>
 	 * @param array $args The notice arguments.
 	 */
-	public function add( array $args ) {
+	public static function add( array $args ) {
 		$args = wp_parse_args(
 			$args,
 			array(
@@ -62,7 +71,7 @@ class Notices {
 			$classes = array_merge( $classes, $args['classes'] );
 		}
 
-		$this->notices[ $args['id'] ] = array(
+		self::$static_notices[ $args['id'] ] = array(
 			'message' => $args['message'],
 			'classes' => $classes,
 		);
