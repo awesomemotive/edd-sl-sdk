@@ -111,27 +111,16 @@ if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sd
 
 ## Admin Notices
 
-The SDK includes a `Notices` class for displaying admin notices.
+The SDK includes a `Notices` class for displaying admin notices. The registry automatically handles instantiation, so you can use the static `add()` method directly.
 
-### Initialization
+### Adding Notices
 
-First, initialize the notices system in your plugin (typically during `admin_init`):
+You can add notices statically from anywhere in your code before the `admin_notices` hook fires at priority 100:
 
 ```php
 use EasyDigitalDownloads\Updater\Admin\Notices;
 
-// Initialize notices rendering (typically in your plugin's main file or during admin_init)
-add_action( 'admin_init', function() {
-    new Notices();
-} );
-```
-
-### Adding Notices
-
-Once initialized, you can add notices statically from anywhere in your code:
-
-```php
-// Add a notice (static method)
+// Basic usage - can be called from anywhere
 Notices::add( array(
     'id'      => 'my-notice-id',
     'type'    => 'success', // 'success', 'error', 'warning', 'info'
@@ -139,14 +128,32 @@ Notices::add( array(
     'classes' => array( 'my-custom-class' ) // Optional additional CSS classes
 ) );
 
-// Example: Add notice from an action
-add_action( 'some_action', function() {
+// Example: Add notice from an early hook (this works)
+add_action( 'admin_init', function() {
     Notices::add( array(
-        'id'      => 'license-activated',
-        'type'    => 'success',
-        'message' => 'License activated successfully!',
+        'id'      => 'early-notice',
+        'type'    => 'info',
+        'message' => 'Notice added during admin_init',
     ) );
 } );
+
+// Example: Add notice from admin_notices at lower priority (this works)
+add_action( 'admin_notices', function() {
+    Notices::add( array(
+        'id'      => 'priority-notice',
+        'type'    => 'warning',
+        'message' => 'Notice added at default priority (10)',
+    ) );
+}, 10 ); // Priority 10 runs before our render at priority 100
+
+// This would NOT work - priority 200 runs after our render at priority 100
+add_action( 'admin_notices', function() {
+    Notices::add( array(
+        'id'      => 'too-late-notice',
+        'type'    => 'error',
+        'message' => 'This notice will not display!',
+    ) );
+}, 200 ); // Too late - render already happened at priority 100
 ```
 
-The notices will be automatically displayed on admin pages. The `Notices` class handles rendering and styling according to WordPress admin notice standards.
+The notices will be automatically displayed on admin pages. The registry takes care of instantiating the `Notices` class, and the `Notices` class handles rendering and styling according to WordPress admin notice standards.

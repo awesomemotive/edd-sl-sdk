@@ -23,22 +23,13 @@ class Notices {
 	 *
 	 * @var array
 	 */
-	private $notices = array();
-
-	/**
-	 * Static notices storage.
-	 *
-	 * @var array
-	 */
-	private static $static_notices = array();
+	private static $notices = array();
 
 	/**
 	 * Notices constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'render' ), 100 );
-		// Merge static notices into instance notices for rendering
-		$this->notices = array_merge( $this->notices, self::$static_notices );
 	}
 
 	/**
@@ -71,7 +62,7 @@ class Notices {
 			$classes = array_merge( $classes, $args['classes'] );
 		}
 
-		self::$static_notices[ $args['id'] ] = array(
+		self::$notices[ $args['id'] ] = array(
 			'message' => $args['message'],
 			'classes' => $classes,
 		);
@@ -81,11 +72,11 @@ class Notices {
 	 * Render the notices.
 	 */
 	public function render() {
-		if ( empty( $this->notices ) ) {
+		if ( empty( self::$notices ) ) {
 			return;
 		}
 
-		foreach ( $this->notices as $id => $args ) {
+		foreach ( self::$notices as $id => $args ) {
 			?>
 			<div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( implode( ' ', $args['classes'] ) ); ?>">
 				<p><?php echo wp_kses_post( $args['message'] ); ?></p>
