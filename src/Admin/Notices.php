@@ -23,7 +23,7 @@ class Notices {
 	 *
 	 * @var array
 	 */
-	private $notices = array();
+	private static $notices = array();
 
 	/**
 	 * Notices constructor.
@@ -62,7 +62,7 @@ class Notices {
 			$classes = array_merge( $classes, $args['classes'] );
 		}
 
-		$this->notices[ $args['id'] ] = array(
+		self::$notices[ $args['id'] ] = array(
 			'message' => $args['message'],
 			'classes' => $classes,
 		);
@@ -72,11 +72,11 @@ class Notices {
 	 * Render the notices.
 	 */
 	public function render() {
-		if ( empty( $this->notices ) ) {
+		if ( empty( self::$notices ) ) {
 			return;
 		}
 
-		foreach ( $this->notices as $id => $args ) {
+		foreach ( self::$notices as $id => $args ) {
 			?>
 			<div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( implode( ' ', $args['classes'] ) ); ?>">
 				<p><?php echo wp_kses_post( $args['message'] ); ?></p>

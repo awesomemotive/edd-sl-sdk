@@ -108,3 +108,52 @@ if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sd
 - `file` - The main plugin file. Not needed for themes.
 - `type` - `plugin` or `theme`. Not needed for plugins.
 - `weekly_check` - Optional: whether to make a weekly request to confirm the license status. Defaults to true.
+
+## Admin Notices
+
+The SDK includes a `Notices` class for displaying admin notices. The registry automatically handles instantiation, so you can use the static `add()` method directly.
+
+### Adding Notices
+
+You can add notices statically from anywhere in your code before the `admin_notices` hook fires at priority 100:
+
+```php
+use EasyDigitalDownloads\Updater\Admin\Notices;
+
+// Basic usage - can be called from anywhere
+Notices::add( array(
+    'id'      => 'my-notice-id',
+    'type'    => 'success', // 'success', 'error', 'warning', 'info'
+    'message' => 'Your license has been activated successfully!',
+    'classes' => array( 'my-custom-class' ) // Optional additional CSS classes
+) );
+
+// Example: Add notice from an early hook (this works)
+add_action( 'admin_init', function() {
+    Notices::add( array(
+        'id'      => 'early-notice',
+        'type'    => 'info',
+        'message' => 'Notice added during admin_init',
+    ) );
+} );
+
+// Example: Add notice from admin_notices at lower priority (this works)
+add_action( 'admin_notices', function() {
+    Notices::add( array(
+        'id'      => 'priority-notice',
+        'type'    => 'warning',
+        'message' => 'Notice added at default priority (10)',
+    ) );
+}, 10 ); // Priority 10 runs before our render at priority 100
+
+// This would NOT work - priority 200 runs after our render at priority 100
+add_action( 'admin_notices', function() {
+    Notices::add( array(
+        'id'      => 'too-late-notice',
+        'type'    => 'error',
+        'message' => 'This notice will not display!',
+    ) );
+}, 200 ); // Too late - render already happened at priority 100
+```
+
+The notices will be automatically displayed on admin pages. The registry takes care of instantiating the `Notices` class, and the `Notices` class handles rendering and styling according to WordPress admin notice standards.
