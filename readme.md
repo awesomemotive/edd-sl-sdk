@@ -38,7 +38,7 @@ The SDK handles all the complex licensing logic behind the scenes:
 
 You can run the SDK as a standalone plugin on your site, or install it as a Composer package in your theme or plugin:
 
-```
+```json
 {
   "name": "edd/edd-sample-plugin",
   "license": "GPL-2.0-or-later",
@@ -52,6 +52,7 @@ You can run the SDK as a standalone plugin on your site, or install it as a Comp
     "easy-digital-downloads/edd-sl-sdk": "1.0.0"
   }
 }
+```
 
 ### Example Usage
 
@@ -78,7 +79,7 @@ if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sd
 ```
 
 Theme:
-```
+```php
 add_action(
 	'edd_sl_sdk_registry',
 	function ( $init ) {
