@@ -120,40 +120,15 @@ You can add notices statically from anywhere in your code before the `admin_noti
 ```php
 use EasyDigitalDownloads\Updater\Admin\Notices;
 
-// Basic usage - can be called from anywhere
-Notices::add( array(
-    'id'      => 'my-notice-id',
-    'type'    => 'success', // 'success', 'error', 'warning', 'info'
-    'message' => 'Your license has been activated successfully!',
-    'classes' => array( 'my-custom-class' ) // Optional additional CSS classes
-) );
-
-// Example: Add notice from an early hook (this works)
-add_action( 'admin_init', function() {
-    Notices::add( array(
-        'id'      => 'early-notice',
-        'type'    => 'info',
-        'message' => 'Notice added during admin_init',
-    ) );
-} );
-
-// Example: Add notice from admin_notices at lower priority (this works)
+// Add notice using admin_notices hook with translation-ready strings
 add_action( 'admin_notices', function() {
     Notices::add( array(
-        'id'      => 'priority-notice',
-        'type'    => 'warning',
-        'message' => 'Notice added at default priority (10)',
+        'id'      => 'my-plugin-license-activated',
+        'type'    => 'success', // 'success', 'error', 'warning', 'info'
+        'message' => __( 'Your license has been activated successfully!', 'my-plugin-textdomain' ),
+        'classes' => array( 'my-custom-class' ) // Optional additional CSS classes
     ) );
 }, 10 ); // Priority 10 runs before our render at priority 100
-
-// This would NOT work - priority 200 runs after our render at priority 100
-add_action( 'admin_notices', function() {
-    Notices::add( array(
-        'id'      => 'too-late-notice',
-        'type'    => 'error',
-        'message' => 'This notice will not display!',
-    ) );
-}, 200 ); // Too late - render already happened at priority 100
 ```
 
 The notices will be automatically displayed on admin pages. The registry takes care of instantiating the `Notices` class, and the `Notices` class handles rendering and styling according to WordPress admin notice standards.
