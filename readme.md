@@ -109,3 +109,27 @@ if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sd
 - `file` - The main plugin file. Not needed for themes.
 - `type` - `plugin` or `theme`. Not needed for plugins.
 - `weekly_check` - Optional: whether to make a weekly request to confirm the license status. Defaults to true.
+
+## Admin Notices
+
+The SDK includes a `Notices` class for displaying admin notices. The registry automatically handles instantiation, so you can use the static `add()` method directly.
+
+### Adding Notices
+
+You can add notices statically from anywhere in your code before the `admin_notices` hook fires at priority 100:
+
+```php
+use EasyDigitalDownloads\Updater\Admin\Notices;
+
+// Add notice using admin_notices hook with translation-ready strings
+add_action( 'admin_notices', function() {
+    Notices::add( array(
+        'id'      => 'my-plugin-license-activated',
+        'type'    => 'success', // 'success', 'error', 'warning', 'info'
+        'message' => __( 'Your license has been activated successfully!', 'my-plugin-textdomain' ),
+        'classes' => array( 'my-custom-class' ) // Optional additional CSS classes
+    ) );
+}, 10 ); // Priority 10 runs before our render at priority 100
+```
+
+The notices will be automatically displayed on admin pages. The registry takes care of instantiating the `Notices` class, and the `Notices` class handles rendering and styling according to WordPress admin notice standards.
