@@ -3,7 +3,7 @@
  * Registry.
  *
  * @package EasyDigitalDownloads\Updater
- * @since <next-version>
+ * @since 1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater;
@@ -23,7 +23,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Gets the instance.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return Registry
 	 */
 	public static function instance() {
@@ -39,7 +39,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Registers an integration.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $integration
 	 * @return void
 	 */
@@ -54,7 +54,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Adds an integration.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $integration
 	 * @return void
 	 */
@@ -104,7 +104,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Gets the integrations.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	private function get_integrations() {

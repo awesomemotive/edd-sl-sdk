@@ -2,12 +2,12 @@
 /**
  * License status message class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Licensing\Messages
  * @copyright (c) 2025, Sandhills Development, LLC
  * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since <next-version>
+ * @since 1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater\Licensing;
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * License status message class.
  *
- * @since <next-version>
+ * @since 1.0.0
  */
 class Messages {
 
@@ -46,7 +46,7 @@ class Messages {
 	/**
 	 * Constructor.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $license_data The license data.
 	 */
 	public function __construct( $license_data = array() ) {
@@ -72,7 +72,7 @@ class Messages {
 	/**
 	 * Gets the appropriate licensing message from an array of license data.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_message() {
@@ -82,7 +82,7 @@ class Messages {
 	/**
 	 * Builds the message based on the license data.
 	 *
-	 * @sinc <next-version>
+	 * @sinc 1.0.0
 	 * @return string
 	 */
 	private function build_message() {
@@ -151,7 +151,7 @@ class Messages {
 	/**
 	 * Gets the message text for a valid license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	private function get_valid_message() {

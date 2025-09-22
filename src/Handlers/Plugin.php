@@ -2,7 +2,7 @@
 /**
  * Plugin handler.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Handlers
  */
@@ -25,7 +25,7 @@ class Plugin extends Handler {
 	/**
 	 * Adds the listeners for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function add_listeners(): void {
@@ -66,7 +66,7 @@ class Plugin extends Handler {
 	/**
 	 * Adds the activation link to the plugin list.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array  $actions     The plugin actions.
 	 * @param string $plugin_file The plugin file.
 	 * @param array  $plugin_data The plugin data.
@@ -114,7 +114,7 @@ class Plugin extends Handler {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {

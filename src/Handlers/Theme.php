@@ -2,7 +2,7 @@
 /**
  * Theme handler.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Handlers
  */
@@ -22,7 +22,7 @@ class Theme extends Handler {
 	/**
 	 * Adds the listeners for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function add_listeners(): void {
@@ -32,7 +32,7 @@ class Theme extends Handler {
 	/**
 	 * Adds the menu item.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function add_menu() {
@@ -106,7 +106,7 @@ class Theme extends Handler {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {

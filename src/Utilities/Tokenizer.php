@@ -5,10 +5,10 @@
  * A class for generating tokens as an alternative to nonce verification.
  * This is designed to work a little better with full page caching.
  *
- * @package   easy-digital-downloads
+ * @package   EasyDigitalDownloads\Updater\Utilities
  * @copyright Copyright (c) 2021, Sandhills Development, LLC
  * @license   GPL2+
- * @since     2.11
+ * @since     1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater\Utilities;
@@ -35,7 +35,7 @@ class Tokenizer {
 	/**
 	 * Retrieves the signing key.
 	 *
-	 * @since 2.11
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -51,7 +51,7 @@ class Tokenizer {
 	/**
 	 * Generates and saves a new signing key.
 	 *
-	 * @since 2.11
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -76,7 +76,7 @@ class Tokenizer {
 	/**
 	 * Generates a token from the data.
 	 *
-	 * @since 2.11
+	 * @since 1.0.0
 	 *
 	 * @return string|false
 	 */
@@ -88,7 +88,7 @@ class Tokenizer {
 	 * Determines whether or not the supplied token is valid for the
 	 * supplied data.
 	 *
-	 * @since 2.11
+	 * @since 1.0.0
 	 *
 	 * @param string           $token Token to check.
 	 * @param string|int|float $data  Data that's been tokenized.
@@ -104,7 +104,7 @@ class Tokenizer {
 	/**
 	 * Generates a token for the supplied data.
 	 *
-	 * @since 2.11
+	 * @since 1.0.0
 	 *
 	 * @param string|int|float $data
 	 *

@@ -7,7 +7,7 @@
  * @package   easy-digital-downloads-updater
  * @copyright Copyright (c) 2024, Easy Digital Downloads, LLC
  * @license   GPLv2 or later
- * @since     <next-version>
+ * @since     1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater\Requests;
@@ -30,7 +30,7 @@ class API {
 	/**
 	 * The class constructor.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param null|string $url Optional; used only for requests to non-EDD sites.
 	 */
 	public function __construct( $url ) {
@@ -40,7 +40,7 @@ class API {
 	/**
 	 * Gets the API URL.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_url() {
@@ -50,7 +50,7 @@ class API {
 	/**
 	 * Makes a request to the Software Licensing API.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $api_params The parameters for the API request.
 	 * @return false|stdClass
 	 */
@@ -94,7 +94,7 @@ class API {
 		 * Filters the API parameters. The hook is specific to the API URL.
 		 * For example, if the API URL is https://example.com, the hook will be `edd_sl_sdk_api_params_example`.
 		 *
-		 * @since <next-version>
+		 * @since 1.0.0
 		 * @param array $api_params The parameters for the specific request.
 		 * @param string $api_url The API URL.
 		 * @return array
@@ -115,7 +115,7 @@ class API {
 	/**
 	 * Gets the API hook.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	private function get_api_filter_hook() {
@@ -137,7 +137,7 @@ class API {
 	/**
 	 * Determines if a request has recently failed.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 *
 	 * @return bool
 	 */
@@ -169,7 +169,7 @@ class API {
 	 * will be allowed again. This way if the site is down for some reason we don't bombard
 	 * it with failed API requests.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 */
 	private function log_failed_request() {
 		update_option( $this->get_failed_request_cache_key(), strtotime( '+1 hour' ), false );
@@ -178,7 +178,7 @@ class API {
 	/**
 	 * Retrieves the cache key for the failed requests option.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string The cache key for failed requests.
 	 */
 	private function get_failed_request_cache_key() {

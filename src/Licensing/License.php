@@ -2,12 +2,12 @@
 /**
  * License class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Licensing\License
  * @copyright (c) 2025, Sandhills Development, LLC
  * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since <next-version>
+ * @since 1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater\Licensing;
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * License class.
  *
- * @since <next-version>
+ * @since 1.0.0
  */
 class License {
 
@@ -39,7 +39,7 @@ class License {
 	/**
 	 * The class constructor.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param string $slug The slug.
 	 * @param array  $args The arguments.
 	 */
@@ -51,7 +51,7 @@ class License {
 	/**
 	 * Get the license key.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_license_key() {
@@ -61,7 +61,7 @@ class License {
 	/**
 	 * Gets the license key option name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_key_option_name() {
@@ -71,7 +71,7 @@ class License {
 	/**
 	 * Gets the button for the pass field.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param bool $should_echo Whether to echo the button.
 	 * @return string
 	 */
@@ -115,7 +115,7 @@ class License {
 	/**
 	 * AJAX handler for activating a license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_activate() {
@@ -158,7 +158,7 @@ class License {
 	/**
 	 * AJAX handler for deactivating a license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_deactivate() {
@@ -200,7 +200,7 @@ class License {
 	/**
 	 * AJAX handler for deleting a license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_delete() {
@@ -225,7 +225,7 @@ class License {
 	/**
 	 * AJAX handler for updating data tracking preference.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_update_tracking() {
@@ -262,7 +262,7 @@ class License {
 	/**
 	 * Gets the allow tracking option name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_allow_tracking() {
@@ -284,7 +284,7 @@ class License {
 	/**
 	 * Gets the license status message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function get_license_status_message() {
@@ -310,7 +310,7 @@ class License {
 	/**
 	 * Saves the license data.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param \stdClass $license_data The license data.
 	 * @return void
 	 */
@@ -321,7 +321,7 @@ class License {
 	/**
 	 * Get the button parameters based on the status.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param string $state
 	 * @return array
 	 */
@@ -345,7 +345,7 @@ class License {
 	 * Whether the current user can manage the pass.
 	 * Checks the user capabilities, tokenizer, and nonce.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param string $nonce The name of the specific nonce to validate.
 	 * @return bool
 	 */
@@ -368,7 +368,7 @@ class License {
 	/**
 	 * Gets the status option name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_status_option_name() {

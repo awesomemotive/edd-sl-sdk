@@ -21,7 +21,7 @@ class Templates {
 	/**
 	 * Get the templates path.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	private static function get_templates_path() {

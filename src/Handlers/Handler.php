@@ -2,7 +2,7 @@
 /**
  * Handler class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater
  * @subpackage Handlers
@@ -48,7 +48,7 @@ abstract class Handler {
 	/**
 	 * The class constructor.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param string $api_url The URL for the API.
 	 * @param array  $args    Optional; used only for requests to non-EDD sites.
 	 */
@@ -75,7 +75,7 @@ abstract class Handler {
 	/**
 	 * Outputs the license modal.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function license_modal() {
@@ -99,7 +99,7 @@ abstract class Handler {
 	/**
 	 * AJAX handler for getting a notice.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_get_license_overlay() {
@@ -126,7 +126,7 @@ abstract class Handler {
 	/**
 	 * Checks the license weekly.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function weekly_license_check() {
@@ -156,7 +156,7 @@ abstract class Handler {
 	/**
 	 * Initializes the auto updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	abstract public function auto_updater();
@@ -164,7 +164,7 @@ abstract class Handler {
 	/**
 	 * Adds the listeners for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	abstract protected function add_listeners(): void;
@@ -172,7 +172,7 @@ abstract class Handler {
 	/**
 	 * Adds the listeners used by all handlers.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	private function add_general_listeners() {
@@ -194,7 +194,7 @@ abstract class Handler {
 	/**
 	 * Gets the localization arguments.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	protected function get_localization_args() {
@@ -210,7 +210,7 @@ abstract class Handler {
 	/**
 	 * Gets the default API request arguments.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	protected function get_default_api_request_args() {
@@ -227,7 +227,7 @@ abstract class Handler {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {
