@@ -2,7 +2,7 @@
 /**
  * Notices class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater
  * @subpackage Admin
@@ -35,7 +35,7 @@ class Notices {
 	/**
 	 * Add a notice.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $args The notice arguments.
 	 */
 	public static function add( array $args ) {

@@ -54,7 +54,7 @@ class Theme extends Updater {
 	/**
 	 * Adds the hooks for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function add_listeners(): void {
@@ -64,7 +64,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {
@@ -74,7 +74,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the name for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_name(): string {
@@ -117,7 +117,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the defaults for an API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	protected function get_api_request_defaults() {
@@ -131,7 +131,7 @@ class Theme extends Updater {
 	 * Gets a limited set of data from the API response.
 	 * This is used for the update_plugins transient.
 	 *
-	 * @since 3.2.10
+	 * @since 1.0.0
 	 * @return \stdClass|false
 	 */
 	private function get_limited_data() {
@@ -186,7 +186,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the plugin's tested version.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param object $version_info The version info.
 	 * @return null|string
 	 */
@@ -221,7 +221,7 @@ class Theme extends Updater {
 	 * Some data like sections, banners, and icons are expected to be an associative array, however due to the JSON
 	 * decoding, they are objects. This method allows us to pass in the object and return an associative array.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param stdClass $data The data to convert.
 	 * @return array
 	 */
@@ -240,7 +240,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the changelog link.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param object $update_cache The update cache.
 	 * @return string
 	 */
