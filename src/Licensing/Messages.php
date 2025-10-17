@@ -155,22 +155,30 @@ class Messages {
 	 * @return string
 	 */
 	private function get_valid_message() {
-		if ( ! empty( $this->license_data['expires'] ) && 'lifetime' === $this->license_data['expires'] ) {
-			return __( 'License key never expires.', 'edd-sl-sdk' );
-		}
+	if ( ! empty( $this->license_data['expires'] ) && 'lifetime' === $this->license_data['expires'] ) {
+		return __( 'License key never expires.', 'edd-sl-sdk' );
+	}
 
-		if ( ( $this->expiration > $this->now ) && ( $this->expiration - $this->now < ( DAY_IN_SECONDS * 30 ) ) ) {
-			return sprintf(
-				/* translators: the license expiration date. */
-				__( 'Your license key expires soon! It expires on %s.', 'edd-sl-sdk' ),
-				edd_date_i18n( $this->expiration )
-			);
-		}
+	// Ensure expiration is numeric timestamp
+	$expiration_time = $this->expiration;
+	if ( is_numeric( $expiration_time ) ) {
+		$expiration_time = date_i18n( get_option( 'date_format' ), $expiration_time );
+	} elseif ( ! empty( $expiration_time ) ) {
+		$expiration_time = edd_date_i18n( strtotime( $expiration_time ) );
+	} else {
+		$expiration_time = __( 'unknown date', 'edd-sl-sdk' );
+	}
 
+	if ( ( $this->expiration > $this->now ) && ( $this->expiration - $this->now < ( DAY_IN_SECONDS * 30 ) ) ) {
 		return sprintf(
-			/* translators: the license expiration date. */
-			__( 'Your license key expires on %s.', 'edd-sl-sdk' ),
-			edd_date_i18n( $this->expiration )
+			__( 'Your license key expires soon! It expires on %s.', 'edd-sl-sdk' ),
+			$expiration_time
 		);
 	}
+
+	return sprintf(
+		__( 'Your license key expires on %s.', 'edd-sl-sdk' ),
+		$expiration_time
+	);
+}
 }
