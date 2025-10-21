@@ -153,7 +153,7 @@ class Plugin extends Updater {
 		}
 
 		// Return early if this plugin isn't in the transient->response or if the site is running the current or newer version of the plugin.
-		if ( empty( $update_cache->response[ $this->get_name() ] ) || version_compare( $this->version, $update_cache->response[ $this->get_name() ]->new_version, '>=' ) ) {
+		if ( empty( $update_cache->response[ $this->get_name() ] ) || version_compare( $this->get_version(), $update_cache->response[ $this->get_name() ]->new_version, '>=' ) ) {
 			return;
 		}
 
@@ -227,7 +227,7 @@ class Plugin extends Updater {
 	/**
 	 * Gets the current version information from the remote site.
 	 *
-	 * @return array|false
+	 * @return stdClass|false
 	 */
 	protected function get_version_from_remote() {
 

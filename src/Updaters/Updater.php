@@ -82,7 +82,7 @@ abstract class Updater {
 	/**
 	 * Gets the current version information from the remote site.
 	 *
-	 * @return array|false
+	 * @return stdClass|false
 	 */
 	protected function get_version_from_remote() {
 		$api_handler = new API( $this->api_url );
