@@ -92,7 +92,7 @@ class Messages {
 				$message = sprintf(
 					/* translators: 1: license expiration date. */
 					__( 'Your license key expired on %1$s. Please renew your license key.', 'edd-sl-sdk' ),
-					edd_date_i18n( $this->expiration )
+					$this->get_date( $this->expiration )
 				);
 				break;
 
@@ -163,14 +163,29 @@ class Messages {
 			return sprintf(
 				/* translators: the license expiration date. */
 				__( 'Your license key expires soon! It expires on %s.', 'edd-sl-sdk' ),
-				edd_date_i18n( $this->expiration )
+				$this->get_date( $this->expiration )
 			);
 		}
 
 		return sprintf(
 			/* translators: the license expiration date. */
 			__( 'Your license key expires on %s.', 'edd-sl-sdk' ),
-			edd_date_i18n( $this->expiration )
+			$this->get_date( $this->expiration )
 		);
+	}
+
+	/**
+	 * Gets a date in the current locale.
+	 *
+	 * @since <next-version>
+	 * @param int $timestamp The timestamp to format.
+	 * @return string
+	 */
+	private function get_date( $timestamp ) {
+		if ( is_numeric( $timestamp ) ) {
+			return date_i18n( get_option( 'date_format' ), $timestamp );
+		}
+
+		return __( 'Unknown date', 'edd-sl-sdk' );
 	}
 }
