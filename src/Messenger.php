@@ -569,14 +569,17 @@ class Messenger {
 	 * @return string
 	 */
 	public function get_view_details_or_update_link( string $new_version, string $changelog_link, string $update_link, string $file ): string {
-		return sprintf(
-			/* translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate 4. opening anchor tag, do not translate 5. closing anchor tag, do not translate */
-			__( '%1$sView version %2$s details%3$s or %4$supdate now%5$s.', $this->text_domain ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
-			'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
-			esc_html( $new_version ),
-			'</a>',
-			'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
-			'</a>'
+		return $this->filter_string(
+			sprintf(
+				/* translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate 4. opening anchor tag, do not translate 5. closing anchor tag, do not translate */
+				__( '%1$sView version %2$s details%3$s or %4$supdate now%5$s.', $this->text_domain ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
+				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
+				esc_html( $new_version ),
+				'</a>',
+				'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
+				'</a>'
+			),
+			'view_details_or_update_link'
 		);
 	}
 
