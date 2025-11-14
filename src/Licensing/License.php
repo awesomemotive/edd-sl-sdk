@@ -37,15 +37,28 @@ class License {
 	private $args;
 
 	/**
+	 * The messenger instance.
+	 *
+	 * @var \EasyDigitalDownloads\Updater\Messenger
+	 */
+	private $messenger;
+
+	/**
 	 * The class constructor.
 	 *
 	 * @since 1.0.0
-	 * @param string $slug The slug.
-	 * @param array  $args The arguments.
+	 * @param string                                       $slug      The slug.
+	 * @param array                                        $args      The arguments.
+	 * @param \EasyDigitalDownloads\Updater\Messenger|null $messenger Optional; the messenger instance for translations.
 	 */
-	public function __construct( $slug, $args ) {
+	public function __construct( $slug, $args, $messenger = null ) {
 		$this->slug = $slug;
 		$this->args = $args;
+
+		// Set messenger instance, falling back to default if not provided.
+		$this->messenger = $messenger instanceof \EasyDigitalDownloads\Updater\Messenger
+			? $messenger
+			: new \EasyDigitalDownloads\Updater\Messenger();
 	}
 
 	/**
@@ -102,7 +115,7 @@ class License {
 					data-token="<?php echo esc_attr( \EasyDigitalDownloads\Updater\Utilities\Tokenizer::tokenize( $timestamp ) ); ?>"
 					data-nonce="<?php echo esc_attr( wp_create_nonce( 'edd_sl_sdk_license_handler-delete' ) ); ?>"
 				>
-					<?php esc_html_e( 'Delete', 'edd-sl-sdk' ); ?>
+					<?php echo esc_html( $this->messenger->get_delete_button_label() ); ?>
 				</button>
 			<?php endif; ?>
 		</div>
@@ -122,7 +135,7 @@ class License {
 		if ( ! $this->can_manage_license() ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_message() ),
 				)
 			);
 		}
@@ -139,7 +152,7 @@ class License {
 		if ( empty( $license_data->success ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'There was an error activating your license. Please try again.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_activation_error_message() ),
 				)
 			);
 		}
@@ -149,7 +162,7 @@ class License {
 
 		wp_send_json_success(
 			array(
-				'message' => wpautop( __( 'Your license was successfully activated.', 'easy-digital-downloads' ) ),
+				'message' => wpautop( $this->messenger->get_activation_success_message() ),
 				'actions' => $this->get_actions(),
 			)
 		);
@@ -165,7 +178,7 @@ class License {
 		if ( ! $this->can_manage_license() ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_message() ),
 				)
 			);
 		}
@@ -182,7 +195,7 @@ class License {
 		if ( empty( $license_data->success ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'There was an error deactivating your license. Please try again.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_deactivation_error_message() ),
 				)
 			);
 		}
@@ -191,7 +204,7 @@ class License {
 
 		wp_send_json_success(
 			array(
-				'message' => wpautop( __( 'Your license was successfully deactivated.', 'easy-digital-downloads' ) ),
+				'message' => wpautop( $this->messenger->get_deactivation_success_message() ),
 				'actions' => $this->get_actions(),
 			)
 		);
@@ -207,7 +220,7 @@ class License {
 		if ( ! $this->can_manage_license( 'edd_sl_sdk_license_handler-delete' ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_message() ),
 				)
 			);
 		}
@@ -216,7 +229,7 @@ class License {
 
 		wp_send_json_success(
 			array(
-				'message' => wpautop( __( 'Your license was successfully deleted.', 'easy-digital-downloads' ) ),
+				'message' => wpautop( $this->messenger->get_deletion_success_message() ),
 				'actions' => $this->get_actions(),
 			)
 		);
@@ -232,7 +245,7 @@ class License {
 		if ( ! $this->can_manage_license( 'edd_sl_sdk_data_tracking' ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this setting.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_setting_message() ),
 				)
 			);
 		}
@@ -249,8 +262,8 @@ class License {
 		update_option( $option_name, $data );
 
 		$message = $allow_tracking
-			? __( 'Data tracking has been enabled.', 'edd-sl-sdk' )
-			: __( 'Data tracking has been disabled.', 'edd-sl-sdk' );
+			? $this->messenger->get_tracking_enabled_message()
+			: $this->messenger->get_tracking_disabled_message();
 
 		wp_send_json_success(
 			array(
@@ -299,7 +312,8 @@ class License {
 				'license_key' => $this->get_license_key(),
 				'expires'     => $status->expires,
 				'name'        => $status->item_name,
-			)
+			),
+			$this->messenger
 		);
 		$message  = $messages->get_message();
 		if ( $message ) {
@@ -329,14 +343,14 @@ class License {
 		if ( in_array( $state, array( 'valid', 'active' ), true ) ) {
 			return array(
 				'action' => 'deactivate',
-				'label'  => __( 'Deactivate', 'edd-sl-sdk' ),
+				'label'  => $this->messenger->get_deactivate_button_label(),
 				'class'  => 'secondary',
 			);
 		}
 
 		return array(
 			'action' => 'activate',
-			'label'  => __( 'Activate', 'edd-sl-sdk' ),
+			'label'  => $this->messenger->get_activate_button_label(),
 			'class'  => 'secondary',
 		);
 	}
