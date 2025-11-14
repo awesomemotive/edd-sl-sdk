@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.0.0
  */
 class License {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The slug.
@@ -37,13 +38,6 @@ class License {
 	private $args;
 
 	/**
-	 * The messenger instance.
-	 *
-	 * @var \EasyDigitalDownloads\Updater\Messenger
-	 */
-	private $messenger;
-
-	/**
 	 * The class constructor.
 	 *
 	 * @since 1.0.0
@@ -56,9 +50,7 @@ class License {
 		$this->args = $args;
 
 		// Set messenger instance, falling back to default if not provided.
-		$this->messenger = $messenger instanceof \EasyDigitalDownloads\Updater\Messenger
-			? $messenger
-			: new \EasyDigitalDownloads\Updater\Messenger();
+		$this->messenger = $this->get_messenger( $messenger );
 	}
 
 	/**

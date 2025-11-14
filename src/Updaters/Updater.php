@@ -18,6 +18,7 @@ use EasyDigitalDownloads\Updater\Requests\API;
  * Represents the updater class.
  */
 abstract class Updater {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The URL for the API.
@@ -41,13 +42,6 @@ abstract class Updater {
 	protected $file = '';
 
 	/**
-	 * The messenger instance.
-	 *
-	 * @var \EasyDigitalDownloads\Updater\Messenger
-	 */
-	protected $messenger;
-
-	/**
 	 * The class constructor.
 	 *
 	 * @since 1.0.0
@@ -62,9 +56,7 @@ abstract class Updater {
 		$this->args    = array_merge( $defaults, array_intersect_key( $args, $defaults ) );
 
 		// Set messenger instance, falling back to default if not provided.
-		$this->messenger = $messenger instanceof \EasyDigitalDownloads\Updater\Messenger
-			? $messenger
-			: new \EasyDigitalDownloads\Updater\Messenger();
+		$this->messenger = $this->get_messenger( $messenger );
 
 		$this->add_listeners();
 	}

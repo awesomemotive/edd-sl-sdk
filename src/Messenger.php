@@ -43,26 +43,6 @@ class Messenger {
 		return $this->text_domain;
 	}
 
-	/**
-	 * Applies the translation filter to a string.
-	 *
-	 * @since <next-version>
-	 * @param string $text_string The translated string.
-	 * @param string $key         The string key/identifier.
-	 * @return string
-	 */
-	protected function filter_string( string $text_string, string $key ): string {
-		/**
-		 * Filters a translated string.
-		 *
-		 * @since <next-version>
-		 * @param string $text_string The translated string.
-		 * @param string $key         The string key/identifier.
-		 * @param string $text_domain The text domain being used.
-		 */
-		return apply_filters( 'edd_sl_sdk_translate_string', $text_string, $key, $this->text_domain );
-	}
-
 	// ==========================================================================
 	// License Status Messages
 	// ==========================================================================
@@ -598,5 +578,25 @@ class Messenger {
 			'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
 			'</a>'
 		);
+	}
+
+	/**
+	 * Applies the translation filter to a string.
+	 *
+	 * @since <next-version>
+	 * @param string $text_string The translated string.
+	 * @param string $key         The string key/identifier.
+	 * @return string
+	 */
+	protected function filter_string( string $text_string, string $key ): string {
+		/**
+		 * Filters a translated string.
+		 *
+		 * @since <next-version>
+		 * @param string $text_string The translated string.
+		 * @param string $key         The string key/identifier.
+		 * @param string $text_domain The text domain being used.
+		 */
+		return apply_filters( 'edd_sl_sdk_translate_string', $text_string, $key, $this->text_domain );
 	}
 }

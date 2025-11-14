@@ -16,6 +16,7 @@ defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 use EasyDigitalDownloads\Updater\Licensing\License;
 
 abstract class Handler {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The URL for the API.
@@ -46,13 +47,6 @@ abstract class Handler {
 	protected $license;
 
 	/**
-	 * The messenger instance.
-	 *
-	 * @var \EasyDigitalDownloads\Updater\Messenger
-	 */
-	protected $messenger;
-
-	/**
 	 * The class constructor.
 	 *
 	 * @since 1.0.0
@@ -75,9 +69,7 @@ abstract class Handler {
 		$this->args['slug'] = $this->get_slug();
 
 		// Set messenger instance, falling back to default if not provided.
-		$this->messenger = $messenger instanceof \EasyDigitalDownloads\Updater\Messenger
-			? $messenger
-			: new \EasyDigitalDownloads\Updater\Messenger();
+		$this->messenger = $this->get_messenger( $messenger );
 
 		$this->license = new License( $this->args['slug'], $this->args, $this->messenger );
 

@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.0.0
  */
 class Messages {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The array of license data.
@@ -42,13 +43,6 @@ class Messages {
 	 * @var int
 	 */
 	private $now;
-
-	/**
-	 * The messenger instance.
-	 *
-	 * @var \EasyDigitalDownloads\Updater\Messenger
-	 */
-	private $messenger;
 
 	/**
 	 * Constructor.
@@ -77,9 +71,7 @@ class Messages {
 		}
 
 		// Set messenger instance, falling back to default if not provided.
-		$this->messenger = $messenger instanceof \EasyDigitalDownloads\Updater\Messenger
-			? $messenger
-			: new \EasyDigitalDownloads\Updater\Messenger();
+		$this->messenger = $this->get_messenger( $messenger );
 	}
 
 	/**
