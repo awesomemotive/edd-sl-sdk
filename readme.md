@@ -264,6 +264,11 @@ For fine-grained control without creating a custom class, use the `edd_sl_sdk_tr
 
 ```php
 add_filter( 'edd_sl_sdk_translate_string', function( $string, $key, $text_domain ) {
+	// Don't translate others' strings.
+	if ( 'my-text-domain' !== $text_domain ) {
+		return $string;
+	}
+
 	// Customize specific strings by their key
 	if ( 'activate_button' === $key ) {
 		return __( 'Enable License', 'my-plugin' );
