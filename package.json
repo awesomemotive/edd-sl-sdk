@@ -18,7 +18,7 @@
     "url": "https://github.com/easydigitaldownloads/edd-sl-sdk/issues"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^30.21.0",
+    "@wordpress/scripts": "^31.0.0",
     "mini-css-extract-plugin": "^2.9.4",
     "path": "^0.12.7",
     "webpack-fix-style-only-entries": "^0.6.1"
