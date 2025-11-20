@@ -169,11 +169,7 @@ class Plugin extends Updater {
 			<div class="update-message notice inline notice-warning notice-alt">
 				<p>
 					<?php
-					printf(
-						/* translators: the plugin name. */
-						esc_html__( 'There is a new version of %1$s available.', 'easy-digital-downloads' ),
-						esc_html( $plugin['Name'] )
-					);
+					echo esc_html( $this->messenger->get_new_version_available_message( $plugin['Name'] ) );
 					echo wp_kses_post( $this->get_message( $update_cache, $file ) );
 					do_action( "in_plugin_update_message-{$file}", $plugin, $plugin );  // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 					?>
@@ -417,17 +413,15 @@ class Plugin extends Updater {
 	 */
 	private function get_message( $update_cache, $file ) {
 		if ( ! current_user_can( 'update_plugins' ) ) {
-			return ' ' . esc_html__( 'Contact your network administrator to install the update.', 'easy-digital-downloads' );
+			return ' ' . esc_html( $this->messenger->get_contact_admin_message() );
 		}
 
 		$changelog_link = $this->get_changelog_link( $update_cache );
 		if ( empty( $update_cache->response[ $this->get_name() ]->package ) && ! empty( $changelog_link ) ) {
 			return ' ' . sprintf(
-				/* translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate. */
-				__( '%1$sView version %2$s details%3$s.', 'easy-digital-downloads' ),
-				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
-				esc_html( $update_cache->response[ $this->get_name() ]->new_version ),
-				'</a>'
+				'<a target="_blank" class="thickbox open-plugin-details-modal" href="%1$s">%2$s</a>',
+				esc_url( $changelog_link ),
+				esc_html( $this->messenger->get_view_details_link( $update_cache->response[ $this->get_name() ]->new_version ) )
 			);
 		}
 
@@ -440,21 +434,13 @@ class Plugin extends Updater {
 		);
 
 		if ( ! empty( $changelog_link ) ) {
-			return ' ' . sprintf(
-				__( '%1$sView version %2$s details%3$s or %4$supdate now%5$s.', 'easy-digital-downloads' ),
-				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
-				esc_html( $update_cache->response[ $this->get_name() ]->new_version ),
-				'</a>',
-				'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
-				'</a>'
-			);
+			return ' ' . $this->messenger->get_view_details_or_update_link( $update_cache->response[ $this->get_name() ]->new_version, $changelog_link, $update_link, $file );
 		}
 
 		return sprintf(
-			' %1$s%2$s%3$s',
-			'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
-			esc_html__( 'Update now.', 'easy-digital-downloads' ),
-			'</a>'
+			' <a target="_blank" class="update-link" href="%1$s">%2$s</a>',
+			esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ),
+			esc_html( $this->messenger->get_update_now_text() )
 		);
 	}
 }

@@ -59,7 +59,8 @@ class Plugin extends Handler {
 		// Set up the updater.
 		new PluginUpdater(
 			$this->api_url,
-			$args
+			$args,
+			$this->messenger
 		);
 	}
 
@@ -80,7 +81,7 @@ class Plugin extends Handler {
 			'<button type="button" class="button-link edd-sdk__notice__trigger edd-sdk__notice__trigger--ajax" data-id="license-control" data-product="%1$s" data-slug="%2$s" data-name="%4$s">%3$s</button>',
 			$this->args['item_id'],
 			$this->args['slug'],
-			__( 'Manage License', 'edd-sl-sdk' ),
+			$this->messenger->get_manage_license_link_label(),
 			$plugin_data['Name']
 		);
 

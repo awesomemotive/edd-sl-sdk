@@ -16,6 +16,7 @@ defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 use EasyDigitalDownloads\Updater\Licensing\License;
 
 abstract class Handler {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The URL for the API.
@@ -49,10 +50,11 @@ abstract class Handler {
 	 * The class constructor.
 	 *
 	 * @since 1.0.0
-	 * @param string $api_url The URL for the API.
-	 * @param array  $args    Optional; used only for requests to non-EDD sites.
+	 * @param string                                       $api_url   The URL for the API.
+	 * @param array                                        $args      Optional; used only for requests to non-EDD sites.
+	 * @param \EasyDigitalDownloads\Updater\Messenger|null $messenger Optional; the messenger instance for translations.
 	 */
-	public function __construct( string $api_url, array $args = array() ) {
+	public function __construct( string $api_url, array $args = array(), $messenger = null ) {
 		$this->api_url      = $api_url;
 		$this->args         = wp_parse_args(
 			$args,
@@ -66,7 +68,10 @@ abstract class Handler {
 		);
 		$this->args['slug'] = $this->get_slug();
 
-		$this->license = new License( $this->args['slug'], $this->args );
+		// Set messenger instance, falling back to default if not provided.
+		$this->messenger = $this->get_messenger( $messenger );
+
+		$this->license = new License( $this->args['slug'], $this->args, $this->messenger );
 
 		$this->add_listeners();
 		$this->add_general_listeners();
@@ -108,14 +113,15 @@ abstract class Handler {
 			wp_send_json_error( 'No template provided.' );
 		}
 
-		$args            = $this->args;
-		$args['license'] = $this->license;
-		$args['name']    = filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS );
+		$args              = $this->args;
+		$args['license']   = $this->license;
+		$args['name']      = filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS );
+		$args['messenger'] = $this->messenger;
 
 		ob_start();
 		?>
 		<button class="button-link edd-sdk__notice--dismiss">
-			<span class="screen-reader-text"><?php esc_html_e( 'Dismiss notice', 'edd-sl-sdk' ); ?></span>
+			<span class="screen-reader-text"><?php echo esc_html( $this->messenger->get_dismiss_notice_text() ); ?></span>
 		</button>
 		<?php
 		\EasyDigitalDownloads\Updater\Templates::load( $template, $args );
@@ -201,9 +207,9 @@ abstract class Handler {
 		return array(
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
 			'nonce'        => wp_create_nonce( 'edd_sdk_notice' ),
-			'activating'   => esc_html__( 'Activating...', 'edd-sl-sdk' ),
-			'deactivating' => esc_html__( 'Deactivating...', 'edd-sl-sdk' ),
-			'error'        => esc_html__( 'An unknown error occurred.', 'edd-sl-sdk' ),
+			'activating'   => esc_html( $this->messenger->get_activating_text() ),
+			'deactivating' => esc_html( $this->messenger->get_deactivating_text() ),
+			'error'        => esc_html( $this->messenger->get_unknown_error_text() ),
 		);
 	}
 

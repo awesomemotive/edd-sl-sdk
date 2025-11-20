@@ -18,6 +18,7 @@ use EasyDigitalDownloads\Updater\Requests\API;
  * Represents the updater class.
  */
 abstract class Updater {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The URL for the API.
@@ -44,14 +45,19 @@ abstract class Updater {
 	 * The class constructor.
 	 *
 	 * @since 1.0.0
-	 * @param string $api_url The URL for the API.
-	 * @param array  $args    Optional; used only for requests to non-EDD sites.
+	 * @param string                                       $api_url   The URL for the API.
+	 * @param array                                        $args      Optional; used only for requests to non-EDD sites.
+	 * @param \EasyDigitalDownloads\Updater\Messenger|null $messenger Optional; the messenger instance for translations.
 	 */
-	public function __construct( $api_url, $args = array() ) {
+	public function __construct( $api_url, $args = array(), $messenger = null ) {
 		$this->api_url = $api_url;
 		$this->file    = $args['file'] ?? '';
 		$defaults      = $this->get_api_request_defaults();
 		$this->args    = array_merge( $defaults, array_intersect_key( $args, $defaults ) );
+
+		// Set messenger instance, falling back to default if not provided.
+		$this->messenger = $this->get_messenger( $messenger );
+
 		$this->add_listeners();
 	}
 
