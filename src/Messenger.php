@@ -6,7 +6,7 @@
  * Plugin and theme developers can extend this class to provide their own
  * translations with their own text domains.
  *
- * @since <next-version>
+ * @since 1.0.1
  *
  * @package EasyDigitalDownloads\Updater
  * @copyright (c) 2025, Sandhills Development, LLC
@@ -21,14 +21,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Messenger class.
  *
- * @since <next-version>
+ * @since 1.0.1
  */
 class Messenger {
 
 	/**
 	 * The text domain to use for translations.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @var string
 	 */
 	protected $text_domain = 'edd-sl-sdk';
@@ -36,7 +36,7 @@ class Messenger {
 	/**
 	 * Gets the text domain.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_text_domain(): string {
@@ -50,7 +50,7 @@ class Messenger {
 	/**
 	 * Gets the message for an expired license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $date The expiration date.
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class Messenger {
 	/**
 	 * Gets the message for a disabled/revoked license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_disabled_message(): string {
@@ -79,7 +79,7 @@ class Messenger {
 	/**
 	 * Gets the message for a missing license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_missing_message(): string {
@@ -91,7 +91,7 @@ class Messenger {
 	/**
 	 * Gets the message for an inactive site.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_site_inactive_message(): string {
@@ -103,7 +103,7 @@ class Messenger {
 	/**
 	 * Gets the message for an invalid license with item name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $item_name The item name.
 	 * @return string
 	 */
@@ -120,7 +120,7 @@ class Messenger {
 	/**
 	 * Gets the message for an invalid license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_invalid_message(): string {
@@ -132,7 +132,7 @@ class Messenger {
 	/**
 	 * Gets the message for no activations left.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_no_activations_message(): string {
@@ -144,7 +144,7 @@ class Messenger {
 	/**
 	 * Gets the message for a bundle license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_bundle_message(): string {
@@ -156,7 +156,7 @@ class Messenger {
 	/**
 	 * Gets the message for a deactivated license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_deactivated_message(): string {
@@ -168,7 +168,7 @@ class Messenger {
 	/**
 	 * Gets the message for an unlicensed product.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_unlicensed_message(): string {
@@ -180,7 +180,7 @@ class Messenger {
 	/**
 	 * Gets the message for a lifetime license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_license_lifetime_message(): string {
@@ -192,7 +192,7 @@ class Messenger {
 	/**
 	 * Gets the message for a license expiring soon.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $date The expiration date.
 	 * @return string
 	 */
@@ -209,7 +209,7 @@ class Messenger {
 	/**
 	 * Gets the message for a valid license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $date The expiration date.
 	 * @return string
 	 */
@@ -226,7 +226,7 @@ class Messenger {
 	/**
 	 * Gets the message for an unknown date.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_unknown_date_message(): string {
@@ -242,7 +242,7 @@ class Messenger {
 	/**
 	 * Gets the label for the Activate button.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_activate_button_label(): string {
@@ -254,7 +254,7 @@ class Messenger {
 	/**
 	 * Gets the label for the Deactivate button.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_deactivate_button_label(): string {
@@ -266,7 +266,7 @@ class Messenger {
 	/**
 	 * Gets the label for the Delete button.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_delete_button_label(): string {
@@ -282,7 +282,7 @@ class Messenger {
 	/**
 	 * Gets the permission denied message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_permission_denied_message(): string {
@@ -294,7 +294,7 @@ class Messenger {
 	/**
 	 * Gets the permission denied message for settings.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_permission_denied_setting_message(): string {
@@ -306,7 +306,7 @@ class Messenger {
 	/**
 	 * Gets the activation error message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_activation_error_message(): string {
@@ -318,7 +318,7 @@ class Messenger {
 	/**
 	 * Gets the activation success message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_activation_success_message(): string {
@@ -330,7 +330,7 @@ class Messenger {
 	/**
 	 * Gets the deactivation error message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_deactivation_error_message(): string {
@@ -342,7 +342,7 @@ class Messenger {
 	/**
 	 * Gets the deactivation success message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_deactivation_success_message(): string {
@@ -354,7 +354,7 @@ class Messenger {
 	/**
 	 * Gets the deletion success message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_deletion_success_message(): string {
@@ -366,7 +366,7 @@ class Messenger {
 	/**
 	 * Gets the tracking enabled message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_tracking_enabled_message(): string {
@@ -378,7 +378,7 @@ class Messenger {
 	/**
 	 * Gets the tracking disabled message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_tracking_disabled_message(): string {
@@ -394,7 +394,7 @@ class Messenger {
 	/**
 	 * Gets the activating text for JavaScript.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_activating_text(): string {
@@ -406,7 +406,7 @@ class Messenger {
 	/**
 	 * Gets the deactivating text for JavaScript.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_deactivating_text(): string {
@@ -418,7 +418,7 @@ class Messenger {
 	/**
 	 * Gets the unknown error text for JavaScript.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_unknown_error_text(): string {
@@ -430,7 +430,7 @@ class Messenger {
 	/**
 	 * Gets the dismiss notice screen reader text.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_dismiss_notice_text(): string {
@@ -446,7 +446,7 @@ class Messenger {
 	/**
 	 * Gets the license key label for a specific item.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $name The item name.
 	 * @return string
 	 */
@@ -463,7 +463,7 @@ class Messenger {
 	/**
 	 * Gets the data tracking checkbox label.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_data_tracking_label(): string {
@@ -475,7 +475,7 @@ class Messenger {
 	/**
 	 * Gets the menu label for managing theme license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_theme_license_menu_label(): string {
@@ -487,7 +487,7 @@ class Messenger {
 	/**
 	 * Gets the link label for managing plugin license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_manage_license_link_label(): string {
@@ -503,7 +503,7 @@ class Messenger {
 	/**
 	 * Gets the new version available message for plugins.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $plugin_name The plugin name.
 	 * @return string
 	 */
@@ -520,7 +520,7 @@ class Messenger {
 	/**
 	 * Gets the contact administrator message for multisite.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_contact_admin_message(): string {
@@ -532,7 +532,7 @@ class Messenger {
 	/**
 	 * Gets the view details link text.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $version The version number.
 	 * @return string
 	 */
@@ -549,7 +549,7 @@ class Messenger {
 	/**
 	 * Gets the update now text.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public function get_update_now_text(): string {
@@ -561,7 +561,7 @@ class Messenger {
 	/**
 	 * Gets the view details or update link text.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $new_version The new plugin version.
 	 * @param string $changelog_link The changelog link.
 	 * @param string $update_link The update link.
@@ -586,7 +586,7 @@ class Messenger {
 	/**
 	 * Applies the translation filter to a string.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $text_string The translated string.
 	 * @param string $key         The string key/identifier.
 	 * @return string
@@ -595,7 +595,7 @@ class Messenger {
 		/**
 		 * Filters a translated string.
 		 *
-		 * @since <next-version>
+		 * @since 1.0.1
 		 * @param string $text_string The translated string.
 		 * @param string $key         The string key/identifier.
 		 * @param string $text_domain The text domain being used.

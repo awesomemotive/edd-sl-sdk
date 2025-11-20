@@ -107,7 +107,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Gets the messenger instance.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param array $integration The integration array.
 	 * @return Messenger
 	 */

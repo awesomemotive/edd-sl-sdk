@@ -1,6 +1,6 @@
 {
   "name": "edd-sl-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EDD Software Licensing WordPress SDK.",
   "author": "Easy Digital Downloads",
   "license": "GPL-3.0-or-later",
@@ -26,6 +26,6 @@
   "scripts": {
     "build": "wp-scripts build",
     "dev": "wp-scripts start",
-		"translate": "wp i18n make-pot . languages/edd-sl-sdk.pot --domain=edd-sl-sdk"
+		"translate": "wp i18n make-pot . languages/edd-sl-sdk.pot --ignore-domain"
   }
 }

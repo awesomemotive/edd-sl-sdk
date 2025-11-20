@@ -166,7 +166,7 @@ class Messages {
 	/**
 	 * Gets a date in the current locale.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param int $timestamp The timestamp to format.
 	 * @return string
 	 */

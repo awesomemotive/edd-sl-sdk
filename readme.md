@@ -45,7 +45,7 @@ You can run the SDK as a standalone plugin on your site, or install it as a Comp
   "repositories": {
     "edd-sl-sdk": {
       "type": "vcs",
-      "url": "git@github.com:awesomemotive/edd-sl-sdk.git"
+      "url": "https://github.com/awesomemotive/edd-sl-sdk"
     }
   },
   "require": {

@@ -2,12 +2,12 @@
 /**
  * Messenger trait.
  *
- * @since <next-version>
+ * @since 1.0.1
  *
  * @package EasyDigitalDownloads\Updater\Traits
  * @copyright (c) 2025, Sandhills Development, LLC
  * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since <next-version>
+ * @since 1.0.1
  */
 
 namespace EasyDigitalDownloads\Updater\Traits;
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Messenger trait.
  *
- * @since <next-version>
+ * @since 1.0.1
  */
 trait Messenger {
 
@@ -32,7 +32,7 @@ trait Messenger {
 	/**
 	 * Gets the messenger instance.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return \EasyDigitalDownloads\Updater\Messenger
 	 */
 	protected function get_messenger( $messenger = null ): \EasyDigitalDownloads\Updater\Messenger {

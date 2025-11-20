@@ -3,7 +3,7 @@
  * Plugin Name: EDD SL SDK
  * Plugin URI: https://easydigitaldownloads.com
  * Description: The Software Licensing SDK for plugins and themes using Software Licensing.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Easy Digital Downloads
  * Author URI: https://easydigitaldownloads.com
  * License: GPL-2.0+
@@ -17,22 +17,22 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
-if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
+if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
 
 	// Include the autoloader.
 	require_once __DIR__ . '/vendor/autoload.php';
 
 	add_action( 'after_setup_theme', array( '\\EasyDigitalDownloads\\Updater\\Versions', 'initialize_latest_version' ), 1, 0 );
 
-	add_action( 'after_setup_theme', 'edd_sl_sdk_register_1_0_0', 0, 0 ); // WRCS: DEFINED_VERSION.
+	add_action( 'after_setup_theme', 'edd_sl_sdk_register_1_0_1', 0, 0 ); // WRCS: DEFINED_VERSION.
 
 	/**
 	 * Registers this version of Action Scheduler.
 	 */
-	function edd_sl_sdk_register_1_0_0() {
-		$version  = '1.0.0';
+	function edd_sl_sdk_register_1_0_1() {
+		$version  = '1.0.1';
 		$versions = EasyDigitalDownloads\Updater\Versions::instance();
-		$versions->register( $version, 'edd_sl_sdk_initialize_1_0_0' ); // WRCS: DEFINED_VERSION.
+		$versions->register( $version, 'edd_sl_sdk_initialize_1_0_1' ); // WRCS: DEFINED_VERSION.
 		if ( ! defined( 'EDD_SL_SDK_VERSION' ) ) {
 			define( 'EDD_SL_SDK_VERSION', $version );
 		}
@@ -42,13 +42,13 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_0' ) && function_exists( 'add_a
 	/**
 	 * Registryializes this version of Action Scheduler.
 	 */
-	function edd_sl_sdk_initialize_1_0_0() {
+	function edd_sl_sdk_initialize_1_0_1() {
 		do_action( 'edd_sl_sdk_registry', EasyDigitalDownloads\Updater\Registry::instance() );
 	}
 
 	// Support usage in themes - load this version if no plugin has loaded a version yet.
 	if ( did_action( 'after_setup_theme' ) && ! doing_action( 'after_setup_theme' ) && ! class_exists( '\\EasyDigitalDownloads\\Updater\\Registry', false ) ) {
-		edd_sl_sdk_initialize_1_0_0(); // WRCS: DEFINED_VERSION.
+		edd_sl_sdk_initialize_1_0_1(); // WRCS: DEFINED_VERSION.
 		EasyDigitalDownloads\Updater\Versions::initialize_latest_version();
 	}
 }
