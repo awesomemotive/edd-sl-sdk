@@ -20,7 +20,9 @@ defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
 
 	// Include the autoloader.
-	require_once __DIR__ . '/vendor/autoload.php';
+	if ( ! class_exists( '\\EasyDigitalDownloads\\Updater\\Versions', false ) ) {
+		require_once __DIR__ . '/vendor/autoload.php';
+	}
 
 	add_action( 'after_setup_theme', array( '\\EasyDigitalDownloads\\Updater\\Versions', 'initialize_latest_version' ), 1, 0 );
 
@@ -33,9 +35,6 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_a
 		$version  = '1.0.1';
 		$versions = EasyDigitalDownloads\Updater\Versions::instance();
 		$versions->register( $version, 'edd_sl_sdk_initialize_1_0_1' ); // WRCS: DEFINED_VERSION.
-		if ( ! defined( 'EDD_SL_SDK_VERSION' ) ) {
-			define( 'EDD_SL_SDK_VERSION', $version );
-		}
 	}
 
 	// phpcs:disable Generic.Functions.OpeningFunctionBraceKernighanRitchie.ContentAfterBrace
@@ -43,6 +42,8 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_a
 	 * Registryializes this version of Action Scheduler.
 	 */
 	function edd_sl_sdk_initialize_1_0_1() {
+		// Set up the SDK paths and version using the Path utility.
+		EasyDigitalDownloads\Updater\Utilities\Path::set( __FILE__, '1.0.0' );
 		do_action( 'edd_sl_sdk_registry', EasyDigitalDownloads\Updater\Registry::instance() );
 	}
 
@@ -51,22 +52,4 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_a
 		edd_sl_sdk_initialize_1_0_1(); // WRCS: DEFINED_VERSION.
 		EasyDigitalDownloads\Updater\Versions::initialize_latest_version();
 	}
-}
-
-// Folder Path.
-if ( ! defined( 'EDD_SL_SDK_DIR' ) ) {
-	define( 'EDD_SL_SDK_DIR', __DIR__ );
-}
-
-// Folder URL, based on this file.
-if ( ! defined( 'EDD_SL_SDK_URL' ) ) {
-	$is_https = ( ! empty( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] ) ||
-				( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] );
-
-	$protocol      = $is_https ? 'https' : 'http';
-	$relative_path = str_replace( realpath( $_SERVER['DOCUMENT_ROOT'] ), '', __DIR__ );
-	$relative_path = ltrim( str_replace( '\\', '/', $relative_path ), '/' );
-
-	$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-	define( 'EDD_SL_SDK_URL', trailingslashit( "$protocol://$host/$relative_path" ) );
 }

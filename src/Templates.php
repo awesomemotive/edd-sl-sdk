@@ -1,10 +1,17 @@
 <?php
+/**
+ * Templates manager.
+ *
+ * @package EasyDigitalDownloads\Updater
+ * @since 1.0.0
+ */
 
 namespace EasyDigitalDownloads\Updater;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
+use EasyDigitalDownloads\Updater\Utilities\Path;
 class Templates {
 
 	public static function load( string $file, array $args = array() ) {
@@ -25,6 +32,6 @@ class Templates {
 	 * @return string
 	 */
 	private static function get_templates_path() {
-		return apply_filters( 'edd_sl_sdk_templates_path', trailingslashit( EDD_SL_SDK_DIR ) . 'templates/' );
+		return apply_filters( 'edd_sl_sdk_templates_path', trailingslashit( Path::get_dir() ) . 'templates/' );
 	}
 }

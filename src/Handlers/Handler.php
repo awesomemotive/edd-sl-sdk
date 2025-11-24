@@ -14,6 +14,7 @@ namespace EasyDigitalDownloads\Updater\Handlers;
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
 use EasyDigitalDownloads\Updater\Licensing\License;
+use EasyDigitalDownloads\Updater\Utilities\Path;
 
 abstract class Handler {
 	use \EasyDigitalDownloads\Updater\Traits\Messenger;
@@ -92,8 +93,8 @@ abstract class Handler {
 		?>
 		<div class="edd-sdk-notice--overlay"></div>
 		<?php
-		wp_enqueue_script( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/js/edd-sl-sdk.js', array(), EDD_SL_SDK_VERSION, true );
-		wp_enqueue_style( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/css/style-edd-sl-sdk.css', array(), EDD_SL_SDK_VERSION );
+		wp_enqueue_script( 'edd-sdk-notice', Path::get_url() . 'assets/build/js/edd-sl-sdk.js', array(), Path::get_version(), true );
+		wp_enqueue_style( 'edd-sdk-notice', Path::get_url() . 'assets/build/css/style-edd-sl-sdk.css', array(), Path::get_version() );
 		wp_localize_script(
 			'edd-sdk-notice',
 			'edd_sdk_notice',
