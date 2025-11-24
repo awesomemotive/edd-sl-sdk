@@ -43,7 +43,7 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_a
 	 */
 	function edd_sl_sdk_initialize_1_0_1() {
 		// Set up the SDK paths and version using the Path utility.
-		EasyDigitalDownloads\Updater\Utilities\Path::set( __FILE__, '1.0.0' );
+		EasyDigitalDownloads\Updater\Utilities\Path::set( __FILE__, '1.0.1' );
 		do_action( 'edd_sl_sdk_registry', EasyDigitalDownloads\Updater\Registry::instance() );
 	}
 
