@@ -73,7 +73,7 @@ add_action(
 	}
 );
 
-if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php' ) ) {
+if ( ! class_exists( '\\EasyDigitalDownloads\\Updater\\Versions', false ) && file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php' ) ) {
 	require_once __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php';
 }
 ```
