@@ -17,19 +17,23 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
-if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
-
-	// Include the autoloader.
-	if ( ! class_exists( '\\EasyDigitalDownloads\\Updater\\Versions', false ) ) {
+// Include the autoloader only if it hasn't been loaded yet.
+// Use a unique constant to prevent multiple autoloader includes.
+if ( ! defined( 'EDD_SL_SDK_AUTOLOADER_LOADED' ) ) {
+	define( 'EDD_SL_SDK_AUTOLOADER_LOADED', true );
+	if ( ! class_exists( '\\EasyDigitalDownloads\\Updater\\Versions' ) ) {
 		require_once __DIR__ . '/vendor/autoload.php';
 	}
+}
+
+// Only set up hooks if WordPress functions are available (not during composer autoload initialization).
+if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_action' ) ) { // WRCS: DEFINED_VERSION.
 
 	add_action( 'after_setup_theme', array( '\\EasyDigitalDownloads\\Updater\\Versions', 'initialize_latest_version' ), 1, 0 );
-
 	add_action( 'after_setup_theme', 'edd_sl_sdk_register_1_0_1', 0, 0 ); // WRCS: DEFINED_VERSION.
 
 	/**
-	 * Registers this version of Action Scheduler.
+	 * Registers this version of the SDK.
 	 */
 	function edd_sl_sdk_register_1_0_1() {
 		$version  = '1.0.1';
@@ -39,7 +43,7 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_a
 
 	// phpcs:disable Generic.Functions.OpeningFunctionBraceKernighanRitchie.ContentAfterBrace
 	/**
-	 * Registryializes this version of Action Scheduler.
+	 * Initializes this version of the SDK.
 	 */
 	function edd_sl_sdk_initialize_1_0_1() {
 		// Set up the SDK paths and version using the Path utility.
@@ -47,7 +51,7 @@ if ( ! function_exists( 'edd_sl_sdk_register_1_0_1' ) && function_exists( 'add_a
 		do_action( 'edd_sl_sdk_registry', EasyDigitalDownloads\Updater\Registry::instance() );
 	}
 
-	// Support usage in themes - load this version if no plugin has loaded a version yet.
+	// Support usage in themes or when included directly - initialize this version if no plugin has loaded a version yet.
 	if ( did_action( 'after_setup_theme' ) && ! doing_action( 'after_setup_theme' ) && ! class_exists( '\\EasyDigitalDownloads\\Updater\\Registry', false ) ) {
 		edd_sl_sdk_initialize_1_0_1(); // WRCS: DEFINED_VERSION.
 		EasyDigitalDownloads\Updater\Versions::initialize_latest_version();
