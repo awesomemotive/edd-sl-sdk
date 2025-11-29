@@ -73,6 +73,7 @@ add_action(
 	}
 );
 
+// Load the SDK from the vendor directory. The SDK handles autoloader setup automatically.
 if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php' ) ) {
 	require_once __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php';
 }
@@ -95,6 +96,7 @@ add_action(
 	}
 );
 
+// Load the SDK from the vendor directory. The SDK handles autoloader setup automatically.
 if ( file_exists( __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php' ) ) {
 	require_once __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php';
 }
