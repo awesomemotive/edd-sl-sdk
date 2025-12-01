@@ -54,7 +54,7 @@ class Theme extends Updater {
 	/**
 	 * Adds the hooks for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function add_listeners(): void {
@@ -64,7 +64,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {
@@ -74,7 +74,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the name for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_name(): string {
@@ -84,7 +84,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the current version information from the remote site.
 	 *
-	 * @return array|false
+	 * @return \stdClass|false
 	 */
 	protected function get_version_from_remote() {
 
@@ -117,7 +117,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the defaults for an API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	protected function get_api_request_defaults() {
@@ -131,7 +131,7 @@ class Theme extends Updater {
 	 * Gets a limited set of data from the API response.
 	 * This is used for the update_plugins transient.
 	 *
-	 * @since 3.2.10
+	 * @since 1.0.0
 	 * @return \stdClass|false
 	 */
 	private function get_limited_data() {
@@ -186,7 +186,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the plugin's tested version.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param object $version_info The version info.
 	 * @return null|string
 	 */
@@ -221,7 +221,7 @@ class Theme extends Updater {
 	 * Some data like sections, banners, and icons are expected to be an associative array, however due to the JSON
 	 * decoding, they are objects. This method allows us to pass in the object and return an associative array.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param stdClass $data The data to convert.
 	 * @return array
 	 */
@@ -240,7 +240,7 @@ class Theme extends Updater {
 	/**
 	 * Gets the changelog link.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param object $update_cache The update cache.
 	 * @return string
 	 */
@@ -282,17 +282,15 @@ class Theme extends Updater {
 	 */
 	private function get_message( $update_cache, $file ) {
 		if ( ! current_user_can( 'update_plugins' ) ) {
-			return ' ' . esc_html__( 'Contact your network administrator to install the update.', 'easy-digital-downloads' );
+			return ' ' . esc_html( $this->messenger->get_contact_admin_message() );
 		}
 
 		$changelog_link = $this->get_changelog_link( $update_cache );
 		if ( empty( $update_cache->response[ $this->get_name() ]->package ) && ! empty( $changelog_link ) ) {
 			return ' ' . sprintf(
-				/* translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate. */
-				__( '%1$sView version %2$s details%3$s.', 'easy-digital-downloads' ),
-				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
-				esc_html( $update_cache->response[ $this->get_name() ]->new_version ),
-				'</a>'
+				'<a target="_blank" class="thickbox open-plugin-details-modal" href="%1$s">%2$s</a>',
+				esc_url( $changelog_link ),
+				esc_html( $this->messenger->get_view_details_link( $update_cache->response[ $this->get_name() ]->new_version ) )
 			);
 		}
 
@@ -305,21 +303,13 @@ class Theme extends Updater {
 		);
 
 		if ( ! empty( $changelog_link ) ) {
-			return ' ' . sprintf(
-				__( '%1$sView version %2$s details%3$s or %4$supdate now%5$s.', 'easy-digital-downloads' ),
-				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
-				esc_html( $update_cache->response[ $this->get_name() ]->new_version ),
-				'</a>',
-				'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
-				'</a>'
-			);
+			return ' ' . $this->messenger->get_view_details_or_update_link( $update_cache->response[ $this->get_name() ]->new_version, $changelog_link, $update_link, $file );
 		}
 
 		return sprintf(
-			' %1$s%2$s%3$s',
-			'<a target="_blank" class="update-link" href="' . esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ) . '">',
-			esc_html__( 'Update now.', 'easy-digital-downloads' ),
-			'</a>'
+			' <a target="_blank" class="update-link" href="%1$s">%2$s</a>',
+			esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ),
+			esc_html( $this->messenger->get_update_now_text() )
 		);
 	}
 }

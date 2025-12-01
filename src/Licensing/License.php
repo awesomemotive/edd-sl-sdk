@@ -2,12 +2,12 @@
 /**
  * License class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Licensing\License
  * @copyright (c) 2025, Sandhills Development, LLC
  * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since <next-version>
+ * @since 1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater\Licensing;
@@ -18,9 +18,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * License class.
  *
- * @since <next-version>
+ * @since 1.0.0
  */
 class License {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The slug.
@@ -39,19 +40,23 @@ class License {
 	/**
 	 * The class constructor.
 	 *
-	 * @since <next-version>
-	 * @param string $slug The slug.
-	 * @param array  $args The arguments.
+	 * @since 1.0.0
+	 * @param string                                       $slug      The slug.
+	 * @param array                                        $args      The arguments.
+	 * @param \EasyDigitalDownloads\Updater\Messenger|null $messenger Optional; the messenger instance for translations.
 	 */
-	public function __construct( $slug, $args ) {
+	public function __construct( $slug, $args, $messenger = null ) {
 		$this->slug = $slug;
 		$this->args = $args;
+
+		// Set messenger instance, falling back to default if not provided.
+		$this->messenger = $this->get_messenger( $messenger );
 	}
 
 	/**
 	 * Get the license key.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_license_key() {
@@ -61,7 +66,7 @@ class License {
 	/**
 	 * Gets the license key option name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_key_option_name() {
@@ -71,7 +76,7 @@ class License {
 	/**
 	 * Gets the button for the pass field.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param bool $should_echo Whether to echo the button.
 	 * @return string
 	 */
@@ -102,7 +107,7 @@ class License {
 					data-token="<?php echo esc_attr( \EasyDigitalDownloads\Updater\Utilities\Tokenizer::tokenize( $timestamp ) ); ?>"
 					data-nonce="<?php echo esc_attr( wp_create_nonce( 'edd_sl_sdk_license_handler-delete' ) ); ?>"
 				>
-					<?php esc_html_e( 'Delete', 'edd-sl-sdk' ); ?>
+					<?php echo esc_html( $this->messenger->get_delete_button_label() ); ?>
 				</button>
 			<?php endif; ?>
 		</div>
@@ -115,14 +120,14 @@ class License {
 	/**
 	 * AJAX handler for activating a license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_activate() {
 		if ( ! $this->can_manage_license() ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_message() ),
 				)
 			);
 		}
@@ -139,7 +144,7 @@ class License {
 		if ( empty( $license_data->success ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'There was an error activating your license. Please try again.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_activation_error_message() ),
 				)
 			);
 		}
@@ -149,7 +154,7 @@ class License {
 
 		wp_send_json_success(
 			array(
-				'message' => wpautop( __( 'Your license was successfully activated.', 'easy-digital-downloads' ) ),
+				'message' => wpautop( $this->messenger->get_activation_success_message() ),
 				'actions' => $this->get_actions(),
 			)
 		);
@@ -158,14 +163,14 @@ class License {
 	/**
 	 * AJAX handler for deactivating a license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_deactivate() {
 		if ( ! $this->can_manage_license() ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_message() ),
 				)
 			);
 		}
@@ -182,7 +187,7 @@ class License {
 		if ( empty( $license_data->success ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'There was an error deactivating your license. Please try again.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_deactivation_error_message() ),
 				)
 			);
 		}
@@ -191,7 +196,7 @@ class License {
 
 		wp_send_json_success(
 			array(
-				'message' => wpautop( __( 'Your license was successfully deactivated.', 'easy-digital-downloads' ) ),
+				'message' => wpautop( $this->messenger->get_deactivation_success_message() ),
 				'actions' => $this->get_actions(),
 			)
 		);
@@ -200,14 +205,14 @@ class License {
 	/**
 	 * AJAX handler for deleting a license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_delete() {
 		if ( ! $this->can_manage_license( 'edd_sl_sdk_license_handler-delete' ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this license.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_message() ),
 				)
 			);
 		}
@@ -216,7 +221,7 @@ class License {
 
 		wp_send_json_success(
 			array(
-				'message' => wpautop( __( 'Your license was successfully deleted.', 'easy-digital-downloads' ) ),
+				'message' => wpautop( $this->messenger->get_deletion_success_message() ),
 				'actions' => $this->get_actions(),
 			)
 		);
@@ -225,14 +230,14 @@ class License {
 	/**
 	 * AJAX handler for updating data tracking preference.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_update_tracking() {
 		if ( ! $this->can_manage_license( 'edd_sl_sdk_data_tracking' ) ) {
 			wp_send_json_error(
 				array(
-					'message' => wpautop( __( 'You do not have permission to manage this setting.', 'edd-sl-sdk' ) ),
+					'message' => wpautop( $this->messenger->get_permission_denied_setting_message() ),
 				)
 			);
 		}
@@ -249,8 +254,8 @@ class License {
 		update_option( $option_name, $data );
 
 		$message = $allow_tracking
-			? __( 'Data tracking has been enabled.', 'edd-sl-sdk' )
-			: __( 'Data tracking has been disabled.', 'edd-sl-sdk' );
+			? $this->messenger->get_tracking_enabled_message()
+			: $this->messenger->get_tracking_disabled_message();
 
 		wp_send_json_success(
 			array(
@@ -262,7 +267,7 @@ class License {
 	/**
 	 * Gets the allow tracking option name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_allow_tracking() {
@@ -284,7 +289,7 @@ class License {
 	/**
 	 * Gets the license status message.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function get_license_status_message() {
@@ -299,7 +304,8 @@ class License {
 				'license_key' => $this->get_license_key(),
 				'expires'     => $status->expires,
 				'name'        => $status->item_name,
-			)
+			),
+			$this->messenger
 		);
 		$message  = $messages->get_message();
 		if ( $message ) {
@@ -310,7 +316,7 @@ class License {
 	/**
 	 * Saves the license data.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param \stdClass $license_data The license data.
 	 * @return void
 	 */
@@ -321,7 +327,7 @@ class License {
 	/**
 	 * Get the button parameters based on the status.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param string $state
 	 * @return array
 	 */
@@ -329,14 +335,14 @@ class License {
 		if ( in_array( $state, array( 'valid', 'active' ), true ) ) {
 			return array(
 				'action' => 'deactivate',
-				'label'  => __( 'Deactivate', 'edd-sl-sdk' ),
+				'label'  => $this->messenger->get_deactivate_button_label(),
 				'class'  => 'secondary',
 			);
 		}
 
 		return array(
 			'action' => 'activate',
-			'label'  => __( 'Activate', 'edd-sl-sdk' ),
+			'label'  => $this->messenger->get_activate_button_label(),
 			'class'  => 'secondary',
 		);
 	}
@@ -345,7 +351,7 @@ class License {
 	 * Whether the current user can manage the pass.
 	 * Checks the user capabilities, tokenizer, and nonce.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param string $nonce The name of the specific nonce to validate.
 	 * @return bool
 	 */
@@ -368,7 +374,7 @@ class License {
 	/**
 	 * Gets the status option name.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_status_option_name() {

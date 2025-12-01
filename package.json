@@ -1,6 +1,6 @@
 {
   "name": "edd-sl-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EDD Software Licensing WordPress SDK.",
   "author": "Easy Digital Downloads",
   "license": "GPL-3.0-or-later",
@@ -18,7 +18,7 @@
     "url": "https://github.com/easydigitaldownloads/edd-sl-sdk/issues"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^30.21.0",
+    "@wordpress/scripts": "^31.0.0",
     "mini-css-extract-plugin": "^2.9.4",
     "path": "^0.12.7",
     "webpack-fix-style-only-entries": "^0.6.1"
@@ -26,6 +26,6 @@
   "scripts": {
     "build": "wp-scripts build",
     "dev": "wp-scripts start",
-		"translate": "wp i18n make-pot . languages/edd-sl-sdk.pot --domain=edd-sl-sdk"
+		"translate": "wp i18n make-pot . languages/edd-sl-sdk.pot --ignore-domain"
   }
 }

@@ -3,7 +3,7 @@
  * Registry.
  *
  * @package EasyDigitalDownloads\Updater
- * @since <next-version>
+ * @since 1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater;
@@ -23,7 +23,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Gets the instance.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return Registry
 	 */
 	public static function instance() {
@@ -39,7 +39,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Registers an integration.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $integration
 	 * @return void
 	 */
@@ -54,7 +54,7 @@ class Registry extends \ArrayObject {
 	/**
 	 * Adds an integration.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array $integration
 	 * @return void
 	 */
@@ -93,18 +93,60 @@ class Registry extends \ArrayObject {
 			);
 		}
 
+		// Handle custom messenger class.
+		$messenger = $this->get_messenger( $integration );
+
 		$handler = 'EasyDigitalDownloads\\Updater\\Handlers\\' . ucfirst( $type );
 
 		$this->offsetSet(
 			$integration['id'],
-			new $handler( $integration['url'], $integration )
+			new $handler( $integration['url'], $integration, $messenger )
 		);
+	}
+
+	/**
+	 * Gets the messenger instance.
+	 *
+	 * @since 1.0.1
+	 * @param array $integration The integration array.
+	 * @return Messenger
+	 */
+	private function get_messenger( array $integration ) {
+		// Use custom messenger class if provided.
+		if ( ! empty( $integration['messenger_class'] ) ) {
+			$messenger_class = $integration['messenger_class'];
+
+			// Validate that the class exists.
+			if ( ! class_exists( $messenger_class ) ) {
+				throw new \InvalidArgumentException(
+					sprintf(
+						'The messenger class "%s" does not exist.',
+						esc_html( $messenger_class )
+					)
+				);
+			}
+
+			// Validate that it extends the base Messenger class.
+			if ( ! is_subclass_of( $messenger_class, Messenger::class ) ) {
+				throw new \InvalidArgumentException(
+					sprintf(
+						'The messenger class "%s" must extend EasyDigitalDownloads\Updater\Messenger.',
+						esc_html( $messenger_class )
+					)
+				);
+			}
+
+			return new $messenger_class();
+		}
+
+		// Return default messenger.
+		return new Messenger();
 	}
 
 	/**
 	 * Gets the integrations.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	private function get_integrations() {

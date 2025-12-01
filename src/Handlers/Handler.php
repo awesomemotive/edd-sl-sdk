@@ -2,7 +2,7 @@
 /**
  * Handler class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater
  * @subpackage Handlers
@@ -14,8 +14,10 @@ namespace EasyDigitalDownloads\Updater\Handlers;
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
 use EasyDigitalDownloads\Updater\Licensing\License;
+use EasyDigitalDownloads\Updater\Utilities\Path;
 
 abstract class Handler {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The URL for the API.
@@ -48,11 +50,12 @@ abstract class Handler {
 	/**
 	 * The class constructor.
 	 *
-	 * @since <next-version>
-	 * @param string $api_url The URL for the API.
-	 * @param array  $args    Optional; used only for requests to non-EDD sites.
+	 * @since 1.0.0
+	 * @param string                                       $api_url   The URL for the API.
+	 * @param array                                        $args      Optional; used only for requests to non-EDD sites.
+	 * @param \EasyDigitalDownloads\Updater\Messenger|null $messenger Optional; the messenger instance for translations.
 	 */
-	public function __construct( string $api_url, array $args = array() ) {
+	public function __construct( string $api_url, array $args = array(), $messenger = null ) {
 		$this->api_url      = $api_url;
 		$this->args         = wp_parse_args(
 			$args,
@@ -66,7 +69,10 @@ abstract class Handler {
 		);
 		$this->args['slug'] = $this->get_slug();
 
-		$this->license = new License( $this->args['slug'], $this->args );
+		// Set messenger instance, falling back to default if not provided.
+		$this->messenger = $this->get_messenger( $messenger );
+
+		$this->license = new License( $this->args['slug'], $this->args, $this->messenger );
 
 		$this->add_listeners();
 		$this->add_general_listeners();
@@ -75,7 +81,7 @@ abstract class Handler {
 	/**
 	 * Outputs the license modal.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function license_modal() {
@@ -87,8 +93,8 @@ abstract class Handler {
 		?>
 		<div class="edd-sdk-notice--overlay"></div>
 		<?php
-		wp_enqueue_script( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/js/edd-sl-sdk.js', array(), EDD_SL_SDK_VERSION, true );
-		wp_enqueue_style( 'edd-sdk-notice', EDD_SL_SDK_URL . 'assets/build/css/style-edd-sl-sdk.css', array(), EDD_SL_SDK_VERSION );
+		wp_enqueue_script( 'edd-sdk-notice', Path::get_url() . 'assets/build/js/edd-sl-sdk.js', array(), Path::get_version(), true );
+		wp_enqueue_style( 'edd-sdk-notice', Path::get_url() . 'assets/build/css/style-edd-sl-sdk.css', array(), Path::get_version() );
 		wp_localize_script(
 			'edd-sdk-notice',
 			'edd_sdk_notice',
@@ -99,7 +105,7 @@ abstract class Handler {
 	/**
 	 * AJAX handler for getting a notice.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ajax_get_license_overlay() {
@@ -108,14 +114,15 @@ abstract class Handler {
 			wp_send_json_error( 'No template provided.' );
 		}
 
-		$args            = $this->args;
-		$args['license'] = $this->license;
-		$args['name']    = filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS );
+		$args              = $this->args;
+		$args['license']   = $this->license;
+		$args['name']      = filter_input( INPUT_GET, 'name', FILTER_SANITIZE_SPECIAL_CHARS );
+		$args['messenger'] = $this->messenger;
 
 		ob_start();
 		?>
 		<button class="button-link edd-sdk__notice--dismiss">
-			<span class="screen-reader-text"><?php esc_html_e( 'Dismiss notice', 'edd-sl-sdk' ); ?></span>
+			<span class="screen-reader-text"><?php echo esc_html( $this->messenger->get_dismiss_notice_text() ); ?></span>
 		</button>
 		<?php
 		\EasyDigitalDownloads\Updater\Templates::load( $template, $args );
@@ -126,7 +133,7 @@ abstract class Handler {
 	/**
 	 * Checks the license weekly.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function weekly_license_check() {
@@ -156,7 +163,7 @@ abstract class Handler {
 	/**
 	 * Initializes the auto updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	abstract public function auto_updater();
@@ -164,7 +171,7 @@ abstract class Handler {
 	/**
 	 * Adds the listeners for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	abstract protected function add_listeners(): void;
@@ -172,7 +179,7 @@ abstract class Handler {
 	/**
 	 * Adds the listeners used by all handlers.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	private function add_general_listeners() {
@@ -194,23 +201,23 @@ abstract class Handler {
 	/**
 	 * Gets the localization arguments.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	protected function get_localization_args() {
 		return array(
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
 			'nonce'        => wp_create_nonce( 'edd_sdk_notice' ),
-			'activating'   => esc_html__( 'Activating...', 'edd-sl-sdk' ),
-			'deactivating' => esc_html__( 'Deactivating...', 'edd-sl-sdk' ),
-			'error'        => esc_html__( 'An unknown error occurred.', 'edd-sl-sdk' ),
+			'activating'   => esc_html( $this->messenger->get_activating_text() ),
+			'deactivating' => esc_html( $this->messenger->get_deactivating_text() ),
+			'error'        => esc_html( $this->messenger->get_unknown_error_text() ),
 		);
 	}
 
 	/**
 	 * Gets the default API request arguments.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return array
 	 */
 	protected function get_default_api_request_args() {
@@ -227,7 +234,7 @@ abstract class Handler {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {

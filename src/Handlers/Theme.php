@@ -2,7 +2,7 @@
 /**
  * Theme handler.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Handlers
  */
@@ -22,7 +22,7 @@ class Theme extends Handler {
 	/**
 	 * Adds the listeners for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function add_listeners(): void {
@@ -32,7 +32,7 @@ class Theme extends Handler {
 	/**
 	 * Adds the menu item.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function add_menu() {
@@ -47,7 +47,7 @@ class Theme extends Handler {
 				'<span class="edd-sdk__notice__trigger edd-sdk__notice__trigger--ajax" data-product="%s" data-slug="%s">%s</span>',
 				$this->args['item_id'],
 				$this->args['slug'],
-				__( 'Theme License', 'edd-sl-sdk' )
+				$this->messenger->get_theme_license_menu_label()
 			),
 			'manage_options',
 			'edd_sl_sdk_theme_license',
@@ -77,7 +77,8 @@ class Theme extends Handler {
 		// Set up the updater.
 		new ThemeUpdater(
 			$this->api_url,
-			$args
+			$args,
+			$this->messenger
 		);
 	}
 
@@ -106,7 +107,7 @@ class Theme extends Handler {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {

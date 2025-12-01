@@ -2,7 +2,7 @@
 /**
  * Plugin handler.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Handlers
  */
@@ -25,7 +25,7 @@ class Plugin extends Handler {
 	/**
 	 * Adds the listeners for the updater.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function add_listeners(): void {
@@ -59,14 +59,15 @@ class Plugin extends Handler {
 		// Set up the updater.
 		new PluginUpdater(
 			$this->api_url,
-			$args
+			$args,
+			$this->messenger
 		);
 	}
 
 	/**
 	 * Adds the activation link to the plugin list.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @param array  $actions     The plugin actions.
 	 * @param string $plugin_file The plugin file.
 	 * @param array  $plugin_data The plugin data.
@@ -80,7 +81,7 @@ class Plugin extends Handler {
 			'<button type="button" class="button-link edd-sdk__notice__trigger edd-sdk__notice__trigger--ajax" data-id="license-control" data-product="%1$s" data-slug="%2$s" data-name="%4$s">%3$s</button>',
 			$this->args['item_id'],
 			$this->args['slug'],
-			__( 'Manage License', 'edd-sl-sdk' ),
+			$this->messenger->get_manage_license_link_label(),
 			$plugin_data['Name']
 		);
 
@@ -114,7 +115,7 @@ class Plugin extends Handler {
 	/**
 	 * Gets the slug for the API request.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	protected function get_slug(): string {

@@ -2,12 +2,12 @@
 /**
  * License status message class.
  *
- * @since <next-version>
+ * @since 1.0.0
  *
  * @package EasyDigitalDownloads\Updater\Licensing\Messages
  * @copyright (c) 2025, Sandhills Development, LLC
  * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since <next-version>
+ * @since 1.0.0
  */
 
 namespace EasyDigitalDownloads\Updater\Licensing;
@@ -18,9 +18,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * License status message class.
  *
- * @since <next-version>
+ * @since 1.0.0
  */
 class Messages {
+	use \EasyDigitalDownloads\Updater\Traits\Messenger;
 
 	/**
 	 * The array of license data.
@@ -46,10 +47,11 @@ class Messages {
 	/**
 	 * Constructor.
 	 *
-	 * @since <next-version>
-	 * @param array $license_data The license data.
+	 * @since 1.0.0
+	 * @param array                                        $license_data The license data.
+	 * @param \EasyDigitalDownloads\Updater\Messenger|null $messenger    Optional; the messenger instance for translations.
 	 */
-	public function __construct( $license_data = array() ) {
+	public function __construct( $license_data = array(), $messenger = null ) {
 		$this->license_data = wp_parse_args(
 			$license_data,
 			array(
@@ -67,12 +69,15 @@ class Messages {
 				$this->expiration = $this->license_data['expires'];
 			}
 		}
+
+		// Set messenger instance, falling back to default if not provided.
+		$this->messenger = $this->get_messenger( $messenger );
 	}
 
 	/**
 	 * Gets the appropriate licensing message from an array of license data.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_message() {
@@ -82,31 +87,27 @@ class Messages {
 	/**
 	 * Builds the message based on the license data.
 	 *
-	 * @sinc <next-version>
+	 * @sinc 1.0.0
 	 * @return string
 	 */
 	private function build_message() {
 		switch ( $this->license_data['status'] ) {
 
 			case 'expired':
-				$message = sprintf(
-					/* translators: 1: license expiration date. */
-					__( 'Your license key expired on %1$s. Please renew your license key.', 'edd-sl-sdk' ),
-					edd_date_i18n( $this->expiration )
-				);
+				$message = $this->messenger->get_license_expired_message( $this->get_date( $this->expiration ) );
 				break;
 
 			case 'revoked':
 			case 'disabled':
-				$message = __( 'Your license key has been disabled.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_disabled_message();
 				break;
 
 			case 'missing':
-				$message = __( 'Invalid license. Please verify it.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_missing_message();
 				break;
 
 			case 'site_inactive':
-				$message = __( 'Your license key is not active for this URL.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_site_inactive_message();
 				break;
 
 			case 'invalid':
@@ -114,26 +115,22 @@ class Messages {
 			case 'item_name_mismatch':
 			case 'key_mismatch':
 				if ( ! empty( $this->license_data['name'] ) ) {
-					$message = sprintf(
-						/* translators: the extension name. */
-						__( 'This appears to be an invalid license key for %s.', 'edd-sl-sdk' ),
-						$this->license_data['name']
-					);
+					$message = $this->messenger->get_license_invalid_for_item_message( $this->license_data['name'] );
 				} else {
-					$message = __( 'This appears to be an invalid license key.', 'edd-sl-sdk' );
+					$message = $this->messenger->get_license_invalid_message();
 				}
 				break;
 
 			case 'no_activations_left':
-				$message = __( 'Your license key has reached its activation limit.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_no_activations_message();
 				break;
 
 			case 'license_not_activable':
-				$message = __( 'The key you entered belongs to a bundle, please use the product specific license key.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_bundle_message();
 				break;
 
 			case 'deactivated':
-				$message = __( 'Your license key has been deactivated.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_deactivated_message();
 				break;
 
 			case 'valid':
@@ -141,7 +138,7 @@ class Messages {
 				break;
 
 			default:
-				$message = __( 'Unlicensed: currently not receiving updates.', 'edd-sl-sdk' );
+				$message = $this->messenger->get_license_unlicensed_message();
 				break;
 		}
 
@@ -151,26 +148,33 @@ class Messages {
 	/**
 	 * Gets the message text for a valid license.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.0
 	 * @return string
 	 */
 	private function get_valid_message() {
 		if ( ! empty( $this->license_data['expires'] ) && 'lifetime' === $this->license_data['expires'] ) {
-			return __( 'License key never expires.', 'edd-sl-sdk' );
+			return $this->messenger->get_license_lifetime_message();
 		}
 
 		if ( ( $this->expiration > $this->now ) && ( $this->expiration - $this->now < ( DAY_IN_SECONDS * 30 ) ) ) {
-			return sprintf(
-				/* translators: the license expiration date. */
-				__( 'Your license key expires soon! It expires on %s.', 'edd-sl-sdk' ),
-				edd_date_i18n( $this->expiration )
-			);
+			return $this->messenger->get_license_expires_soon_message( $this->get_date( $this->expiration ) );
 		}
 
-		return sprintf(
-			/* translators: the license expiration date. */
-			__( 'Your license key expires on %s.', 'edd-sl-sdk' ),
-			edd_date_i18n( $this->expiration )
-		);
+		return $this->messenger->get_license_expires_message( $this->get_date( $this->expiration ) );
+	}
+
+	/**
+	 * Gets a date in the current locale.
+	 *
+	 * @since 1.0.1
+	 * @param int $timestamp The timestamp to format.
+	 * @return string
+	 */
+	private function get_date( $timestamp ) {
+		if ( is_numeric( $timestamp ) ) {
+			return date_i18n( get_option( 'date_format' ), $timestamp );
+		}
+
+		return $this->messenger->get_unknown_date_message();
 	}
 }
