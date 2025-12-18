@@ -37,8 +37,8 @@ class Theme extends Updater {
 		}
 
 		$current = $this->get_limited_data();
-		if ( false !== $current && is_object( $current ) && isset( $current->new_version ) ) {
-			if ( version_compare( $this->get_version(), $current->new_version, '<' ) ) {
+		if ( false !== $current && isset( $current['new_version'] ) ) {
+			if ( version_compare( $this->get_version(), $current['new_version'], '<' ) ) {
 				$transient_data->response[ $this->get_name() ] = $current;
 			} else {
 				// Populating the no_update information is required to support auto-updates in WordPress 5.5.
@@ -115,24 +115,11 @@ class Theme extends Updater {
 	}
 
 	/**
-	 * Gets the defaults for an API request.
-	 *
-	 * @since 1.0.0
-	 * @return array
-	 */
-	protected function get_api_request_defaults() {
-		$defaults        = parent::get_api_request_defaults();
-		$defaults['url'] = '';
-
-		return $defaults;
-	}
-
-	/**
 	 * Gets a limited set of data from the API response.
 	 * This is used for the update_plugins transient.
 	 *
 	 * @since 1.0.0
-	 * @return \stdClass|false
+	 * @return array|false
 	 */
 	private function get_limited_data() {
 		$version_info = $this->get_repo_api_data();
