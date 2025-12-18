@@ -130,10 +130,10 @@ class Theme extends Updater {
 		return array(
 			'theme'        => $this->get_slug(),
 			'new_version'  => $version_info->new_version,
-			'url'          => $this->args['url'],
 			'package'      => $version_info->package,
-			'requires'     => $version_info->requires,
-			'requires_php' => $version_info->requires_php,
+			'url'          => $version_info->url ?? '',
+			'requires'     => $version_info->requires ?? '',
+			'requires_php' => $version_info->requires_php ?? '',
 		);
 	}
 
