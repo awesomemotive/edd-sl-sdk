@@ -49,7 +49,7 @@ You can run the SDK as a standalone plugin on your site, or install it as a Comp
     }
   },
   "require": {
-    "easy-digital-downloads/edd-sl-sdk": "1.0.1"
+    "easy-digital-downloads/edd-sl-sdk": "^1.0.2"
   }
 }
 ```
