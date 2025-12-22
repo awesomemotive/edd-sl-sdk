@@ -226,7 +226,6 @@ abstract class Handler {
 			'license'        => $this->license->get_license_key(),
 			'item_id'        => $this->args['item_id'],
 			'beta'           => false,
-			'url'            => $this->args['url'],
 			'allow_tracking' => $this->license->get_allow_tracking(),
 		);
 	}
