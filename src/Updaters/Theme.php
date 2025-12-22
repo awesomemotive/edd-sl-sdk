@@ -19,12 +19,12 @@ class Theme extends Updater {
 	 * Check for Updates at the defined API endpoint and modify the update array.
 	 *
 	 * This function dives into the update API just when WordPress creates its update array,
-	 * then adds a custom API call and injects the custom plugin data retrieved from the API.
-	 * It is reassembled from parts of the native WordPress plugin update code.
-	 * See wp-includes/update.php line 121 for the original wp_update_plugins() function.
+	 * then adds a custom API call and injects the custom theme data retrieved from the API.
+	 * It is reassembled from parts of the native WordPress theme update code.
+	 * See wp-includes/update.php for the original wp_update_themes() function.
 	 *
 	 * @param array $transient_data Update array build by WordPress.
-	 * @return array Modified update array with custom plugin data.
+	 * @return array Modified update array with custom theme data.
 	 */
 	public function check_update( $transient_data ) {
 
@@ -68,7 +68,7 @@ class Theme extends Updater {
 	 * @return string
 	 */
 	protected function get_slug(): string {
-		return wp_get_theme()->get_template();
+		return wp_get_theme()->get_stylesheet();
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Theme extends Updater {
 	 * Get repo API data from store.
 	 * Save to cache.
 	 *
-	 * @return \stdClass
+	 * @return \stdClass|false
 	 */
 	private function get_repo_api_data() {
 		$version_info = $this->get_cached_version_info();
@@ -154,10 +154,7 @@ class Theme extends Updater {
 			return false;
 		}
 
-		// This is required for your plugin to support auto-updates in WordPress 5.5.
-		$version_info->plugin = $this->get_name();
-		$version_info->id     = $this->get_name();
-		$version_info->tested = $this->get_tested_version( $version_info );
+		$version_info->theme = $this->get_name();
 		if ( ! isset( $version_info->requires ) ) {
 			$version_info->requires = '';
 		}
@@ -168,135 +165,5 @@ class Theme extends Updater {
 		$this->set_version_info_cache( $version_info );
 
 		return $version_info;
-	}
-
-	/**
-	 * Gets the plugin's tested version.
-	 *
-	 * @since 1.0.0
-	 * @param object $version_info The version info.
-	 * @return null|string
-	 */
-	private function get_tested_version( $version_info ) {
-
-		// There is no tested version.
-		if ( empty( $version_info->tested ) ) {
-			return null;
-		}
-
-		// Strip off extra version data so the result is x.y or x.y.z.
-		list( $current_wp_version ) = explode( '-', get_bloginfo( 'version' ) );
-
-		// The tested version is greater than or equal to the current WP version, no need to do anything.
-		if ( version_compare( $version_info->tested, $current_wp_version, '>=' ) ) {
-			return $version_info->tested;
-		}
-		$current_version_parts = explode( '.', $current_wp_version );
-		$tested_parts          = explode( '.', $version_info->tested );
-
-		// The current WordPress version is x.y.z, so update the tested version to match it.
-		if ( isset( $current_version_parts[2] ) && $current_version_parts[0] === $tested_parts[0] && $current_version_parts[1] === $tested_parts[1] ) {
-			$tested_parts[2] = $current_version_parts[2];
-		}
-
-		return implode( '.', $tested_parts );
-	}
-
-	/**
-	 * Convert some objects to arrays when injecting data into the update API
-	 *
-	 * Some data like sections, banners, and icons are expected to be an associative array, however due to the JSON
-	 * decoding, they are objects. This method allows us to pass in the object and return an associative array.
-	 *
-	 * @since 1.0.0
-	 * @param stdClass $data The data to convert.
-	 * @return array
-	 */
-	private function convert_object_to_array( $data ) {
-		if ( ! is_array( $data ) && ! is_object( $data ) ) {
-			return array();
-		}
-		$new_data = array();
-		foreach ( $data as $key => $value ) {
-			$new_data[ $key ] = is_object( $value ) ? $this->convert_object_to_array( $value ) : $value;
-		}
-
-		return $new_data;
-	}
-
-	/**
-	 * Gets the changelog link.
-	 *
-	 * @since 1.0.0
-	 * @param object $update_cache The update cache.
-	 * @return string
-	 */
-	private function get_changelog_link( $update_cache ) {
-		if ( empty( $update_cache->response[ $this->get_name() ]->sections->changelog ) ) {
-			return '';
-		}
-
-		return add_query_arg(
-			array(
-				'tab'       => 'plugin-information',
-				'plugin'    => rawurlencode( $this->get_slug() ),
-				'TB_iframe' => 'true',
-				'width'     => 77,
-				'height'    => 911,
-			),
-			self_admin_url( 'network/plugin-install.php' )
-		);
-	}
-
-	/**
-	 * Gets the plugins active in a multisite network.
-	 *
-	 * @return array
-	 */
-	private function get_active_plugins() {
-		$active_plugins         = (array) get_option( 'active_plugins' );
-		$active_network_plugins = (array) get_site_option( 'active_sitewide_plugins' );
-
-		return array_merge( $active_plugins, array_keys( $active_network_plugins ) );
-	}
-
-	/**
-	 * Gets the update message.
-	 *
-	 * @param object $update_cache The update cache.
-	 * @param string $file         The file.
-	 * @return string
-	 */
-	private function get_message( $update_cache, $file ) {
-		if ( ! current_user_can( 'update_plugins' ) ) {
-			return ' ' . esc_html( $this->messenger->get_contact_admin_message() );
-		}
-
-		$changelog_link = $this->get_changelog_link( $update_cache );
-		if ( empty( $update_cache->response[ $this->get_name() ]->package ) && ! empty( $changelog_link ) ) {
-			return ' ' . sprintf(
-				'<a target="_blank" class="thickbox open-plugin-details-modal" href="%1$s">%2$s</a>',
-				esc_url( $changelog_link ),
-				esc_html( $this->messenger->get_view_details_link( $update_cache->response[ $this->get_name() ]->new_version ) )
-			);
-		}
-
-		$update_link = add_query_arg(
-			array(
-				'action' => 'upgrade-plugin',
-				'plugin' => rawurlencode( $this->get_name() ),
-			),
-			self_admin_url( 'update.php' )
-		);
-
-		if ( ! empty( $changelog_link ) ) {
-			return ' ' . $this->messenger->get_view_details_or_update_link( $update_cache->response[ $this->get_name() ]->new_version, $changelog_link, $update_link, $file );
-		}
-
-		return sprintf(
-			' <a target="_blank" class="update-link" href="%1$s">%2$s</a>',
-			esc_url( wp_nonce_url( $update_link, 'upgrade-plugin_' . $file ) ),
-			esc_html( $this->messenger->get_update_now_text() )
-		);
 	}
 }
