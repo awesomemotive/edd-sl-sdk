@@ -116,7 +116,7 @@ class Theme extends Updater {
 
 	/**
 	 * Gets a limited set of data from the API response.
-	 * This is used for the update_plugins transient.
+	 * This is used for the update_themes transient.
 	 *
 	 * @since 1.0.0
 	 * @return array|false
