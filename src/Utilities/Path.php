@@ -3,7 +3,7 @@
  * Path utility class.
  *
  * @package EasyDigitalDownloads\Updater
- * @since <next-version>
+ * @since 1.0.1
  */
 
 namespace EasyDigitalDownloads\Updater\Utilities;
@@ -40,7 +40,7 @@ class Path {
 	/**
 	 * Sets the SDK paths and version based on a file location.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @param string $file    The __FILE__ constant from the SDK main plugin file.
 	 * @param string $version The version number.
 	 * @return void
@@ -64,7 +64,7 @@ class Path {
 	/**
 	 * Gets the SDK directory.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public static function get_dir() {
@@ -74,7 +74,7 @@ class Path {
 	/**
 	 * Gets the SDK URL.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public static function get_url() {
@@ -84,7 +84,7 @@ class Path {
 	/**
 	 * Gets the SDK version.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.1
 	 * @return string
 	 */
 	public static function get_version() {
