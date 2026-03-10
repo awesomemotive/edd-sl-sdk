@@ -68,6 +68,10 @@ class Theme extends Updater {
 	 * @return string
 	 */
 	protected function get_slug(): string {
+		if ( ! empty( $this->args['slug'] ) ) {
+			return $this->args['slug'];
+		}
+
 		return wp_get_theme()->get_stylesheet();
 	}
 
