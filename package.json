@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@wordpress/scripts": "^31.6.0",
-    "mini-css-extract-plugin": "^2.10.0",
+    "mini-css-extract-plugin": "^2.10.1",
     "path": "^0.12.7",
     "webpack-fix-style-only-entries": "^0.6.1"
   },
