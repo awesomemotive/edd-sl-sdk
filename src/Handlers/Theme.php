@@ -72,7 +72,8 @@ class Theme extends Handler {
 			return;
 		}
 
-		$args = $this->get_default_api_request_args();
+		$args         = $this->get_default_api_request_args();
+		$args['slug'] = $this->args['slug'];
 
 		// Set up the updater.
 		new ThemeUpdater(
