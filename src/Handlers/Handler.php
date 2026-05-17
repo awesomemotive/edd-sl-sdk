@@ -170,10 +170,7 @@ abstract class Handler {
 	 */
 	private function reschedule_after_failure() {
 		$hook = 'edd_sl_sdk_weekly_license_check_' . $this->args['slug'];
-		$next = wp_next_scheduled( $hook );
-		if ( $next ) {
-			wp_unschedule_event( $next, 'weekly', $hook );
-		}
+		wp_clear_scheduled_hook( $hook );
 		wp_schedule_event( time() + HOUR_IN_SECONDS + wp_rand( 0, 15 * MINUTE_IN_SECONDS ), 'weekly', $hook );
 	}
 
