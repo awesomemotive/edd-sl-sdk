@@ -154,10 +154,24 @@ abstract class Handler {
 		$api          = new \EasyDigitalDownloads\Updater\Requests\API( $this->args['api_url'] );
 		$license_data = $api->make_request( $api_params );
 		if ( empty( $license_data->success ) ) {
+			$this->reschedule_after_failure();
 			return;
 		}
 
 		$this->license->save( $license_data );
+	}
+
+	/**
+	 * Reschedules the next license check ~1 hour out after a failed request,
+	 * so we don't wait a full week to retry when the store was briefly down.
+	 *
+	 * @since 1.0.4
+	 * @return void
+	 */
+	private function reschedule_after_failure() {
+		$hook = 'edd_sl_sdk_weekly_license_check_' . $this->args['slug'];
+		wp_clear_scheduled_hook( $hook );
+		wp_schedule_event( time() + HOUR_IN_SECONDS + wp_rand( 0, 15 * MINUTE_IN_SECONDS ), 'weekly', $hook );
 	}
 
 	/**
@@ -192,7 +206,9 @@ abstract class Handler {
 		add_action( 'wp_ajax_edd_sl_sdk_update_tracking_' . $slug, array( $this->license, 'ajax_update_tracking' ) );
 		if ( ! empty( $this->args['weekly_check'] ) ) {
 			if ( ! wp_next_scheduled( 'edd_sl_sdk_weekly_license_check_' . $slug ) ) {
-				wp_schedule_event( time(), 'weekly', 'edd_sl_sdk_weekly_license_check_' . $slug );
+				// Jitter the first run within a 24h window so many sites/plugins activating
+				// on the same day do not all hit the EDD store at the same hour every week.
+				wp_schedule_event( time() + wp_rand( 0, DAY_IN_SECONDS ), 'weekly', 'edd_sl_sdk_weekly_license_check_' . $slug );
 			}
 			add_action( 'edd_sl_sdk_weekly_license_check_' . $slug, array( $this, 'weekly_license_check' ) );
 		}
