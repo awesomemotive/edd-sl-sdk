@@ -51,19 +51,32 @@
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: new URLSearchParams( data ),
 		} )
-			.then( ( response ) => response.json() )
+			.then( ( response ) => {
+				// Surface HTTP failures and non-JSON payloads (proxy/challenge
+				// pages, PHP fatals) instead of collapsing them into an
+				// undifferentiated error.
+				if ( ! response.ok ) {
+					throw new Error( 'HTTP ' + response.status );
+				}
+				return response.json().catch( () => {
+					throw new Error( 'invalid JSON response' );
+				} );
+			} )
 			.then( ( res ) => {
-				if ( res.success ) {
-					if ( res.data.message ) {
+				// Guard the message lookup so a malformed response cannot
+				// throw and mask the actual server message.
+				const message = res && res.data && res.data.message ? res.data.message : '';
+				if ( res && res.success ) {
+					if ( message ) {
 						$( '.edd-sl-sdk__data' ).insertAdjacentHTML(
 							'afterend',
-							`<div class="notice inline-notice notice-success">${ res.data.message }</div>`
+							`<div class="notice inline-notice notice-success">${ message }</div>`
 						);
 					}
 				} else {
 					$( '.edd-sl-sdk__data' ).insertAdjacentHTML(
 						'afterend',
-						`<div class="notice inline-notice notice-warning">${ res.data.message }</div>`
+						`<div class="notice inline-notice notice-warning">${ message || '<p>' + edd_sdk_notice.error + '</p>' }</div>`
 					);
 					// Revert checkbox state on error
 					checkbox.checked = ! checkbox.checked;
@@ -72,9 +85,12 @@
 			} )
 			.catch( ( error ) => {
 				console.error( 'Error updating tracking preference:', error );
+				const detail = error && error.message
+					? ` <code>${ String( error.message ).replace( /[<>&]/g, '' ) }</code>`
+					: '';
 				$( '.edd-sl-sdk__data' ).insertAdjacentHTML(
 					'afterend',
-					`<div class="notice inline-notice notice-error"><p>${ edd_sdk_notice.error }</p></div>`
+					`<div class="notice inline-notice notice-error"><p>${ edd_sdk_notice.error }${ detail }</p></div>`
 				);
 				// Revert checkbox state on error
 				checkbox.checked = ! checkbox.checked;
