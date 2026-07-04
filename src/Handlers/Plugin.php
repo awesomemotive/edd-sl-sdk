@@ -31,6 +31,7 @@ class Plugin extends Handler {
 	protected function add_listeners(): void {
 		$plugin_basename = plugin_basename( $this->args['file'] );
 		add_filter( "plugin_action_links_{$plugin_basename}", array( $this, 'plugin_links' ), 100, 3 );
+		add_action( 'admin_print_scripts-plugins.php', array( $this, 'print_early_trigger_buffer' ) );
 	}
 
 		/**
@@ -88,6 +89,58 @@ class Plugin extends Handler {
 		add_action( 'admin_footer', array( $this, 'license_modal' ) );
 
 		return $actions;
+	}
+
+	/**
+	 * Buffers clicks on the license trigger until the SDK script is ready.
+	 *
+	 * The "Manage License" trigger is rendered with the plugins list, but its
+	 * click listener is only bound once the SDK footer script has executed.
+	 * On plugin-heavy sites that leaves a multi-second window in which clicks
+	 * are silently ignored. This tiny head script catches those early clicks,
+	 * shows the core spinner state as feedback, and re-dispatches the click
+	 * once the SDK is ready.
+	 *
+	 * @since 1.0.4
+	 * @return void
+	 */
+	public function print_early_trigger_buffer() {
+		static $did_run;
+		if ( $did_run ) {
+			return;
+		}
+		$did_run = true;
+
+		$script = <<<'JS'
+( function() {
+	var pending = false;
+	document.addEventListener( 'click', function( event ) {
+		var trigger = event.target && event.target.closest ? event.target.closest( '.edd-sdk__notice__trigger' ) : null;
+		if ( ! trigger || pending || document.querySelector( '.edd-sdk__notice__overlay' ) ) {
+			return;
+		}
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		pending = true;
+		trigger.classList.add( 'updating-message' );
+		var started = Date.now();
+		var timer = window.setInterval( function() {
+			var ready = document.querySelector( '.edd-sdk__notice__overlay' );
+			if ( ! ready && Date.now() - started < 15000 ) {
+				return;
+			}
+			window.clearInterval( timer );
+			trigger.classList.remove( 'updating-message' );
+			pending = false;
+			if ( ready ) {
+				trigger.click();
+			}
+		}, 200 );
+	}, true );
+} )();
+JS;
+
+		wp_print_inline_script_tag( $script );
 	}
 
 	/**
