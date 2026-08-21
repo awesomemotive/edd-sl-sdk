@@ -22,6 +22,7 @@ if ( overlayNotice ) {
 					product_id: event.target.dataset.product ?? '',
 					slug: event.target.dataset.slug ?? '',
 					name: event.target.dataset.name ?? '',
+					nonce: edd_sdk_notice.nonce,
 				};
 
 				data.action = 'edd_sdk_get_notice_' + data.slug;

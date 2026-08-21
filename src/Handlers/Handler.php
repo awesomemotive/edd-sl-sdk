@@ -109,6 +109,10 @@ abstract class Handler {
 	 * @return void
 	 */
 	public function ajax_get_license_overlay() {
+		if ( ! current_user_can( 'manage_options' ) || ! check_ajax_referer( 'edd_sdk_notice', 'nonce', false ) ) {
+			wp_send_json_error( 'Permission denied.', 403 );
+		}
+
 		$template = filter_input( INPUT_GET, 'template', FILTER_SANITIZE_SPECIAL_CHARS );
 		if ( ! $template ) {
 			wp_send_json_error( 'No template provided.' );
