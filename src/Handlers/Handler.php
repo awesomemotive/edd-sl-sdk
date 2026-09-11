@@ -247,4 +247,18 @@ abstract class Handler {
 
 		return $this->slug;
 	}
+
+	/**
+	 * Determines if the updater can auto update.
+	 *
+	 * @since <next-version>
+	 * @return bool
+	 */
+	protected function can_auto_update(): bool {
+		if ( current_user_can( 'manage_options' ) || wp_doing_cron() ) {
+			return true;
+		}
+
+		return defined( 'WP_CLI' ) && WP_CLI;
+	}
 }
