@@ -251,7 +251,7 @@ abstract class Handler {
 	/**
 	 * Determines if the updater can auto update.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.4
 	 * @return bool
 	 */
 	protected function can_auto_update(): bool {
