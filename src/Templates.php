@@ -50,7 +50,7 @@ class Templates {
 	/**
 	 * Resolves a template name to a file inside the templates directory.
 	 *
-	 * @since <next-version>
+	 * @since 1.0.4
 	 * @param string $file The template file name, relative to the templates directory, without the extension.
 	 * @return string|false The absolute path to the template, or false if it is not a valid template.
 	 */
