@@ -30,12 +30,16 @@ if ( overlayNotice ) {
 				fetch( `${ ajaxurl }?${ new URLSearchParams( data ) }` )
 					.then( ( response ) => response.json() )
 					.then( ( response ) => {
-						if ( response.data ) {
-							overlayNotice.innerHTML = response.data;
-							// Add a class to the overlay notice
-							overlayNoticeWrapper.classList.add( 'edd-sdk__notice--ajax' );
+						event.target.disabled = false;
+						if ( ! response.data ) {
+							return;
 						}
+
+						overlayNotice.innerHTML = response.data;
+						overlayNoticeWrapper.classList.add( 'edd-sdk__notice--ajax' );
 						triggerNoticeEnter( overlayNoticeWrapper );
+					} )
+					.catch( () => {
 						event.target.disabled = false;
 					} );
 			} else {
